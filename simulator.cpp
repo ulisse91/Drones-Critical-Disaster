@@ -142,13 +142,11 @@ double simulator::objective_function_cycle(vector<vector<vector<pair<int, double
 
                 cost_nodes_in_cycle += distance_prev_to_curr_node + sol[drone][cycle][nodo].second * v.node_weight;
                 _temp_nodes[current_node_index] -= sol[drone][cycle][nodo].second * v.node_weight;
-                
 
                 // cout << current_node_index << ": " << distance_prev_to_curr_node << " " << cost_nodes_in_cycle << " " << previous_time_cycle << "\n";
                 // cout << cost_nodes_in_cycle << ": " << distance_prev_to_curr_node << ": " << sol[drone][cycle][nodo].second << ": " << v.node_weight << "\n\n";
-
             }
-            for (int nodo = 1; nodo < sol[drone][cycle].size()-1; nodo++)
+            for (int nodo = 1; nodo < sol[drone][cycle].size() - 1; nodo++)
             {
                 int current_node_index = sol[drone][cycle][nodo].first;
                 if (_temp_nodes[current_node_index] == 0)
@@ -162,8 +160,6 @@ double simulator::objective_function_cycle(vector<vector<vector<pair<int, double
             previous_time_cycle = cost_nodes_in_cycle;
         }
     }
-
-
 
     // double val_sol = 0;
     // for (int drone = 0; drone < sol.size(); drone++)

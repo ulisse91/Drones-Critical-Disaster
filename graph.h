@@ -4,7 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <random>
-#include <assert.h> 
+#include <assert.h>
 
 using namespace std;
 

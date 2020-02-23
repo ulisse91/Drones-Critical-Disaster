@@ -64,22 +64,12 @@ int main(int argc, char **argv)
         cout << "Set Default value: " << budget << "\n";
     }
 
-    //// TEST
-    graph G = graph(1, 2, n_nodes);
-    simulator sim = simulator(G, n_drones, n_batteries, budget);
-
-    G.print_graph();
-
-    vector<vector<vector<pair<int, double>>>> sol_2 = {{{make_pair(0, 1), make_pair(1, 0.5), make_pair(2, 1), make_pair(0, 1)}}, {{make_pair(0, 1) , make_pair(1, 0.5),make_pair(4, 1), make_pair(5, 1), make_pair(0, 1)}}};
-
-    cout << sim.evaluate_solution(0, sol_2) << endl;
-    //// END TEST
-
     // input: file_graph
     // fun: read graph from file
     // fun: read solution from file (?)
     // alg: KIM
-    // enanche:: check_solution_feasible deve contenere: se sono stati fatti tutti i nodi e "fino in fondo"
+    // alg: prim-based
+    // alg: TOP-based
     // create random graph -> populate_graph() diventa random graph
 
     return 0;

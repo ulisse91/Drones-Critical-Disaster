@@ -56,7 +56,7 @@ int graph::add_node(double _x, double _y, int _node_weight, int _priority)
         // cout << "[ERROR:graph]:: node outside area" << endl;
         return -2;
     }
-    
+
     this->vertices.push_back(new_node);
     this->n_nodes++;
 
@@ -73,9 +73,8 @@ bool graph::check_double_node(node new_node)
             return false;
         }
     }
-    return true; 
+    return true;
 }
-
 
 void graph::print_graph()
 {

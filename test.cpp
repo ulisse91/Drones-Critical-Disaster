@@ -196,3 +196,5 @@ bool test::check_fsolutions_obj_func_value_1()
 
     return false;
 }
+
+// test valore seconda funzione obj
