@@ -23,18 +23,21 @@ private:
     int area_x;
     int area_y;
 
-    void populate_graph();
+    bool check_double_node(node new_node);
 
 public:
     int n_nodes;
     vector<node> vertices;
 
     graph();
-    graph(int _area_x, int _area_y, int _n_nodes);
+    graph(int _area_x, int _area_y);
     ~graph();
 
     double dist(node u, node v);
     void print_graph();
+
+    void create_random_graph();
+    int add_node(double _x, double _y, int _node_weight, int _priority);
 };
 
 #endif // GRAPH_H

@@ -19,12 +19,15 @@ private:
     int n_batteries;
     int budget;
 
+    double objective_function_cycle(vector<vector<vector<pair<int, double>>>> sol);
+    double objective_function_weighted_latency(vector<vector<vector<pair<int, double>>>> sol);
+
 public:
     simulator(graph, int, int, int);
     ~simulator();
 
-    bool check_solution_feasible(vector<vector<vector<pair<int, double>>>> sol);
-    double evaluate_solution(vector<vector<vector<pair<int, double>>>> sol);
+    int check_solution_feasible(vector<vector<vector<pair<int, double>>>> sol);
+    double evaluate_solution(int which, vector<vector<vector<pair<int, double>>>> sol);
     void print_solution(vector<vector<vector<pair<int, double>>>> sol);
 };
 

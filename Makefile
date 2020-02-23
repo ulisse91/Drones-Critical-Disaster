@@ -1,16 +1,18 @@
 CXX = g++ -std=c++14
 OPT = -O4 # -DNDEBUG
 TARGET = main
+TARGET_TEST = mainTest
 
 OPTIONS = -lboost_program_options
 # INCLUDEPATH = $(HOME)/NetworKit/include
 PATHLIB = /usr/include/boost
-SOURCES = $(TARGET).cpp graph.cpp simulator.cpp
+SOURCES = graph.cpp simulator.cpp
 
 main:
-	$(CXX) -o $(TARGET) $(SOURCES) $(OPT) -L$(PATHLIB) $(OPTIONS)
+	$(CXX) -o $(TARGET) $(TARGET).cpp $(SOURCES) $(OPT) -L$(PATHLIB) $(OPTIONS)
+
+test:
+	$(CXX) -o $(TARGET_TEST) $(TARGET_TEST).cpp $(SOURCES) test.cpp $(OPT) -L$(PATHLIB) $(OPTIONS)
 
 clean:
-	rm -rf $(TARGET)
-
-# main:	$(CXX) -o $(TARGET) -I$(INCLUDEPATH) -L$(PATHLIB) $(SOURCES) $(OPTIONS)
+	rm -rf $(TARGET) $(TARGET_TEST)

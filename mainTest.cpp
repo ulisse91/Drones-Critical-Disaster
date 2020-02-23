@@ -1,0 +1,28 @@
+#include <iostream>
+
+#include "main.h"
+#include "graph.h"
+#include "simulator.h"
+#include "test.h"
+
+using namespace std;
+
+int main(int argc, char **argv)
+{
+
+    test T = test();
+
+    // graph
+    assert(T.check_if_double_node());
+    assert(T.check_if_node_outside_area());
+
+    // feasible solutions
+    assert(T.check_fsolutions_depot());
+    assert(T.check_fsolutions_node_out_index());
+    assert(T.check_fsolutions_cycle_over_budget());
+    assert(T.check_fsolutions_all_nodes_1());
+    assert(T.check_fsolutions_all_nodes_2());
+    assert(T.check_fsolutions_obj_func_value_1());
+
+    return 0;
+}
