@@ -48,6 +48,23 @@ bool test::check_if_node_outside_area()
     return false;
 }
 
+bool test::read_graph_from_file()
+{
+    graph G = graph(2, 1);
+    if (G.read_graph_from_file("data/graph/filedoesnotexist.csv") == -1)
+    {
+        if (G.read_graph_from_file("data/graph/test1.csv") == 1)
+        {
+            if (G.vertices[1].x == 0.5 and G.vertices[1].y == 0.8 and G.vertices[1].priority == 2 and G.vertices[1].node_weight == 1.5)
+            {
+                return true;
+            }
+            return false;
+        }
+    }
+    return false;
+}
+
 ///////////////////////////////////////////////////////////////////////
 /////////////// FEASIBLE SOLUTIONS ////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
@@ -182,8 +199,6 @@ bool test::check_fsolutions_obj_func_value_1()
     vector<vector<vector<pair<int, double>>>> sol3 = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(0, 1)}}, {{make_pair(0, 1), make_pair(4, 1), make_pair(0, 1)}}};
     vector<vector<vector<pair<int, double>>>> sol4 = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(4, 0.5), make_pair(0, 1)}, {make_pair(0, 1), make_pair(4, 0.5), make_pair(0, 1)}}};
 
-    return true;
-
     if (sim.check_solution_feasible(sol) == 1 and sim.check_solution_feasible(sol2) == 1 and sim.check_solution_feasible(sol3) == 1 and sim.check_solution_feasible(sol4) == 1)
         if (45.9 >= sim.evaluate_solution(0, sol) and sim.evaluate_solution(0, sol) >= 45.88)
             if (47.1115 >= sim.evaluate_solution(0, sol2) and sim.evaluate_solution(0, sol2) >= 47.1113)
@@ -197,4 +212,30 @@ bool test::check_fsolutions_obj_func_value_1()
     return false;
 }
 
-// test valore seconda funzione obj
+bool test::check_fsolutions_obj_func_value_2()
+{
+    graph G = graph(2, 1);
+    G.add_node(0.5, 0.8, 1, 1); // a
+    G.add_node(1.5, 0.5, 1, 1); // b
+    G.add_node(1, 0.2, 1, 1);   // c
+    G.add_node(0.7, 0.3, 1, 3); // d
+
+    simulator sim = simulator(G, 1, 1, 8);
+
+    vector<vector<vector<pair<int, double>>>> sol = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(4, 1), make_pair(0, 1)}}};
+    vector<vector<vector<pair<int, double>>>> sol2 = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(0, 1)}, {make_pair(0, 1), make_pair(4, 1), make_pair(0, 1)}}};
+    vector<vector<vector<pair<int, double>>>> sol3 = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(0, 1)}}, {{make_pair(0, 1), make_pair(4, 1), make_pair(0, 1)}}};
+    vector<vector<vector<pair<int, double>>>> sol4 = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(4, 0.5), make_pair(0, 1)}, {make_pair(0, 1), make_pair(4, 0.5), make_pair(0, 1)}}};
+
+    if (sim.check_solution_feasible(sol) == 1 and sim.check_solution_feasible(sol2) == 1 and sim.check_solution_feasible(sol3) == 1 and sim.check_solution_feasible(sol4) == 1)
+        if (32.1617 >= sim.evaluate_solution(1, sol) and sim.evaluate_solution(1, sol) >= 32.1615)
+            if (36.5572 >= sim.evaluate_solution(1, sol2) and sim.evaluate_solution(1, sol2) >= 36.5570)
+                if (16.7862 >= sim.evaluate_solution(1, sol3) and sim.evaluate_solution(1, sol3) >= 16.7860)
+                    if (36.7312 >= sim.evaluate_solution(1, sol4) and sim.evaluate_solution(1, sol4) >= 36.7310)
+                    {
+                        cout << "check_fsolutions_obj_func_value_1 (weighted latency) [OK]" << endl;
+                        return true;
+                    }
+
+    return false;
+}

@@ -5,15 +5,16 @@
 #include <vector>
 #include <random>
 #include <assert.h>
+#include <fstream>
 
 using namespace std;
 
 struct node
 {
     double x, y;
-    int node_weight;
+    double node_weight;
     int priority;
-    node(double _x, double _y, int _node_weight, int _priority) : x(_x), y(_y), node_weight(_node_weight), priority(_priority) {}
+    node(double _x, double _y, double _node_weight, int _priority) : x(_x), y(_y), node_weight(_node_weight), priority(_priority) {}
 };
 
 class graph
@@ -35,9 +36,9 @@ public:
 
     double dist(node u, node v);
     void print_graph();
-
     void create_random_graph();
-    int add_node(double _x, double _y, int _node_weight, int _priority);
+    int add_node(double _x, double _y, double _node_weight, int _priority);
+    int read_graph_from_file(string file);
 };
 
 #endif // GRAPH_H

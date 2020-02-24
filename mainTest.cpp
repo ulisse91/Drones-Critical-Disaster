@@ -15,6 +15,7 @@ int main(int argc, char **argv)
     // graph
     assert(T.check_if_double_node());
     assert(T.check_if_node_outside_area());
+    assert(T.read_graph_from_file());
 
     // feasible solutions
     assert(T.check_fsolutions_depot());
@@ -23,6 +24,7 @@ int main(int argc, char **argv)
     assert(T.check_fsolutions_all_nodes_1());
     assert(T.check_fsolutions_all_nodes_2());
     assert(T.check_fsolutions_obj_func_value_1());
+    assert(T.check_fsolutions_obj_func_value_2());
 
     return 0;
 }

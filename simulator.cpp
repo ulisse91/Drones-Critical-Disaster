@@ -87,9 +87,10 @@ double simulator::objective_function_weighted_latency(vector<vector<vector<pair<
     double val_sol = 0;
     for (int drone = 0; drone < sol.size(); drone++)
     {
-        double previous_time = 0;
+        double previous_time_cycle = 0;
         for (int cycle = 0; cycle < sol[drone].size(); cycle++)
         {
+            double cost_nodes_in_cycle = 0;
             for (int nodo = 1; nodo < sol[drone][cycle].size(); nodo++)
             {
                 int previous_node_index = sol[drone][cycle][nodo - 1].first;
@@ -98,17 +99,18 @@ double simulator::objective_function_weighted_latency(vector<vector<vector<pair<
                 node v = this->G.vertices[current_node_index];
                 double distance_prev_to_curr_node = this->G.dist(u, v);
 
+                cost_nodes_in_cycle += distance_prev_to_curr_node + sol[drone][cycle][nodo].second * v.node_weight;
                 _temp_nodes[current_node_index] -= sol[drone][cycle][nodo].second * v.node_weight;
-                double t_f_node_v = previous_time + distance_prev_to_curr_node + sol[drone][cycle][nodo].second * v.node_weight;
 
-                // cout << current_node_index << " : " << t_f_node_v << " | ";
+                // cout << current_node_index << ": " << distance_prev_to_curr_node << " " << cost_nodes_in_cycle << " " << previous_time_cycle << " " << sol[drone][cycle][nodo].second << " " << v.node_weight << "\n\n";
 
-                previous_time = t_f_node_v;
                 if (_temp_nodes[current_node_index] == 0)
                 {
-                    val_sol += v.priority * t_f_node_v;
+                    // cout << "val: " << v.priority << " " << cost_nodes_in_cycle << " " << previous_time_cycle << "\n";
+                    val_sol += v.priority * (cost_nodes_in_cycle + previous_time_cycle);
                 }
             }
+            previous_time_cycle = cost_nodes_in_cycle;
         }
     }
     return val_sol;
@@ -160,41 +162,6 @@ double simulator::objective_function_cycle(vector<vector<vector<pair<int, double
             previous_time_cycle = cost_nodes_in_cycle;
         }
     }
-
-    // double val_sol = 0;
-    // for (int drone = 0; drone < sol.size(); drone++)
-    // {
-    //     double previous_time_cycle = 0;
-    //     for (int cycle = 0; cycle < sol[drone].size(); cycle++)
-    //     {
-    //         double previous_time_node = 0;
-    //         for (int nodo = 1; nodo < sol[drone][cycle].size(); nodo++)
-    //         {
-    //             int previous_node_index = sol[drone][cycle][nodo - 1].first;
-    //             int current_node_index = sol[drone][cycle][nodo].first;
-    //             node u = this->G.vertices[previous_node_index];
-    //             node v = this->G.vertices[current_node_index];
-    //             double distance_prev_to_curr_node = this->G.dist(u, v);
-
-    //             _temp_nodes[current_node_index] -= sol[drone][cycle][nodo].second * v.node_weight;
-    //             double t_f_node_v = previous_time_node + distance_prev_to_curr_node + sol[drone][cycle][nodo].second * v.node_weight;
-
-    //             // cout << current_node_index << " : " << t_f_node_v << " | ";
-
-    //             previous_time_node = t_f_node_v;
-    //         }
-    //         for (int nodo = 1; nodo < sol[drone][cycle].size()-1; nodo++)
-    //         {
-    //             int current_node_index = sol[drone][cycle][nodo].first;
-    //             if (_temp_nodes[current_node_index] == 0)
-    //             {
-    //                 val_sol += this->G.vertices[current_node_index].priority * (previous_time_node + previous_time_cycle);
-    //             }
-
-    //             cout << current_node_index << " " << val_sol << "; ";
-    //         }
-    //     }
-    // }
     return val_sol;
 }
 
@@ -209,7 +176,6 @@ double simulator::evaluate_solution(int which, vector<vector<vector<pair<int, do
     {
         val_sol = objective_function_weighted_latency(sol);
     }
-
     return val_sol;
 }
 

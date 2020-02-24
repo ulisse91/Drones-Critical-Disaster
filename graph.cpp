@@ -5,6 +5,7 @@ graph::graph(int _area_x, int _area_y)
     this->area_x = _area_x;
     this->area_y = _area_y;
 
+    // DEPOT: must have priority and weight == 0 (we use this in the code)
     node depot(0, 0, 0, 0); // v_0 = depot
     this->vertices.push_back(depot);
 
@@ -42,7 +43,7 @@ double graph::dist(node u, node v)
     return sqrt(pow(u.x - v.x, 2) + pow(u.y - v.y, 2));
 }
 
-int graph::add_node(double _x, double _y, int _node_weight, int _priority)
+int graph::add_node(double _x, double _y, double _node_weight, int _priority)
 {
     node new_node(_x, _y, _node_weight, _priority);
 
@@ -81,7 +82,29 @@ void graph::print_graph()
     cout << "***** GRAPH *****" << endl;
     for (size_t i = 0; i < this->vertices.size(); i++)
     {
-        cout << i << ": (" << this->vertices[i].y << ", " << this->vertices[i].y << ") p:" << this->vertices[i].priority << " w:" << this->vertices[i].node_weight << endl;
+        cout << i << ": (" << this->vertices[i].x << ", " << this->vertices[i].y << ") p:" << this->vertices[i].priority << " w:" << this->vertices[i].node_weight << endl;
     }
     cout << "*****************" << endl;
+}
+
+int graph::read_graph_from_file(string file)
+{
+    fstream fin;
+    fin.open(file, ios::in);
+
+    if (fin.is_open())
+    {
+        string _x, _y, _priority, _node_weight;
+        while (fin.good())
+        {
+            getline(fin, _x, ',');
+            getline(fin, _y, ',');
+            getline(fin, _priority, ',');
+            getline(fin, _node_weight);
+            add_node(stod(_x), stod(_y), stod(_node_weight), stoi(_priority));
+        }
+        fin.close();
+        return 1;
+    }
+    return -1; // Unable to open file
 }

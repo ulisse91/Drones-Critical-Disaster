@@ -22,6 +22,7 @@ public:
     // graph
     bool check_if_double_node();
     bool check_if_node_outside_area();
+    bool read_graph_from_file();
 
     // feasible solutions
     bool check_fsolutions_depot();
@@ -30,6 +31,7 @@ public:
     bool check_fsolutions_all_nodes_1();
     bool check_fsolutions_all_nodes_2();
     bool check_fsolutions_obj_func_value_1();
+    bool check_fsolutions_obj_func_value_2();
 };
 
 #endif // TEST_H
