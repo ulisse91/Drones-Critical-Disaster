@@ -55,3 +55,46 @@ vector<int> algo::primMST(graph G)
 
     return parent;
 }
+
+vector<int> algo::metric_k_center(graph G, int k)
+{
+    vector<int> sol;
+    vector<pair<int, node>> temp_nodes;
+
+    /* initialize random seed: */
+    srand(time(NULL));
+    sol.push_back(rand() % (G.n_nodes - 1) + 1);
+    k--;
+
+    for (size_t i = 0; i < G.n_nodes; i++)
+    {
+        temp_nodes.push_back(make_pair(i, G.vertices[i]));
+    }
+
+    while (k > 0)
+    {
+        vector<int> temp(G.n_nodes);
+        for (size_t i = 0; i < temp_nodes.size(); i++)
+        {
+            double min_dist = G.area_x + G.area_y;
+            for (size_t j = 0; j < sol.size(); j++)
+            {
+                min_dist = min(min_dist, G.dist(temp_nodes[i].second, G.vertices[sol[j]]));
+            }
+            temp[temp_nodes[i].first] = min_dist;
+        }
+
+        int new_center = max_element(temp.begin(), temp.end()) - temp.begin();
+        sol.push_back(new_center);
+        temp_nodes.erase(temp_nodes.begin() + new_center);
+        k--;
+    }
+
+    // for (size_t i = 0; i < sol.size(); i++)
+    // {
+    //     cout << sol[i] << " ";
+    // }
+    // cout << endl;
+
+    return sol;
+}

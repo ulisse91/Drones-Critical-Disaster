@@ -3,6 +3,9 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
+#include <stdlib.h> /* srand, rand */
+#include <time.h>   /* time */
 
 #include "graph.h"
 #include "simulator.h"
@@ -20,6 +23,7 @@ public:
     ~algo();
 
     vector<int> primMST(graph G);
+    vector<int> metric_k_center(graph G, int k);
 };
 
 #endif // ALGO_H

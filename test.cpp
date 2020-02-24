@@ -57,7 +57,7 @@ bool test::check_read_graph_from_file()
         {
             if (G.vertices[1].x == 0.5 and G.vertices[1].y == 0.8 and G.vertices[1].priority == 2 and G.vertices[1].node_weight == 1.5)
             {
-                cout << "read_graph_from_file [OK]" << endl;
+                cout << "check_read_graph_from_file [OK]" << endl;
                 return true;
             }
             return false;
@@ -262,6 +262,29 @@ bool test::check_primMST()
     if (2.1995 >= sum_of_elems and sum_of_elems >= 2.1993)
     {
         cout << "check_primMST [OK]" << endl;
+        return true;
+    }
+    return false;
+}
+
+bool test::check_metric_k_center()
+{
+    graph G = graph(2, 1);
+    G.read_graph_from_file("data/graph/test_primMST.csv");
+    algo alg = algo();
+    int k = 2;
+    vector<int> sol = alg.metric_k_center(G, k);
+
+    if (sol.size() == k)
+    {
+        for (size_t i = 0; i < sol.size(); i++)
+        {
+            if (sol[i] > G.n_nodes or sol[i] < 0)
+            {
+                return false;
+            }
+        }
+        cout << "check_metric_k_center [OK]" << endl;
         return true;
     }
     return false;

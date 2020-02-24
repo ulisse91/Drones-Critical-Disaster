@@ -29,6 +29,7 @@ int main(int argc, char **argv)
 
     // algorithms
     assert(T.check_primMST());
+    assert(T.check_metric_k_center());
 
     return 0;
 }

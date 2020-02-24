@@ -36,6 +36,7 @@ public:
 
     // algorithms
     bool check_primMST();
+    bool check_metric_k_center();
 };
 
 #endif // TEST_H
