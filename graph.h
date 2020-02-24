@@ -21,12 +21,11 @@ class graph
 {
 
 private:
-    int area_x;
-    int area_y;
-
     bool check_double_node(node new_node);
 
 public:
+    int area_x;
+    int area_y;
     int n_nodes;
     vector<node> vertices;
 

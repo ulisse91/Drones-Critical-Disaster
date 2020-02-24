@@ -6,7 +6,7 @@ TARGET_TEST = mainTest
 OPTIONS = -lboost_program_options
 # INCLUDEPATH = $(HOME)/NetworKit/include
 PATHLIB = /usr/include/boost
-SOURCES = graph.cpp simulator.cpp
+SOURCES = graph.cpp simulator.cpp algo.cpp
 
 main:
 	$(CXX) -o $(TARGET) $(TARGET).cpp $(SOURCES) $(OPT) -L$(PATHLIB) $(OPTIONS)

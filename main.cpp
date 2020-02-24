@@ -73,9 +73,9 @@ int main(int argc, char **argv)
         cout << "file was not set. ";
     }
 
-     graph G = graph(2, 1);
-     G.read_graph_from_file(graph_file);
-     G.print_graph();
+    graph G = graph(2, 1);
+    G.read_graph_from_file(graph_file);
+    G.print_graph();
 
     // fun: read solution from file (?)
     // alg: KIM

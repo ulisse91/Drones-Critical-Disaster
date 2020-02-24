@@ -48,15 +48,16 @@ bool test::check_if_node_outside_area()
     return false;
 }
 
-bool test::read_graph_from_file()
+bool test::check_read_graph_from_file()
 {
     graph G = graph(2, 1);
     if (G.read_graph_from_file("data/graph/filedoesnotexist.csv") == -1)
     {
-        if (G.read_graph_from_file("data/graph/test1.csv") == 1)
+        if (G.read_graph_from_file("data/graph/test_read_graph_from_file.csv") == 1)
         {
             if (G.vertices[1].x == 0.5 and G.vertices[1].y == 0.8 and G.vertices[1].priority == 2 and G.vertices[1].node_weight == 1.5)
             {
+                cout << "read_graph_from_file [OK]" << endl;
                 return true;
             }
             return false;
@@ -237,5 +238,31 @@ bool test::check_fsolutions_obj_func_value_2()
                         return true;
                     }
 
+    return false;
+}
+
+///////////////////////////////////////////////////////////////////////
+/////////////////////// ALGORITHMS ////////////////////////////////////
+///////////////////////////////////////////////////////////////////////
+
+bool test::check_primMST()
+{
+    graph G = graph(2, 1);
+    G.read_graph_from_file("data/graph/test_primMST.csv");
+    algo alg = algo();
+    vector<int> sol = alg.primMST(G);
+
+    double sum_of_elems = 0;
+
+    for (size_t i = 0; i < sol.size(); i++)
+    {
+        sum_of_elems += G.dist(G.vertices[i], G.vertices[sol[i]]);
+    }
+
+    if (2.1995 >= sum_of_elems and sum_of_elems >= 2.1993)
+    {
+        cout << "check_primMST [OK]" << endl;
+        return true;
+    }
     return false;
 }
