@@ -10,8 +10,6 @@
 #include "simulator.h"
 #include "algo.h"
 
-using namespace std;
-
 class test
 {
 
@@ -37,6 +35,9 @@ public:
     // algorithms
     bool check_primMST();
     bool check_metric_k_center();
+    bool check_primMST_with_forced_nodes();
+    bool check_primMST_with_forced_nodes_and_budget();
+    bool check_find_TSP();
 };
 
 #endif // TEST_H

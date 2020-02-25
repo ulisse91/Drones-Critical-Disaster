@@ -7,8 +7,6 @@
 #include <assert.h>
 #include <fstream>
 
-using namespace std;
-
 struct node
 {
     double x, y;
@@ -27,7 +25,7 @@ public:
     int area_x;
     int area_y;
     int n_nodes;
-    vector<node> vertices;
+    std::vector<node> vertices;
 
     graph();
     graph(int _area_x, int _area_y);
@@ -37,7 +35,7 @@ public:
     void print_graph();
     void create_random_graph();
     int add_node(double _x, double _y, double _node_weight, int _priority);
-    int read_graph_from_file(string file);
+    int read_graph_from_file(std::string file);
 };
 
 #endif // GRAPH_H

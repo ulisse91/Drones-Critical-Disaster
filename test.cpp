@@ -21,10 +21,10 @@ bool test::check_if_double_node()
 
     if (G.add_node(0, 1, 2, 3) == 1 and G.add_node(0.5, 0.5, 2, 3) == 1 and G.add_node(0.5, 1, 2, 3) == -1)
     {
-        cout << "check_if_double_node [OK]" << endl;
+        std::cout << "check_if_double_node [OK]" << std::endl;
         return true;
     }
-    // cout << "[ERROR::TEST] check_if_double_node" << endl;
+    // std::cout << "[ERROR::TEST] check_if_double_node" << std::endl;
     return false;
 }
 
@@ -41,10 +41,10 @@ bool test::check_if_node_outside_area()
 
     if (G.add_node(3, 1, 2, 3) == -2 and G.add_node(1, 3, 2, 3) == -2 and G.add_node(3, 4, 2, 3) == -2)
     {
-        cout << "check_if_node_outside_area [OK]" << endl;
+        std::cout << "check_if_node_outside_area [OK]" << std::endl;
         return true;
     }
-    // cout << "[ERROR::TEST] check_if_node_outside_area" << endl;
+    // std::cout << "[ERROR::TEST] check_if_node_outside_area" << std::endl;
     return false;
 }
 
@@ -57,7 +57,7 @@ bool test::check_read_graph_from_file()
         {
             if (G.vertices[1].x == 0.5 and G.vertices[1].y == 0.8 and G.vertices[1].priority == 2 and G.vertices[1].node_weight == 1.5)
             {
-                cout << "check_read_graph_from_file [OK]" << endl;
+                std::cout << "check_read_graph_from_file [OK]" << std::endl;
                 return true;
             }
             return false;
@@ -80,14 +80,14 @@ bool test::check_fsolutions_depot()
 
     simulator sim = simulator(G, 1, 1, 10);
 
-    vector<vector<vector<pair<int, double>>>> sol = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(4, 1), make_pair(0, 1)}}};
-    vector<vector<vector<pair<int, double>>>> sol2 = {{{make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(4, 1), make_pair(0, 1)}}};
-    vector<vector<vector<pair<int, double>>>> sol3 = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(4, 1)}}};
-    vector<vector<vector<pair<int, double>>>> sol4 = {{{make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(4, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol2 = {{{std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol3 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol4 = {{{std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 1)}}};
 
     if (sim.check_solution_feasible(sol) == 1 and sim.check_solution_feasible(sol2) == -1 and sim.check_solution_feasible(sol3) == -1 and sim.check_solution_feasible(sol4) == -1)
     {
-        cout << "check_fsolutions_depot [OK]" << endl;
+        std::cout << "check_fsolutions_depot [OK]" << std::endl;
         return true;
     }
 
@@ -104,12 +104,12 @@ bool test::check_fsolutions_node_out_index()
 
     simulator sim = simulator(G, 1, 1, 8);
 
-    vector<vector<vector<pair<int, double>>>> sol = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(4, 1), make_pair(0, 1)}}};
-    vector<vector<vector<pair<int, double>>>> sol2 = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(5, 1), make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol2 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(5, 1), std::make_pair(0, 1)}}};
 
     if (sim.check_solution_feasible(sol) == 1 and sim.check_solution_feasible(sol2) == -3)
     {
-        cout << "check_fsolutions_node_out_index [OK]" << endl;
+        std::cout << "check_fsolutions_node_out_index [OK]" << std::endl;
         return true;
     }
 
@@ -128,11 +128,11 @@ bool test::check_fsolutions_cycle_over_budget()
     simulator sim2 = simulator(G, 1, 1, 8);
 
     // needs B = ~7.65
-    vector<vector<vector<pair<int, double>>>> sol = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(4, 1), make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
 
     if (sim.check_solution_feasible(sol) == -2 and sim2.check_solution_feasible(sol) == 1)
     {
-        cout << "check_fsolutions_cycle_over_budget [OK]" << endl;
+        std::cout << "check_fsolutions_cycle_over_budget [OK]" << std::endl;
         return true;
     }
 
@@ -149,13 +149,13 @@ bool test::check_fsolutions_all_nodes_1()
 
     simulator sim = simulator(G, 1, 1, 8);
 
-    vector<vector<vector<pair<int, double>>>> sol = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(4, 1), make_pair(0, 1)}}};
-    vector<vector<vector<pair<int, double>>>> sol2 = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(0, 1)}}};
-    vector<vector<vector<pair<int, double>>>> sol3 = {{{make_pair(0, 1), make_pair(1, 1), make_pair(0, 1)}, {make_pair(0, 1), make_pair(2, 1), make_pair(0, 1)}}, {{make_pair(0, 1), make_pair(3, 1), make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol2 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol3 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(0, 1)}, {std::make_pair(0, 1), std::make_pair(2, 1), std::make_pair(0, 1)}}, {{std::make_pair(0, 1), std::make_pair(3, 1), std::make_pair(0, 1)}}};
 
     if (sim.check_solution_feasible(sol) == 1 and sim.check_solution_feasible(sol2) == -4 and sim.check_solution_feasible(sol3) == -4)
     {
-        cout << "check_fsolutions_all_nodes_1 (without portions) [OK]" << endl;
+        std::cout << "check_fsolutions_all_nodes_1 (without portions) [OK]" << std::endl;
         return true;
     }
 
@@ -172,13 +172,13 @@ bool test::check_fsolutions_all_nodes_2()
 
     simulator sim = simulator(G, 1, 1, 8);
 
-    vector<vector<vector<pair<int, double>>>> sol = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 0.3), make_pair(4, 1), make_pair(0, 1)}}, {{make_pair(0, 1), make_pair(3, 0.7), make_pair(0, 1)}}};
-    vector<vector<vector<pair<int, double>>>> sol2 = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(4, 0.5), make_pair(0, 1)}}};
-    vector<vector<vector<pair<int, double>>>> sol3 = {{{make_pair(0, 1), make_pair(1, 1), make_pair(4, 1), make_pair(0, 1)}, {make_pair(0, 1), make_pair(2, 0.2), make_pair(0, 1)}}, {{make_pair(0, 1), make_pair(3, 1), make_pair(2, 0.7), make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 0.3), std::make_pair(4, 1), std::make_pair(0, 1)}}, {{std::make_pair(0, 1), std::make_pair(3, 0.7), std::make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol2 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 0.5), std::make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol3 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(4, 1), std::make_pair(0, 1)}, {std::make_pair(0, 1), std::make_pair(2, 0.2), std::make_pair(0, 1)}}, {{std::make_pair(0, 1), std::make_pair(3, 1), std::make_pair(2, 0.7), std::make_pair(0, 1)}}};
 
     if (sim.check_solution_feasible(sol) == 1 and sim.check_solution_feasible(sol2) == -4 and sim.check_solution_feasible(sol3) == -4)
     {
-        cout << "check_fsolutions_all_nodes_2 (with portions) [OK]" << endl;
+        std::cout << "check_fsolutions_all_nodes_2 (with portions) [OK]" << std::endl;
         return true;
     }
 
@@ -195,10 +195,10 @@ bool test::check_fsolutions_obj_func_value_1()
 
     simulator sim = simulator(G, 1, 1, 8);
 
-    vector<vector<vector<pair<int, double>>>> sol = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(4, 1), make_pair(0, 1)}}};
-    vector<vector<vector<pair<int, double>>>> sol2 = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(0, 1)}, {make_pair(0, 1), make_pair(4, 1), make_pair(0, 1)}}};
-    vector<vector<vector<pair<int, double>>>> sol3 = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(0, 1)}}, {{make_pair(0, 1), make_pair(4, 1), make_pair(0, 1)}}};
-    vector<vector<vector<pair<int, double>>>> sol4 = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(4, 0.5), make_pair(0, 1)}, {make_pair(0, 1), make_pair(4, 0.5), make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol2 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(0, 1)}, {std::make_pair(0, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol3 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(0, 1)}}, {{std::make_pair(0, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol4 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 0.5), std::make_pair(0, 1)}, {std::make_pair(0, 1), std::make_pair(4, 0.5), std::make_pair(0, 1)}}};
 
     if (sim.check_solution_feasible(sol) == 1 and sim.check_solution_feasible(sol2) == 1 and sim.check_solution_feasible(sol3) == 1 and sim.check_solution_feasible(sol4) == 1)
         if (45.9 >= sim.evaluate_solution(0, sol) and sim.evaluate_solution(0, sol) >= 45.88)
@@ -206,7 +206,7 @@ bool test::check_fsolutions_obj_func_value_1()
                 if (27.3405 >= sim.evaluate_solution(0, sol3) and sim.evaluate_solution(0, sol3) >= 27.3403)
                     if (48.9595 >= sim.evaluate_solution(0, sol4) and sim.evaluate_solution(0, sol4) >= 48.9593)
                     {
-                        cout << "check_fsolutions_obj_func_value_1 (cycle) [OK]" << endl;
+                        std::cout << "check_fsolutions_obj_func_value_1 (cycle) [OK]" << std::endl;
                         return true;
                     }
 
@@ -223,10 +223,10 @@ bool test::check_fsolutions_obj_func_value_2()
 
     simulator sim = simulator(G, 1, 1, 8);
 
-    vector<vector<vector<pair<int, double>>>> sol = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(4, 1), make_pair(0, 1)}}};
-    vector<vector<vector<pair<int, double>>>> sol2 = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(0, 1)}, {make_pair(0, 1), make_pair(4, 1), make_pair(0, 1)}}};
-    vector<vector<vector<pair<int, double>>>> sol3 = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(0, 1)}}, {{make_pair(0, 1), make_pair(4, 1), make_pair(0, 1)}}};
-    vector<vector<vector<pair<int, double>>>> sol4 = {{{make_pair(0, 1), make_pair(1, 1), make_pair(2, 1), make_pair(3, 1), make_pair(4, 0.5), make_pair(0, 1)}, {make_pair(0, 1), make_pair(4, 0.5), make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol2 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(0, 1)}, {std::make_pair(0, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol3 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(0, 1)}}, {{std::make_pair(0, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol4 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 0.5), std::make_pair(0, 1)}, {std::make_pair(0, 1), std::make_pair(4, 0.5), std::make_pair(0, 1)}}};
 
     if (sim.check_solution_feasible(sol) == 1 and sim.check_solution_feasible(sol2) == 1 and sim.check_solution_feasible(sol3) == 1 and sim.check_solution_feasible(sol4) == 1)
         if (32.1617 >= sim.evaluate_solution(1, sol) and sim.evaluate_solution(1, sol) >= 32.1615)
@@ -234,7 +234,7 @@ bool test::check_fsolutions_obj_func_value_2()
                 if (16.7862 >= sim.evaluate_solution(1, sol3) and sim.evaluate_solution(1, sol3) >= 16.7860)
                     if (36.7312 >= sim.evaluate_solution(1, sol4) and sim.evaluate_solution(1, sol4) >= 36.7310)
                     {
-                        cout << "check_fsolutions_obj_func_value_1 (weighted latency) [OK]" << endl;
+                        std::cout << "check_fsolutions_obj_func_value_1 (weighted latency) [OK]" << std::endl;
                         return true;
                     }
 
@@ -250,7 +250,7 @@ bool test::check_primMST()
     graph G = graph(2, 1);
     G.read_graph_from_file("data/graph/test_primMST.csv");
     algo alg = algo();
-    vector<int> sol = alg.primMST(G);
+    std::vector<int> sol = alg.primMST(G, {0}, 100);
 
     double sum_of_elems = 0;
 
@@ -261,7 +261,7 @@ bool test::check_primMST()
 
     if (2.1995 >= sum_of_elems and sum_of_elems >= 2.1993)
     {
-        cout << "check_primMST [OK]" << endl;
+        std::cout << "check_primMST [OK]" << std::endl;
         return true;
     }
     return false;
@@ -273,7 +273,7 @@ bool test::check_metric_k_center()
     G.read_graph_from_file("data/graph/test_primMST.csv");
     algo alg = algo();
     int k = 2;
-    vector<int> sol = alg.metric_k_center(G, k);
+    std::vector<int> sol = alg.metric_k_center(G, k);
 
     if (sol.size() == k)
     {
@@ -284,7 +284,73 @@ bool test::check_metric_k_center()
                 return false;
             }
         }
-        cout << "check_metric_k_center [OK]" << endl;
+        std::cout << "check_metric_k_center [OK]" << std::endl;
+        return true;
+    }
+    return false;
+}
+
+bool test::check_primMST_with_forced_nodes()
+{
+    graph G = graph(2, 1);
+    G.read_graph_from_file("data/graph/test_primMST.csv");
+    algo alg = algo();
+
+    std::vector<int> f_nodes = {0, 1, 3};
+    std::vector<int> sol = alg.primMST(G, f_nodes, 10);
+
+    double sum_of_elems = 0;
+
+    for (size_t i = 0; i < sol.size(); i++)
+    {
+        if (sol[i] != -1)
+            sum_of_elems += G.dist(G.vertices[i], G.vertices[sol[i]]);
+    }
+
+    if (3.32635 >= sum_of_elems and sum_of_elems >= 3.32633)
+    {
+        std::cout << "check_primMST_with_forced_nodes [OK]" << std::endl;
+        return true;
+    }
+    return false;
+}
+
+bool test::check_primMST_with_forced_nodes_and_budget()
+{
+    graph G = graph(2, 1);
+    G.read_graph_from_file("data/graph/test_primMST.csv");
+    algo alg = algo();
+
+    std::vector<int> f_nodes = {0, 1, 3};
+    std::vector<int> sol = alg.primMST(G, f_nodes, 1.6);
+
+    double sum_of_elems = 0;
+
+    for (size_t i = 0; i < sol.size(); i++)
+    {
+        if (sol[i] != -1)
+            sum_of_elems += G.dist(G.vertices[i], G.vertices[sol[i]]);
+    }
+
+    if (2.50173 >= sum_of_elems and sum_of_elems >= 2.50171)
+    {
+        std::cout << "check_primMST_with_forced_nodes_and_budget [OK]" << std::endl;
+        return true;
+    }
+    return false;
+}
+
+bool test::check_find_TSP()
+{
+    graph G = graph(2, 1);
+    G.read_graph_from_file("data/graph/test_primMST.csv");
+    algo alg = algo();
+    std::vector<int> sol = alg.primMST(G, {0}, 100);
+
+    std::vector<int> sol_tsp = alg.find_TSP(0, sol);
+    if (sol_tsp.size() == G.n_nodes and sol_tsp[0] == 0 and sol_tsp[1] == 4 and sol_tsp[2] == 1 and sol_tsp[3] == 3 and sol_tsp[4] == 2)
+    {
+        std::cout << "check_find_TSP [OK]" << std::endl;
         return true;
     }
     return false;

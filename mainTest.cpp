@@ -6,8 +6,6 @@
 #include "test.h"
 #include "algo.h"
 
-using namespace std;
-
 int main(int argc, char **argv)
 {
 
@@ -30,6 +28,9 @@ int main(int argc, char **argv)
     // algorithms
     assert(T.check_primMST());
     assert(T.check_metric_k_center());
+    assert(T.check_primMST_with_forced_nodes());
+    assert(T.check_primMST_with_forced_nodes_and_budget());
+    assert(T.check_find_TSP());
 
     return 0;
 }

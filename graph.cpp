@@ -18,7 +18,7 @@ graph::~graph() {}
 
 void graph::create_random_graph()
 {
-    cout << "TO_DO\n";
+    std::cout << "TO_DO\n";
     // // da fare
     // uniform_real_distribution<double> unif_1(0, area_x);
     // uniform_real_distribution<double> unif_2(0, area_y);
@@ -49,12 +49,12 @@ int graph::add_node(double _x, double _y, double _node_weight, int _priority)
 
     if (not check_double_node(new_node))
     {
-        // cout << "[ERROR:graph]:: double node! Skipped" << endl;
+        // std::cout << "[ERROR:graph]:: double node! Skipped" << std::endl;
         return -1;
     }
     if (new_node.x > this->area_x or new_node.y > this->area_y)
     {
-        // cout << "[ERROR:graph]:: node outside area" << endl;
+        // std::cout << "[ERROR:graph]:: node outside area" << std::endl;
         return -2;
     }
 
@@ -79,22 +79,22 @@ bool graph::check_double_node(node new_node)
 
 void graph::print_graph()
 {
-    cout << "***** GRAPH *****" << endl;
+    std::cout << "***** GRAPH *****" << std::endl;
     for (size_t i = 0; i < this->vertices.size(); i++)
     {
-        cout << i << ": (" << this->vertices[i].x << ", " << this->vertices[i].y << ") p:" << this->vertices[i].priority << " w:" << this->vertices[i].node_weight << endl;
+        std::cout << i << ": (" << this->vertices[i].x << ", " << this->vertices[i].y << ") p:" << this->vertices[i].priority << " w:" << this->vertices[i].node_weight << std::endl;
     }
-    cout << "*****************" << endl;
+    std::cout << "*****************" << std::endl;
 }
 
-int graph::read_graph_from_file(string file)
+int graph::read_graph_from_file(std::string file)
 {
-    fstream fin;
-    fin.open(file, ios::in);
+    std::fstream fin;
+    fin.open(file, std::ios::in);
 
     if (fin.is_open())
     {
-        string _x, _y, _priority, _node_weight;
+        std::string _x, _y, _priority, _node_weight;
         while (fin.good())
         {
             getline(fin, _x, ',');
