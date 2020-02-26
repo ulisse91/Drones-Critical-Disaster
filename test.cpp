@@ -55,7 +55,8 @@ bool test::check_read_graph_from_file()
     {
         if (G.read_graph_from_file("data/graph/test_read_graph_from_file.csv") == 1)
         {
-            if (G.vertices[1].x == 0.5 and G.vertices[1].y == 0.8 and G.vertices[1].priority == 2 and G.vertices[1].node_weight == 1.5)
+            std::vector<int> _temp = G.get_vertices();
+            if (G.get_coord_x(1) == 0.5 and G.get_coord_y(1) == 0.8 and G.get_priority_node(1) == 2 and G.get_weight_node(1) == 1.5)
             {
                 std::cout << "check_read_graph_from_file [OK]" << std::endl;
                 return true;
@@ -254,9 +255,11 @@ bool test::check_primMST()
 
     double sum_of_elems = 0;
 
+    std::vector<int> graph_vertices = G.get_vertices();
+
     for (size_t i = 0; i < sol.size(); i++)
     {
-        sum_of_elems += G.dist(G.vertices[i], G.vertices[sol[i]]);
+        sum_of_elems += G.dist(graph_vertices[i], graph_vertices[sol[i]]);
     }
 
     if (2.1995 >= sum_of_elems and sum_of_elems >= 2.1993)
@@ -279,7 +282,7 @@ bool test::check_metric_k_center()
     {
         for (size_t i = 0; i < sol.size(); i++)
         {
-            if (sol[i] > G.n_nodes or sol[i] < 0)
+            if (sol[i] > G.get_n_nodes() or sol[i] < 0)
             {
                 return false;
             }
@@ -304,7 +307,7 @@ bool test::check_primMST_with_forced_nodes()
     for (size_t i = 0; i < sol.size(); i++)
     {
         if (sol[i] != -1)
-            sum_of_elems += G.dist(G.vertices[i], G.vertices[sol[i]]);
+            sum_of_elems += G.dist(i, sol[i]);
     }
 
     if (3.32635 >= sum_of_elems and sum_of_elems >= 3.32633)
@@ -329,7 +332,7 @@ bool test::check_primMST_with_forced_nodes_and_budget()
     for (size_t i = 0; i < sol.size(); i++)
     {
         if (sol[i] != -1)
-            sum_of_elems += G.dist(G.vertices[i], G.vertices[sol[i]]);
+            sum_of_elems += G.dist(i, sol[i]);
     }
 
     if (2.50173 >= sum_of_elems and sum_of_elems >= 2.50171)
@@ -348,7 +351,7 @@ bool test::check_find_TSP()
     std::vector<int> sol = alg.primMST(G, {0}, 100);
 
     std::vector<int> sol_tsp = alg.find_TSP(0, sol);
-    if (sol_tsp.size() == G.n_nodes and sol_tsp[0] == 0 and sol_tsp[1] == 4 and sol_tsp[2] == 1 and sol_tsp[3] == 3 and sol_tsp[4] == 2)
+    if (sol_tsp.size() == G.get_n_nodes() and sol_tsp[0] == 0 and sol_tsp[1] == 4 and sol_tsp[2] == 1 and sol_tsp[3] == 3 and sol_tsp[4] == 2)
     {
         std::cout << "check_find_TSP [OK]" << std::endl;
         return true;

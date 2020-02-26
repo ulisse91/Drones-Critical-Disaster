@@ -6,7 +6,7 @@ graph::graph(int _area_x, int _area_y)
     this->area_y = _area_y;
 
     // DEPOT: must have priority and weight == 0 (we use this in the code)
-    node depot(0, 0, 0, 0); // v_0 = depot
+    node depot(0, 0, 0, 0, 0); // v_0 = depot
     this->vertices.push_back(depot);
 
     this->n_nodes = 1;
@@ -38,14 +38,14 @@ void graph::create_random_graph()
     // assert(this->vertices.size() == this->n_nodes + 1);
 }
 
-double graph::dist(node u, node v)
+double graph::dist(int u, int v)
 {
-    return sqrt(pow(u.x - v.x, 2) + pow(u.y - v.y, 2));
+    return sqrt(pow(this->vertices[u].x - this->vertices[v].x, 2) + pow(this->vertices[u].y - this->vertices[v].y, 2));
 }
 
 int graph::add_node(double _x, double _y, double _node_weight, int _priority)
 {
-    node new_node(_x, _y, _node_weight, _priority);
+    node new_node(this->n_nodes, _x, _y, _node_weight, _priority);
 
     if (not check_double_node(new_node))
     {
@@ -82,7 +82,7 @@ void graph::print_graph()
     std::cout << "***** GRAPH *****" << std::endl;
     for (size_t i = 0; i < this->vertices.size(); i++)
     {
-        std::cout << i << ": (" << this->vertices[i].x << ", " << this->vertices[i].y << ") p:" << this->vertices[i].priority << " w:" << this->vertices[i].node_weight << std::endl;
+        std::cout << this->vertices[i].id << ": (" << this->vertices[i].x << ", " << this->vertices[i].y << ") p:" << this->vertices[i].priority << " w:" << this->vertices[i].node_weight << std::endl;
     }
     std::cout << "*****************" << std::endl;
 }
@@ -107,4 +107,53 @@ int graph::read_graph_from_file(std::string file)
         return 1;
     }
     return -1; // Unable to open file
+}
+
+/////////////////////////////////////////////////
+/////////////// GETTER & SETTER /////////////////
+/////////////////////////////////////////////////
+
+int graph::get_area_x()
+{
+    return this->area_x;
+}
+
+int graph::get_area_y()
+{
+    return this->area_y;
+}
+
+int graph::get_n_nodes()
+{
+    return this->n_nodes;
+}
+
+std::vector<int> graph::get_vertices()
+{
+    std::vector<int> nodes_id;
+    for (size_t i = 0; i < this->n_nodes; i++)
+    {
+        nodes_id.push_back(this->vertices[i].id);
+    }
+    return nodes_id;
+}
+
+int graph::get_priority_node(int id)
+{
+    return this->vertices[id].priority;
+}
+
+double graph::get_weight_node(int id)
+{
+    return this->vertices[id].node_weight;
+}
+
+double graph::get_coord_x(int id)
+{
+    return this->vertices[id].x;
+}
+
+double graph::get_coord_y(int id)
+{
+    return this->vertices[id].y;
 }

@@ -11,7 +11,7 @@ namespace po = boost::program_options;
 int main(int argc, char **argv)
 {
     po::options_description desc{"Options"};
-    desc.add_options()("help,h", "Help screen")("nodes,n", po::value<int>(), "Number of nodes (default = 10)")("drones,d", po::value<int>(), "Number of drones (default = 1)")("budget,b", po::value<int>(), "Budget (default = 1)")("batteries,p", po::value<int>(), "Number of batteries (default = number of drones)")("file,f", po::value<string>(), "Graph file");
+    desc.add_options()("help,h", "Help screen")("nodes,n", po::value<int>(), "Number of nodes (default = 10)")("drones,d", po::value<int>(), "Number of drones (default = 1)")("budget,b", po::value<double>(), "Budget (default = 1)")("batteries,p", po::value<int>(), "Number of batteries (default = number of drones)")("file,f", po::value<std::string>(), "Graph file");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -54,8 +54,8 @@ int main(int argc, char **argv)
     }
     if (vm.count("budget"))
     {
-        budget = vm["budget"].as<int>();
-        std::cout << "Budget: " << vm["budget"].as<int>() << std::endl;
+        budget = vm["budget"].as<double>();
+        std::cout << "Budget: " << vm["budget"].as<double>() << std::endl;
     }
     else
     {
@@ -64,8 +64,8 @@ int main(int argc, char **argv)
     }
     if (vm.count("file"))
     {
-        graph_file = vm["file"].as<string>();
-        std::cout << "file: " << vm["file"].as<string>() << std::endl;
+        graph_file = vm["file"].as<std::string>();
+        std::cout << "file: " << vm["file"].as<std::string>() << std::endl;
     }
     else
     {

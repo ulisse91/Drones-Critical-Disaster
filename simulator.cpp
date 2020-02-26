@@ -15,10 +15,11 @@ simulator::~simulator() {}
 
 int simulator::check_solution_feasible(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
 {
-    std::vector<double> _temp_nodes(this->G.n_nodes);
+    std::vector<int> graph_vertices = G.get_vertices();
+    std::vector<double> _temp_nodes(this->G.get_n_nodes());
     for (size_t i = 0; i < _temp_nodes.size(); i++)
     {
-        _temp_nodes[i] = this->G.vertices[i].node_weight;
+        _temp_nodes[i] = G.get_weight_node(graph_vertices[i]);
     }
 
     for (int drone = 0; drone < sol.size(); drone++)
@@ -37,20 +38,18 @@ int simulator::check_solution_feasible(std::vector<std::vector<std::vector<std::
                 int previous_node_index = sol[drone][cycle][nodo - 1].first;
                 int current_node_index = sol[drone][cycle][nodo].first;
 
-                if (previous_node_index >= this->G.n_nodes or current_node_index >= this->G.n_nodes)
+                if (previous_node_index >= this->G.get_n_nodes() or current_node_index >= this->G.get_n_nodes())
                 {
                     // std::cout << "[ERROR:simulator]:: node-index not valid" << std::endl;
                     return -3;
                 }
 
-                node u = this->G.vertices[previous_node_index];
-                node v = this->G.vertices[current_node_index];
-                double distance_prev_to_curr_node = this->G.dist(u, v);
+                double distance_prev_to_curr_node = this->G.dist(previous_node_index, current_node_index);
 
                 // std::cout << "(" << u.x << ", " << u.y << ")<->(" << v.x << ", " << v.y << ") : " << distance_prev_to_curr_node << "\n";
 
-                used_budget += distance_prev_to_curr_node + sol[drone][cycle][nodo].second * v.node_weight;
-                _temp_nodes[current_node_index] -= sol[drone][cycle][nodo].second * v.node_weight;
+                used_budget += distance_prev_to_curr_node + sol[drone][cycle][nodo].second * G.get_weight_node(current_node_index);
+                _temp_nodes[current_node_index] -= sol[drone][cycle][nodo].second * G.get_weight_node(current_node_index);
             }
             // std::cout << used_budget << std::endl;
             if (used_budget > this->budget)
@@ -65,7 +64,7 @@ int simulator::check_solution_feasible(std::vector<std::vector<std::vector<std::
     {
         if (_temp_nodes[i] > 0)
         {
-            // std::cout << this->G.vertices[i].x << ", " << this->G.vertices[i].y << std::endl;
+            // std::cout << this->graph_vertices[i].x << ", " << this->graph_vertices[i].y << std::endl;
             return -4;
         }
     }
@@ -75,13 +74,16 @@ int simulator::check_solution_feasible(std::vector<std::vector<std::vector<std::
 
 double simulator::objective_function_weighted_latency(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
 {
+
+    std::vector<int> graph_vertices = G.get_vertices();
+
     if (not check_solution_feasible(sol))
         return -1;
 
-    std::vector<double> _temp_nodes(this->G.n_nodes);
-    for (size_t i = 0; i < _temp_nodes.size(); i++)
+    std::map<int, double> _temp_nodes;
+    for (size_t i = 0; i < graph_vertices.size(); i++)
     {
-        _temp_nodes[i] = this->G.vertices[i].node_weight;
+        _temp_nodes[graph_vertices[i]] = G.get_weight_node(graph_vertices[i]);
     }
 
     double val_sol = 0;
@@ -95,19 +97,17 @@ double simulator::objective_function_weighted_latency(std::vector<std::vector<st
             {
                 int previous_node_index = sol[drone][cycle][nodo - 1].first;
                 int current_node_index = sol[drone][cycle][nodo].first;
-                node u = this->G.vertices[previous_node_index];
-                node v = this->G.vertices[current_node_index];
-                double distance_prev_to_curr_node = this->G.dist(u, v);
+                double distance_prev_to_curr_node = this->G.dist(previous_node_index, current_node_index);
 
-                cost_nodes_in_cycle += distance_prev_to_curr_node + sol[drone][cycle][nodo].second * v.node_weight;
-                _temp_nodes[current_node_index] -= sol[drone][cycle][nodo].second * v.node_weight;
+                cost_nodes_in_cycle += distance_prev_to_curr_node + sol[drone][cycle][nodo].second * G.get_weight_node(current_node_index);
+                _temp_nodes[current_node_index] -= sol[drone][cycle][nodo].second * G.get_weight_node(current_node_index);
 
                 // std::cout << current_node_index << ": " << distance_prev_to_curr_node << " " << cost_nodes_in_cycle << " " << previous_time_cycle << " " << sol[drone][cycle][nodo].second << " " << v.node_weight << "\n\n";
 
                 if (_temp_nodes[current_node_index] == 0)
                 {
-                    // std::cout << "val: " << v.priority << " " << cost_nodes_in_cycle << " " << previous_time_cycle << "\n";
-                    val_sol += v.priority * (cost_nodes_in_cycle + previous_time_cycle);
+                    // std::cout << "val: " << G.get_priority_node(current_node_index) << " " << cost_nodes_in_cycle << " " << previous_time_cycle << "\n";
+                    val_sol += G.get_priority_node(current_node_index) * (cost_nodes_in_cycle + previous_time_cycle);
                 }
             }
             previous_time_cycle = cost_nodes_in_cycle;
@@ -121,10 +121,12 @@ double simulator::objective_function_cycle(std::vector<std::vector<std::vector<s
     if (not check_solution_feasible(sol))
         return -1;
 
-    std::vector<double> _temp_nodes(this->G.n_nodes);
-    for (size_t i = 0; i < _temp_nodes.size(); i++)
+    std::map<int, double> _temp_nodes;
+    std::vector<int> graph_vertices = this->G.get_vertices();
+
+    for (size_t i = 0; i < graph_vertices.size(); i++)
     {
-        _temp_nodes[i] = this->G.vertices[i].node_weight;
+        _temp_nodes[i] = this->G.get_weight_node(graph_vertices[i]);
     }
 
     double val_sol = 0;
@@ -138,12 +140,10 @@ double simulator::objective_function_cycle(std::vector<std::vector<std::vector<s
             {
                 int previous_node_index = sol[drone][cycle][nodo - 1].first;
                 int current_node_index = sol[drone][cycle][nodo].first;
-                node u = this->G.vertices[previous_node_index];
-                node v = this->G.vertices[current_node_index];
-                double distance_prev_to_curr_node = this->G.dist(u, v);
+                double distance_prev_to_curr_node = this->G.dist(previous_node_index, current_node_index);
 
-                cost_nodes_in_cycle += distance_prev_to_curr_node + sol[drone][cycle][nodo].second * v.node_weight;
-                _temp_nodes[current_node_index] -= sol[drone][cycle][nodo].second * v.node_weight;
+                cost_nodes_in_cycle += distance_prev_to_curr_node + sol[drone][cycle][nodo].second * G.get_weight_node(current_node_index);
+                _temp_nodes[current_node_index] -= sol[drone][cycle][nodo].second * G.get_weight_node(current_node_index);
 
                 // std::cout << current_node_index << ": " << distance_prev_to_curr_node << " " << cost_nodes_in_cycle << " " << previous_time_cycle << "\n";
                 // std::cout << cost_nodes_in_cycle << ": " << distance_prev_to_curr_node << ": " << sol[drone][cycle][nodo].second << ": " << v.node_weight << "\n\n";
@@ -154,7 +154,7 @@ double simulator::objective_function_cycle(std::vector<std::vector<std::vector<s
                 if (_temp_nodes[current_node_index] == 0)
                 {
                     // std::cout << val_sol << " " << this->G.vertices[current_node_index].priority  << " " <<  cost_nodes_in_cycle  << " " <<  previous_time_cycle << std::endl;
-                    val_sol += this->G.vertices[current_node_index].priority * (cost_nodes_in_cycle + previous_time_cycle);
+                    val_sol += this->G.get_priority_node(current_node_index) * (cost_nodes_in_cycle + previous_time_cycle);
                 }
 
                 // std::cout << current_node_index << " " << val_sol << "; ";
@@ -195,4 +195,73 @@ void simulator::print_solution(std::vector<std::vector<std::vector<std::pair<int
         }
         std::cout << std::endl;
     }
+}
+
+void simulator::prim_based_alg()
+{
+    std::map<int, bool> visited;
+    std::vector<int> graph_vertices = this->G.get_vertices();
+
+    visited[0] = true;
+
+    graph G_1 = graph(this->G.get_area_x(), this->G.get_area_y());
+    graph G_2 = graph(this->G.get_area_x(), this->G.get_area_y());
+    graph G_3 = graph(this->G.get_area_x(), this->G.get_area_y());
+
+    for (size_t i = 0; i < this->G.get_n_nodes(); i++)
+    {
+        visited[graph_vertices[i]] = false;
+        if (G.get_priority_node(graph_vertices[i]) == priority_max)
+        {
+            G_3.add_node(this->G.get_coord_x(graph_vertices[i]), this->G.get_coord_y(graph_vertices[i]), this->G.get_weight_node(graph_vertices[i]), this->G.get_priority_node(graph_vertices[i]));
+        }
+        if (G.get_priority_node(graph_vertices[i]) == priority_med)
+        {
+            G_2.add_node(this->G.get_coord_x(graph_vertices[i]), this->G.get_coord_y(graph_vertices[i]), this->G.get_weight_node(graph_vertices[i]), this->G.get_priority_node(graph_vertices[i]));
+        }
+        if (G.get_priority_node(graph_vertices[i]) == priority_min)
+        {
+            G_1.add_node(this->G.get_coord_x(graph_vertices[i]), this->G.get_coord_y(graph_vertices[i]), this->G.get_weight_node(graph_vertices[i]), this->G.get_priority_node(graph_vertices[i]));
+        }
+    }
+
+    algo alg = algo();
+
+    
+
+
+
+    // std::vector<int> centers = alg.metric_k_center(G_3, this->n_drones);
+    // centers.push_back({0});
+    // std::vector<int> tree = alg.primMST(G_3, centers, this->budget);
+
+    // considerare caso unico drone
+    /*
+        - recuperare foglie di tree
+        - aggiungere le foglie a G_2 e considerarle come centers e far ripartire primMST
+        - ripetere per G_1
+        - ricostruire soluzione
+        - questo è il primo ciclo
+    */
+
+
+
+    // // n droni > 1
+    // for (size_t i = 0; i < this->n_drones; i++)
+    // {
+    //     if (centers[i] != 0)
+    //     {
+    //         std::vector<int> cycle = alg.find_TSP(centers[i], tree);
+    //     }
+    // }
+
+    // creare 3 grafi "uno per priorità"
+    // std::vector<int> centers = metric_k_center(G_3, this->n_drones)
+    // std::vector<int> tree = primMST(G_3, centers, this->budget)
+    // calcola cicli chiamando find_TSP(start, tree) con start = v per ogni nodo v \in centers
+    // componi da sopra cicli soluzione primo round
+    // calcola valore funzione obj
+    // ripeti finchè tutti i nodi non sono visitati
+
+    // questo va esteso a passare a prim anche grafo G_2 e G_1
 }

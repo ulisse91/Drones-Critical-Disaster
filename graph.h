@@ -7,31 +7,41 @@
 #include <assert.h>
 #include <fstream>
 
-struct node
-{
-    double x, y;
-    double node_weight;
-    int priority;
-    node(double _x, double _y, double _node_weight, int _priority) : x(_x), y(_y), node_weight(_node_weight), priority(_priority) {}
-};
-
 class graph
 {
 
 private:
-    bool check_double_node(node new_node);
+    struct node
+    {
+        int id;
+        double x, y;
+        double node_weight;
+        int priority;
+        node(int _id, double _x, double _y, double _node_weight, int _priority) : id(_id), x(_x), y(_y), node_weight(_node_weight), priority(_priority) {}
+    };
 
-public:
     int area_x;
     int area_y;
     int n_nodes;
-    std::vector<node> vertices;
+    std::vector<graph::node> vertices;
 
+    bool check_double_node(node new_node);
+
+public:
     graph();
     graph(int _area_x, int _area_y);
     ~graph();
 
-    double dist(node u, node v);
+    int get_area_x();
+    int get_area_y();
+    int get_n_nodes();
+    double get_weight_node(int id);
+    int get_priority_node(int id);
+    double get_coord_x(int id);
+    double get_coord_y(int id);
+    std::vector<int> get_vertices();
+
+    double dist(int u, int v);
     void print_graph();
     void create_random_graph();
     int add_node(double _x, double _y, double _node_weight, int _priority);
