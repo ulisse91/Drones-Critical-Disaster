@@ -31,10 +31,10 @@
 *.out
 *.app
 
-main
-mainTest
+# Generated files
+build/
 
-
+# Visual Studio Code
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json

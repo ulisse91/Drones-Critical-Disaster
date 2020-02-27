@@ -1,10 +1,10 @@
 #include <iostream>
 
-#include "main.h"
-#include "graph.h"
-#include "simulator.h"
+#include "../src/main.h"
+#include "../src/core/graph.h"
+#include "../src/core/simulator.h"
+#include "../src/core/algo.h"
 #include "test.h"
-#include "algo.h"
 
 int main(int argc, char **argv)
 {

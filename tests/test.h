@@ -6,9 +6,9 @@
 #include <assert.h>
 #include <utility>
 
-#include "graph.h"
-#include "simulator.h"
-#include "algo.h"
+#include "../src/core/graph.h"
+#include "../src/core/simulator.h"
+#include "../src/core/algo.h"
 
 class test
 {

@@ -199,6 +199,8 @@ void simulator::print_solution(std::vector<std::vector<std::vector<std::pair<int
 
 void simulator::prim_based_alg()
 {
+    std::cout << "non funzionante -- da completare\n";
+    return;
     std::map<int, bool> visited;
     std::vector<int> graph_vertices = this->G.get_vertices();
 
@@ -264,4 +266,17 @@ void simulator::prim_based_alg()
     // ripeti finchè tutti i nodi non sono visitati
 
     // questo va esteso a passare a prim anche grafo G_2 e G_1
+}
+
+std::vector<int> simulator::op_path_BB_insert_step(std::vector<int> graph_vertices, int i, std::vector<int> sol_temp)
+{
+    // insert node i in sol_temp
+    // calcola TSP -> calcola MST + TSP
+    // if \less than this->budget continue
+    // ritorna vettore che ha max evaluate_sol_OP( op_path_BB_insert_step(grap_vertices, i+1, sol_temp \cup i),op_path_BB_insert_step(grap_vertices, i+1, sol_temp))
+}
+
+std::vector<int> simulator::top_path_BB()
+{
+    std::vector<int> graph_vertices = this->G.get_vertices();
 }

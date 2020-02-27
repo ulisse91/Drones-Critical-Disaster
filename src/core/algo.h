@@ -15,7 +15,7 @@ class algo
 {
 
 private:
-    int minKey_index(std::vector<double> key, std::vector<bool> mstSet, int INT_MAX, int number_of_nodes);
+    int minKey_index(std::vector<double> key, std::vector<bool> mstSet, int max_int, int number_of_nodes);
     int find_in_subtree(std::vector<std::pair<double, std::unordered_set<int>>> sub_trees, int who);
     void DFSUtil(int v, std::vector<int> tree, std::vector<bool> visited, std::vector<int> &sol);
 

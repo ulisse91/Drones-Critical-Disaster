@@ -2,9 +2,9 @@
 
 #include <boost/program_options.hpp>
 
-#include "main.h"
-#include "graph.h"
-#include "simulator.h"
+#include "core/main.h"
+#include "core/graph.h"
+#include "core/simulator.h"
 
 namespace po = boost::program_options;
 

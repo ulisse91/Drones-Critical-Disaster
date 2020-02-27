@@ -25,7 +25,8 @@ private:
 
     double objective_function_cycle(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     double objective_function_weighted_latency(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
-
+    std::vector<int> op_path_BB_insert_step(std::vector<int> graph_vertices, int i, std::vector<int> sol_temp);
+    
 public:
     simulator(graph, int, int, int);
     ~simulator();
@@ -34,6 +35,7 @@ public:
     double evaluate_solution(int which, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     void print_solution(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     void prim_based_alg();
+    std::vector<int> top_path_BB();
 };
 
 #endif // SIMULATOR_H

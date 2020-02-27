@@ -1,8 +1,6 @@
 #ifndef MAIN_H
 #define MAIN_H
 
-#include <iostream>
-
 /// Default values
 int n_nodes = 10;
 int n_drones = 1;

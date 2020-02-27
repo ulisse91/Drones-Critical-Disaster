@@ -1,18 +1,32 @@
-CXX = g++ -std=c++14
-OPT = -O4 # -DNDEBUG
+# path #
+SRC_PATH = src/core
+SRC_PATH_TEST = tests
+BUILD_PATH = build
+
+# executable # 
 TARGET = main
 TARGET_TEST = mainTest
 
+SOURCES = $(shell find $(SRC_PATH) -name '*.cpp')
+SOURCES_TEST = $(shell find $(SRC_PATH_TEST) -name '*.cpp')
+
+# flags #
+COMPILE_FLAGS = g++ -std=c++11 -O4 # -DNDEBUG
 OPTIONS = -lboost_program_options
-# INCLUDEPATH = $(HOME)/NetworKit/include
 PATHLIB = /usr/include/boost
-SOURCES = graph.cpp simulator.cpp algo.cpp
 
-main:
-	$(CXX) -o $(TARGET) $(TARGET).cpp $(SOURCES) $(OPT) -L$(PATHLIB) $(OPTIONS)
+.PHONY: dirs
+dirs:
+	@echo "Creating directories"
+	@mkdir -p $(BUILD_PATH)
 
-test:
-	$(CXX) -o $(TARGET_TEST) $(TARGET_TEST).cpp $(SOURCES) test.cpp $(OPT) -L$(PATHLIB) $(OPTIONS)
+main: clean dirs
+	$(COMPILE_FLAGS) -o $(BUILD_PATH)/$(TARGET) src/main.cpp $(SOURCES) -L$(PATHLIB) $(OPTIONS)
 
+test: clean dirs
+	$(COMPILE_FLAGS) -o $(BUILD_PATH)/$(TARGET_TEST) $(SOURCES) $(SOURCES_TEST) -L$(PATHLIB) $(OPTIONS)
+
+.PHONY: clean
 clean:
-	rm -rf $(TARGET) $(TARGET_TEST)
+	@echo "Deleting $(BUILD_PATH) directory"
+	@$(RM) -r $(BUILD_PATH)
