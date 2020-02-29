@@ -2,7 +2,7 @@
 
 #include <boost/program_options.hpp>
 
-#include "core/main.h"
+#include "main.h"
 #include "core/graph.h"
 #include "core/simulator.h"
 

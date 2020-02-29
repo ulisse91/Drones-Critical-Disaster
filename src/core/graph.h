@@ -6,6 +6,7 @@
 #include <random>
 #include <assert.h>
 #include <fstream>
+#include <unordered_set>
 
 class graph
 {
@@ -40,6 +41,7 @@ public:
     double get_coord_x(int id);
     double get_coord_y(int id);
     std::vector<int> get_vertices();
+    std::unordered_set<int> get_vertices_set();
 
     double dist(int u, int v);
     void print_graph();

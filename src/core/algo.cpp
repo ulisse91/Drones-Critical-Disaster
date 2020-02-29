@@ -169,7 +169,6 @@ void algo::DFSUtil(int v, std::vector<int> tree, std::vector<bool> visited, std:
 {
     sol.push_back(v);
     visited[v] = true;
-
     for (size_t i = 0; i < tree.size(); i++)
     {
         if (tree[i] == v and !visited[i])

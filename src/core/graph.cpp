@@ -157,3 +157,13 @@ double graph::get_coord_y(int id)
 {
     return this->vertices[id].y;
 }
+
+std::unordered_set<int> graph::get_vertices_set()
+{
+    std::unordered_set<int> nodes_id;
+    for (size_t i = 0; i < this->n_nodes; i++)
+    {
+        nodes_id.insert(this->vertices[i].id);
+    }
+    return nodes_id;
+}

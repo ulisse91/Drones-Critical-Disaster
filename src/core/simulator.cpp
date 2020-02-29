@@ -227,15 +227,9 @@ void simulator::prim_based_alg()
         }
     }
 
-    algo alg = algo();
-
-    
-
-
-
-    // std::vector<int> centers = alg.metric_k_center(G_3, this->n_drones);
+    // std::vector<int> centers = algo::metric_k_center(G_3, this->n_drones);
     // centers.push_back({0});
-    // std::vector<int> tree = alg.primMST(G_3, centers, this->budget);
+    // std::vector<int> tree = algo::primMST(G_3, centers, this->budget);
 
     // considerare caso unico drone
     /*
@@ -246,14 +240,12 @@ void simulator::prim_based_alg()
         - questo è il primo ciclo
     */
 
-
-
     // // n droni > 1
     // for (size_t i = 0; i < this->n_drones; i++)
     // {
     //     if (centers[i] != 0)
     //     {
-    //         std::vector<int> cycle = alg.find_TSP(centers[i], tree);
+    //         std::vector<int> cycle = algo::find_TSP(centers[i], tree);
     //     }
     // }
 
@@ -268,15 +260,98 @@ void simulator::prim_based_alg()
     // questo va esteso a passare a prim anche grafo G_2 e G_1
 }
 
-std::vector<int> simulator::op_path_BB_insert_step(std::vector<int> graph_vertices, int i, std::vector<int> sol_temp)
+std::unordered_set<int> simulator::op_path_BB_insert_step(std::unordered_set<int> graph_vertices, std::unordered_set<int> sol_temp)
 {
-    // insert node i in sol_temp
-    // calcola TSP -> calcola MST + TSP
-    // if \less than this->budget continue
-    // ritorna vettore che ha max evaluate_sol_OP( op_path_BB_insert_step(grap_vertices, i+1, sol_temp \cup i),op_path_BB_insert_step(grap_vertices, i+1, sol_temp))
+    int a = graph_vertices.extract(graph_vertices.begin()).value();
+    graph_vertices.erase(graph_vertices.find(a));
+
+    std::unordered_set<int> sol_temp_augmented = sol_temp;
+    sol_temp_augmented.insert(a);
+
+    if (cost_budget_cycle(sol_temp_augmented) == -1)
+    {
+        return op_path_BB_insert_step(graph_vertices, sol_temp);
+    }
+    std::unordered_set<int> sol_temp_next_step = op_path_BB_insert_step(graph_vertices, sol_temp);
+    std::unordered_set<int> sol_temp_next_step_a = op_path_BB_insert_step(graph_vertices, sol_temp_augmented);
+
+    if (cost_cycle_OP(sol_temp_next_step) > cost_cycle_OP(sol_temp_next_step_a))
+    {
+        return sol_temp_next_step;
+    }
+    return sol_temp_next_step_a;
 }
 
-std::vector<int> simulator::top_path_BB()
+std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::top_path_BB()
 {
-    std::vector<int> graph_vertices = this->G.get_vertices();
+    std::unordered_set<int> graph_vertices = this->G.get_vertices_set();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol;
+
+    for (size_t i = 0; i < this->n_drones; i++)
+        sol.push_back(std::vector<std::vector<std::pair<int, double>>>());
+
+    graph_vertices.erase(graph_vertices.find(0));
+
+    int current_drone = 0;
+    while (not graph_vertices.empty())
+    {
+        std::unordered_set<int> cycle_set = op_path_BB_insert_step(graph_vertices, {0});
+        std::vector<int> cycle = set_to_tsp(cycle_set);
+        std::vector<std::pair<int, double>> _temp;
+        for (size_t j = 0; j < cycle.size(); j++)
+        {
+            _temp.push_back(std::make_pair(cycle[j], 1));
+        }
+        _temp.push_back(std::make_pair(0, 1));
+        sol[current_drone].push_back(_temp);
+
+        std::unordered_set<int> diff;
+
+        std::set_difference(graph_vertices.begin(), graph_vertices.end(), cycle_set.begin(), cycle_set.end(),
+                            std::inserter(diff, diff.begin()));
+        graph_vertices = diff;
+
+        current_drone = (current_drone + 1) % this->n_drones;
+    }
+
+    return sol;
+}
+
+std::vector<int> simulator::set_to_tsp(std::unordered_set<int> _temp)
+{
+    graph G_prime = graph(this->G.get_area_x(), this->G.get_area_y());
+    for (const int &i : _temp)
+    {
+        G_prime.add_node(G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), G.get_priority_node(i));
+    }
+    return algo::find_TSP(0, algo::primMST(G_prime, {0}, this->budget));
+}
+
+double simulator::cost_cycle_OP(std::unordered_set<int> _temp)
+{
+    std::vector<int> tsp_temp = set_to_tsp(_temp);
+    double sum_of_elems = 0;
+    for (size_t i = 1; i < tsp_temp.size(); i++)
+    {
+        sum_of_elems += this->G.get_priority_node(tsp_temp[i]);
+    }
+    return sum_of_elems;
+}
+
+double simulator::cost_budget_cycle(std::unordered_set<int> _temp)
+{
+    std::vector<int> tsp_temp = set_to_tsp(_temp);
+
+    double sum_of_elems = 0;
+    for (size_t i = 0; i < tsp_temp.size() - 1; i++)
+    {
+        sum_of_elems += this->G.dist(tsp_temp[i], tsp_temp[i + 1]);
+    }
+    sum_of_elems += this->G.dist(tsp_temp[tsp_temp.size() - 1], tsp_temp[0]);
+
+    if (sum_of_elems > this->budget)
+    {
+        return -1;
+    }
+    return sum_of_elems;
 }
