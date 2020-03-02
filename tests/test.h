@@ -38,6 +38,11 @@ public:
     bool check_primMST_with_forced_nodes();
     bool check_primMST_with_forced_nodes_and_budget();
     bool check_find_TSP();
+
+    // simulator
+    bool check_cost_budget_cycle();
+    bool check_set_to_tsp();
+    bool check_cost_cycle_OP();
 };
 
 #endif // TEST_H

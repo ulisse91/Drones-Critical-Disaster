@@ -250,8 +250,7 @@ bool test::check_primMST()
 {
     graph G = graph(2, 1);
     G.read_graph_from_file("data/graph/test_primMST.csv");
-    algo alg = algo();
-    std::vector<int> sol = alg.primMST(G, {0}, 100);
+    std::vector<int> sol = algo::primMST(G, {0}, 100);
 
     double sum_of_elems = 0;
 
@@ -274,9 +273,8 @@ bool test::check_metric_k_center()
 {
     graph G = graph(2, 1);
     G.read_graph_from_file("data/graph/test_primMST.csv");
-    algo alg = algo();
     int k = 2;
-    std::vector<int> sol = alg.metric_k_center(G, k);
+    std::vector<int> sol = algo::metric_k_center(G, k);
 
     if (sol.size() == k)
     {
@@ -297,10 +295,9 @@ bool test::check_primMST_with_forced_nodes()
 {
     graph G = graph(2, 1);
     G.read_graph_from_file("data/graph/test_primMST.csv");
-    algo alg = algo();
 
     std::vector<int> f_nodes = {0, 1, 3};
-    std::vector<int> sol = alg.primMST(G, f_nodes, 10);
+    std::vector<int> sol = algo::primMST(G, f_nodes, 10);
 
     double sum_of_elems = 0;
 
@@ -322,10 +319,9 @@ bool test::check_primMST_with_forced_nodes_and_budget()
 {
     graph G = graph(2, 1);
     G.read_graph_from_file("data/graph/test_primMST.csv");
-    algo alg = algo();
 
     std::vector<int> f_nodes = {0, 1, 3};
-    std::vector<int> sol = alg.primMST(G, f_nodes, 1.6);
+    std::vector<int> sol = algo::primMST(G, f_nodes, 1.6);
 
     double sum_of_elems = 0;
 
@@ -347,10 +343,10 @@ bool test::check_find_TSP()
 {
     graph G = graph(2, 1);
     G.read_graph_from_file("data/graph/test_primMST.csv");
-    algo alg = algo();
-    std::vector<int> sol = alg.primMST(G, {0}, 100);
+    std::vector<int> sol = algo::primMST(G, {0}, 100);
 
-    std::vector<int> sol_tsp = alg.find_TSP(0, sol);
+    std::vector<int> sol_tsp = algo::find_TSP(0, sol);
+
     if (sol_tsp.size() == G.get_n_nodes() and sol_tsp[0] == 0 and sol_tsp[1] == 4 and sol_tsp[2] == 1 and sol_tsp[3] == 3 and sol_tsp[4] == 2)
     {
         std::cout << "check_find_TSP [OK]" << std::endl;
@@ -363,3 +359,57 @@ bool test::check_find_TSP()
 /////////////////////// SIMULATOR /////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////
 
+bool test::check_set_to_tsp()
+{
+    graph G = graph(2, 1);
+    G.read_graph_from_file("data/graph/test_primMST.csv");
+    int budget = 100;
+    std::vector<int> sol = algo::primMST(G, {0}, 100);
+
+    simulator sim = simulator(G, 1, 1, 100);
+
+    std::vector<int> sol_tsp = sim.set_to_tsp(G.get_vertices_set());
+
+    if (sol_tsp.size() == G.get_n_nodes() and sol_tsp[0] == 0 and sol_tsp[1] == 4 and sol_tsp[2] == 1 and sol_tsp[3] == 3 and sol_tsp[4] == 2)
+    {
+        std::cout << "check_set_to_tsp [OK]" << std::endl;
+        return true;
+    }
+    return true;
+}
+
+bool test::check_cost_budget_cycle()
+{
+    graph G = graph(2, 1);
+    G.read_graph_from_file("data/graph/test_primMST.csv");
+
+    simulator sim = simulator(G, 1, 1, 100);
+
+    double _value_tsp = sim.cost_budget_cycle(G.get_vertices_set());
+
+    if (4.24536 > _value_tsp and _value_tsp > 4.24534)
+    {
+        std::cout << "check_cost_budget_cycle [OK]" << std::endl;
+        return true;
+    }
+    return false;
+}
+
+bool test::check_cost_cycle_OP()
+{
+    graph G = graph(2, 1);
+    G.read_graph_from_file("data/graph/test_primMST.csv");
+
+    simulator sim = simulator(G, 1, 1, 100);
+    double _value_OP = sim.cost_cycle_OP(G.get_vertices_set());
+
+    simulator sim2 = simulator(G, 1, 1, 3);
+    double _value_OP2 = sim2.cost_cycle_OP(G.get_vertices_set());
+
+    if (_value_OP == 4 and _value_OP2 == 2)
+    {
+        std::cout << "check_cost_cycle_OP [OK]" << std::endl;
+        return true;
+    }
+    return false;
+}

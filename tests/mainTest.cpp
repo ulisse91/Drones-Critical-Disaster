@@ -32,13 +32,15 @@ int main(int argc, char **argv)
     assert(T.check_primMST_with_forced_nodes_and_budget());
     assert(T.check_find_TSP());
 
+    // simulator
+    assert(T.check_set_to_tsp());
+    assert(T.check_cost_budget_cycle());
+    assert(T.check_cost_cycle_OP());
+
     /*
         vanno testati:
         - simulator::op_path_BB_insert_step
         - simulator::top_path_BB
-        - simulator::set_to_tsp
-        - simulator::cost_cycle_OP
-        - simulator::cost_budget_cycle
     */
 
     return 0;

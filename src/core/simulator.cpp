@@ -215,15 +215,15 @@ void simulator::prim_based_alg()
         visited[graph_vertices[i]] = false;
         if (G.get_priority_node(graph_vertices[i]) == priority_max)
         {
-            G_3.add_node(this->G.get_coord_x(graph_vertices[i]), this->G.get_coord_y(graph_vertices[i]), this->G.get_weight_node(graph_vertices[i]), this->G.get_priority_node(graph_vertices[i]));
+            G_3.add_node(i, this->G.get_coord_x(graph_vertices[i]), this->G.get_coord_y(graph_vertices[i]), this->G.get_weight_node(graph_vertices[i]), this->G.get_priority_node(graph_vertices[i]));
         }
         if (G.get_priority_node(graph_vertices[i]) == priority_med)
         {
-            G_2.add_node(this->G.get_coord_x(graph_vertices[i]), this->G.get_coord_y(graph_vertices[i]), this->G.get_weight_node(graph_vertices[i]), this->G.get_priority_node(graph_vertices[i]));
+            G_2.add_node(i, this->G.get_coord_x(graph_vertices[i]), this->G.get_coord_y(graph_vertices[i]), this->G.get_weight_node(graph_vertices[i]), this->G.get_priority_node(graph_vertices[i]));
         }
         if (G.get_priority_node(graph_vertices[i]) == priority_min)
         {
-            G_1.add_node(this->G.get_coord_x(graph_vertices[i]), this->G.get_coord_y(graph_vertices[i]), this->G.get_weight_node(graph_vertices[i]), this->G.get_priority_node(graph_vertices[i]));
+            G_1.add_node(i, this->G.get_coord_x(graph_vertices[i]), this->G.get_coord_y(graph_vertices[i]), this->G.get_weight_node(graph_vertices[i]), this->G.get_priority_node(graph_vertices[i]));
         }
     }
 
@@ -322,7 +322,7 @@ std::vector<int> simulator::set_to_tsp(std::unordered_set<int> _temp)
     graph G_prime = graph(this->G.get_area_x(), this->G.get_area_y());
     for (const int &i : _temp)
     {
-        G_prime.add_node(G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), G.get_priority_node(i));
+        G_prime.add_node(i, G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), G.get_priority_node(i));
     }
     return algo::find_TSP(0, algo::primMST(G_prime, {0}, this->budget));
 }
@@ -331,7 +331,7 @@ double simulator::cost_cycle_OP(std::unordered_set<int> _temp)
 {
     std::vector<int> tsp_temp = set_to_tsp(_temp);
     double sum_of_elems = 0;
-    for (size_t i = 1; i < tsp_temp.size(); i++)
+    for (size_t i = 0; i < tsp_temp.size(); i++)
     {
         sum_of_elems += this->G.get_priority_node(tsp_temp[i]);
     }

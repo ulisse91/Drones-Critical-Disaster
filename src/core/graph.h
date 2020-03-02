@@ -46,6 +46,7 @@ public:
     double dist(int u, int v);
     void print_graph();
     void create_random_graph();
+    int add_node(int id, double _x, double _y, double _node_weight, int _priority);
     int add_node(double _x, double _y, double _node_weight, int _priority);
     int read_graph_from_file(std::string file);
 };

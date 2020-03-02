@@ -43,6 +43,27 @@ double graph::dist(int u, int v)
     return sqrt(pow(this->vertices[u].x - this->vertices[v].x, 2) + pow(this->vertices[u].y - this->vertices[v].y, 2));
 }
 
+int graph::add_node(int id, double _x, double _y, double _node_weight, int _priority)
+{
+    node new_node(id, _x, _y, _node_weight, _priority);
+
+    if (not check_double_node(new_node))
+    {
+        // std::cout << "[ERROR:graph]:: double node! Skipped" << std::endl;
+        return -1;
+    }
+    if (new_node.x > this->area_x or new_node.y > this->area_y)
+    {
+        // std::cout << "[ERROR:graph]:: node outside area" << std::endl;
+        return -2;
+    }
+
+    this->vertices.push_back(new_node);
+    this->n_nodes++;
+
+    return 1;
+}
+
 int graph::add_node(double _x, double _y, double _node_weight, int _priority)
 {
     node new_node(this->n_nodes, _x, _y, _node_weight, _priority);

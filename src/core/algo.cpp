@@ -77,7 +77,7 @@ std::vector<int> algo::primMST(graph G, std::vector<int> forced_nodes, double bu
     //     std::cout<<std::endl;
     // }
 
-    //////////////////////////////////////////////
+    ////////////////////////////////////////////
 
     for (size_t i = 0; i < G.get_n_nodes(); i++)
     {
