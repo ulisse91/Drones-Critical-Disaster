@@ -26,9 +26,7 @@ private:
 
     double objective_function_cycle(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     double objective_function_weighted_latency(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
-    std::unordered_set<int> op_path_BB_insert_step(std::unordered_set<int> graph_vertices, std::unordered_set<int> sol_temp);
-    std::vector<int> unordered_set_to_tsp(std::unordered_set<int> _temp);
-
+    
 public:
     simulator(graph, int, int, int);
     ~simulator();
@@ -40,7 +38,10 @@ public:
     std::vector<std::vector<std::vector<std::pair<int, double>>>> top_path_BB();
     double cost_cycle_OP(std::unordered_set<int> tsp_temp);
     double cost_budget_cycle(std::unordered_set<int> tsp_temp);
+    double cost_budget_cycle(std::vector<int> _temp);
     std::vector<int> set_to_tsp(std::unordered_set<int> _temp);
+    std::unordered_set<int> op_path_BB_insert_step(std::unordered_set<int> graph_vertices, std::unordered_set<int> sol_temp);
+    
 };
 
 #endif // SIMULATOR_H

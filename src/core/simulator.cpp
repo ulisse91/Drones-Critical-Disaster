@@ -262,16 +262,17 @@ void simulator::prim_based_alg()
 
 std::unordered_set<int> simulator::op_path_BB_insert_step(std::unordered_set<int> graph_vertices, std::unordered_set<int> sol_temp)
 {
+    if (graph_vertices.empty())
+    {
+        return sol_temp;
+    }
+
     int a = graph_vertices.extract(graph_vertices.begin()).value();
-    graph_vertices.erase(graph_vertices.find(a));
+    graph_vertices.erase(a);
 
     std::unordered_set<int> sol_temp_augmented = sol_temp;
     sol_temp_augmented.insert(a);
 
-    if (cost_budget_cycle(sol_temp_augmented) == -1)
-    {
-        return op_path_BB_insert_step(graph_vertices, sol_temp);
-    }
     std::unordered_set<int> sol_temp_next_step = op_path_BB_insert_step(graph_vertices, sol_temp);
     std::unordered_set<int> sol_temp_next_step_a = op_path_BB_insert_step(graph_vertices, sol_temp_augmented);
 
@@ -313,28 +314,34 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::top_pat
 
         current_drone = (current_drone + 1) % this->n_drones;
     }
-
     return sol;
 }
 
 std::vector<int> simulator::set_to_tsp(std::unordered_set<int> _temp)
 {
     graph G_prime = graph(this->G.get_area_x(), this->G.get_area_y());
+
     for (const int &i : _temp)
     {
         G_prime.add_node(i, G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), G.get_priority_node(i));
     }
+
     return algo::find_TSP(0, algo::primMST(G_prime, {0}, this->budget));
 }
 
 double simulator::cost_cycle_OP(std::unordered_set<int> _temp)
 {
     std::vector<int> tsp_temp = set_to_tsp(_temp);
+
+    if (cost_budget_cycle(tsp_temp) == -1)
+        return -1;
+
     double sum_of_elems = 0;
     for (size_t i = 0; i < tsp_temp.size(); i++)
     {
         sum_of_elems += this->G.get_priority_node(tsp_temp[i]);
     }
+
     return sum_of_elems;
 }
 
@@ -342,12 +349,39 @@ double simulator::cost_budget_cycle(std::unordered_set<int> _temp)
 {
     std::vector<int> tsp_temp = set_to_tsp(_temp);
 
+    // for (size_t i = 0; i < tsp_temp.size(); i++) std::cout << tsp_temp[i] << " ";
+    // std::cout << std::endl;
+
     double sum_of_elems = 0;
-    for (size_t i = 0; i < tsp_temp.size() - 1; i++)
+
+    if (tsp_temp.size() > 1)
     {
-        sum_of_elems += this->G.dist(tsp_temp[i], tsp_temp[i + 1]);
+        for (size_t i = 0; i < tsp_temp.size() - 1; i++)
+        {
+            sum_of_elems += this->G.dist(tsp_temp[i], tsp_temp[i + 1]);
+        }
+        sum_of_elems += this->G.dist(tsp_temp[tsp_temp.size() - 1], tsp_temp[0]);
     }
-    sum_of_elems += this->G.dist(tsp_temp[tsp_temp.size() - 1], tsp_temp[0]);
+
+    if (sum_of_elems > this->budget)
+    {
+        return -1;
+    }
+    return sum_of_elems;
+}
+
+double simulator::cost_budget_cycle(std::vector<int> tsp_temp)
+{
+    double sum_of_elems = 0;
+
+    if (tsp_temp.size() > 1)
+    {
+        for (size_t i = 0; i < tsp_temp.size() - 1; i++)
+        {
+            sum_of_elems += this->G.dist(tsp_temp[i], tsp_temp[i + 1]);
+        }
+        sum_of_elems += this->G.dist(tsp_temp[tsp_temp.size() - 1], tsp_temp[0]);
+    }
 
     if (sum_of_elems > this->budget)
     {

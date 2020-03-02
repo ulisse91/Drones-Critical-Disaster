@@ -36,10 +36,10 @@ int main(int argc, char **argv)
     assert(T.check_set_to_tsp());
     assert(T.check_cost_budget_cycle());
     assert(T.check_cost_cycle_OP());
+    assert(T.check_op_path_BB_insert_step());
 
     /*
         vanno testati:
-        - simulator::op_path_BB_insert_step
         - simulator::top_path_BB
     */
 

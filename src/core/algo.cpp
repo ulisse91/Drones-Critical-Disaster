@@ -12,27 +12,27 @@ bool compare(const std::pair<int, int> &a, const std::pair<int, int> &b)
     return a.second > b.second;
 }
 
-int algo::minKey_index(std::vector<double> key, std::vector<bool> mstSet, int INT_MAX, int number_of_nodes)
+int algo::minKey_index(std::map<int, double> key, std::map<int, bool> mstSet, int INT_MAX, int number_of_nodes)
 {
     double min = INT_MAX;
     int min_index = -1;
-    for (int v = 0; v < number_of_nodes; v++)
+    for (auto const &pair : key)
     {
-        if (mstSet[v] == false and key[v] <= min)
+        if (mstSet[pair.first] == false and key[pair.first] <= min)
         {
-            min = key[v];
-            min_index = v;
+            min = key[pair.first];
+            min_index = pair.first;
         }
     }
     return min_index;
 }
 
-int algo::find_in_subtree(std::vector<std::pair<double, std::unordered_set<int>>> sub_trees, int who)
+int algo::find_in_subtree(std::map<int, std::pair<double, std::unordered_set<int>>> sub_trees, int who)
 {
-    for (size_t j = 0; j < sub_trees.size(); j++)
+    for (auto const &pair : sub_trees)
     {
-        if (sub_trees[j].second.find(who) != sub_trees[j].second.end())
-            return j;
+        if (sub_trees[pair.first].second.find(who) != sub_trees[pair.first].second.end())
+            return pair.first;
     }
     return -1;
 }
@@ -41,21 +41,20 @@ int algo::find_in_subtree(std::vector<std::pair<double, std::unordered_set<int>>
 /////////////////////////// MAIN ////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 
-std::vector<int> algo::primMST(graph G, std::vector<int> forced_nodes, double budget)
+std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double budget)
 {
-    std::vector<int> parent(G.get_n_nodes());
-    std::vector<double> key(G.get_n_nodes());
-    std::vector<bool> mstSet(G.get_n_nodes());
-    std::vector<std::pair<double, std::unordered_set<int>>> sub_trees;
-
-    for (int i = 0; i < G.get_n_nodes(); i++)
-    {
-        key[i] = G.get_area_x() + G.get_area_y();
-        mstSet[i] = false;
-        parent[i] = -1;
-    }
-
+    std::map<int, int> parent;
+    std::map<int, double> key;
+    std::map<int, bool> mstSet;
+    std::map<int, std::pair<double, std::unordered_set<int>>> sub_trees;
     std::vector<int> id_vertices = G.get_vertices();
+
+    for (int i = 0; i < id_vertices.size(); i++)
+    {
+        key[id_vertices[i]] = G.get_area_x() + G.get_area_y();
+        mstSet[id_vertices[i]] = false;
+        parent[id_vertices[i]] = -1;
+    }
 
     //////////////////////////////////////////////
     for (size_t i = 0; i < forced_nodes.size(); i++)
@@ -63,7 +62,7 @@ std::vector<int> algo::primMST(graph G, std::vector<int> forced_nodes, double bu
         parent[forced_nodes[i]] = 0;
         key[forced_nodes[i]] = G.dist(id_vertices[0], id_vertices[forced_nodes[i]]);
         std::unordered_set<int> myset = {forced_nodes[i]};
-        sub_trees.push_back(std::make_pair(budget - key[i], myset));
+        sub_trees[forced_nodes[i]] = std::make_pair(budget - key[forced_nodes[i]], myset);
     }
     parent[0] = -1;
     mstSet[0] = forced_nodes.size() > 1 ? true : false;
@@ -89,39 +88,46 @@ std::vector<int> algo::primMST(graph G, std::vector<int> forced_nodes, double bu
 
         mstSet[u] = true;
 
-        for (int v = 1; v < key.size(); v++)
+        for (auto const &pair : key)
         {
-            if (find(forced_nodes.begin(), forced_nodes.end(), v) != forced_nodes.end())
+            if (pair.first == u or find(forced_nodes.begin(), forced_nodes.end(), pair.first) != forced_nodes.end())
             {
                 continue;
             }
             int index = find_in_subtree(sub_trees, u);
 
-            // std::cout << " " << v << " " << index << " " << sub_trees[index].first << " " << mstSet[v] << " " << G.dist(id_vertices[u], id_vertices[v]) << " " << key[v] << std::endl;
+            // std::cout << " " << u << " " << std::flush
+            //  << pair.first << " " << std::flush
+            //  << index << " " << std::flush
+            //  << sub_trees[index].first << " " << std::flush
+            //  << mstSet[pair.first] << " " << std::flush
+            //  << id_vertices[u] << " " << std::flush
+            //  << G.dist(id_vertices[u], pair.first) << " " << std::flush
+            //  << key[pair.first] << std::endl << std::flush;
 
-            if (mstSet[v] == false and G.dist(id_vertices[u], id_vertices[v]) < key[v])
+            if (mstSet[pair.first] == false and G.dist(id_vertices[u], pair.first) < key[pair.first])
             {
-                if (sub_trees[index].first - G.dist(id_vertices[u], id_vertices[v]) >= 0)
+                if (sub_trees[index].first - G.dist(id_vertices[u], pair.first) >= 0)
                 {
-                    if (parent[v] != -1)
+                    if (parent[pair.first] != -1)
                     {
-                        int index_p = find_in_subtree(sub_trees, v);
-                        sub_trees[index_p].first += G.dist(id_vertices[v], id_vertices[parent[v]]);
-                        sub_trees[index_p].second.erase(v);
+                        int index_p = find_in_subtree(sub_trees, pair.first);
+                        sub_trees[index_p].first += G.dist(pair.first, id_vertices[parent[pair.first]]);
+                        sub_trees[index_p].second.erase(pair.first);
                     }
-                    sub_trees[index].first -= G.dist(id_vertices[u], id_vertices[v]);
-                    sub_trees[index].second.insert(v);
-                    parent[v] = u, key[v] = G.dist(id_vertices[u], id_vertices[v]);
+                    sub_trees[index].first -= G.dist(id_vertices[u], pair.first);
+                    sub_trees[index].second.insert(pair.first);
+                    parent[pair.first] = u, key[pair.first] = G.dist(id_vertices[u], pair.first);
                 }
             }
         }
     }
 
     // std::cout << std::endl << "print finale:\n";
-    // for (size_t i = 1; i < parent.size(); i++)
+    // for (auto const &pair : parent)
     // {
-    //     std::cout << i << "-" << parent[i] << " : " << G.dist(G.vertices[i], G.vertices[parent[i]]) << std::endl;
-    // }
+    //     std::cout << pair.first << ":" << pair.second << " ";
+    // } std::cout << std::endl;
 
     return parent;
 }
@@ -165,31 +171,30 @@ std::vector<int> algo::metric_k_center(graph G, int k)
     return sol;
 }
 
-void algo::DFSUtil(int v, std::vector<int> tree, std::vector<bool> visited, std::vector<int> &sol)
+void algo::DFSUtil(int v, std::map<int, int> tree, std::map<int, bool> visited, std::vector<int> &sol)
 {
+    // std::cout << v << " ";
     sol.push_back(v);
     visited[v] = true;
-    for (size_t i = 0; i < tree.size(); i++)
+    for (auto const &pair : tree)
     {
-        if (tree[i] == v and !visited[i])
+        if (tree[pair.first] == v and not visited[pair.first])
         {
-            DFSUtil(i, tree, visited, sol);
+            DFSUtil(pair.first, tree, visited, sol);
         }
     }
 }
 
-std::vector<int> algo::find_TSP(int start, std::vector<int> tree)
+std::vector<int> algo::find_TSP(int start, std::map<int, int> tree)
 {
     std::vector<int> sol;
-    std::vector<bool> visited(tree.size(), false);
-
-    DFSUtil(start, tree, visited, sol);
-
+    std::map<int, bool> visited;
+    for (auto const &pair : tree)
+    {
+        visited[pair.first] = false;
+    }
     // std::cout << std::endl;
-    // for (size_t i = 0; i < sol.size(); i++)
-    // {
-    //     std::cout << sol[i] << " ";
-    // }
+    DFSUtil(start, tree, visited, sol);
     // std::cout << std::endl;
 
     return sol;
