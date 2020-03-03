@@ -7,26 +7,28 @@
 #include <assert.h>
 #include <fstream>
 #include <unordered_set>
-
-class graph
-{
-
-private:
-    struct node
+#include <map>
+struct node
     {
         int id;
         double x, y;
         double node_weight;
         int priority;
         node(int _id, double _x, double _y, double _node_weight, int _priority) : id(_id), x(_x), y(_y), node_weight(_node_weight), priority(_priority) {}
+        node()=default;
     };
+class graph
+{
+
+private:
+
 
     int area_x;
     int area_y;
     int n_nodes;
-    std::vector<graph::node> vertices;
+    std::map<int, node> vertices;
 
-    bool check_double_node(node new_node);
+    bool check_double_node(double _x, double _y);
 
 public:
     graph();

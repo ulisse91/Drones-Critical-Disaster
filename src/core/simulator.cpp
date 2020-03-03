@@ -262,6 +262,7 @@ void simulator::prim_based_alg()
 
 std::unordered_set<int> simulator::op_path_BB_insert_step(std::unordered_set<int> graph_vertices, std::unordered_set<int> sol_temp)
 {
+
     if (graph_vertices.empty())
     {
         return sol_temp;
@@ -326,7 +327,7 @@ std::vector<int> simulator::set_to_tsp(std::unordered_set<int> _temp)
         G_prime.add_node(i, G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), G.get_priority_node(i));
     }
 
-    return algo::find_TSP(0, algo::primMST(G_prime, {0}, this->budget));
+    return algo::find_TSP(G_prime, this->budget, 0, algo::primMST(G_prime, {0}, this->budget));
 }
 
 double simulator::cost_cycle_OP(std::unordered_set<int> _temp)
@@ -348,9 +349,6 @@ double simulator::cost_cycle_OP(std::unordered_set<int> _temp)
 double simulator::cost_budget_cycle(std::unordered_set<int> _temp)
 {
     std::vector<int> tsp_temp = set_to_tsp(_temp);
-
-    // for (size_t i = 0; i < tsp_temp.size(); i++) std::cout << tsp_temp[i] << " ";
-    // std::cout << std::endl;
 
     double sum_of_elems = 0;
 

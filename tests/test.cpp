@@ -55,7 +55,6 @@ bool test::check_read_graph_from_file()
     {
         if (G.read_graph_from_file("data/graph/test_read_graph_from_file.csv") == 1)
         {
-            std::vector<int> _temp = G.get_vertices();
             if (G.get_coord_x(1) == 0.5 and G.get_coord_y(1) == 0.8 and G.get_priority_node(1) == 2 and G.get_weight_node(1) == 1.5)
             {
                 std::cout << "check_read_graph_from_file [OK]" << std::endl;
@@ -343,9 +342,10 @@ bool test::check_find_TSP()
 {
     graph G = graph(2, 1);
     G.read_graph_from_file("data/graph/test_primMST.csv");
-    std::map<int, int> sol = algo::primMST(G, {0}, 100);
+    double budget = 100;
+    std::map<int, int> sol = algo::primMST(G, {0}, budget);
 
-    std::vector<int> sol_tsp = algo::find_TSP(0, sol);
+    std::vector<int> sol_tsp = algo::find_TSP(G, budget, 0, sol);
 
     if (sol_tsp.size() == G.get_n_nodes() and sol_tsp[0] == 0 and sol_tsp[1] == 4 and sol_tsp[2] == 1 and sol_tsp[3] == 3 and sol_tsp[4] == 2)
     {
@@ -368,14 +368,14 @@ bool test::check_set_to_tsp()
 
     simulator sim = simulator(G, 1, 1, 100);
 
-    std::vector<int> sol_tsp = sim.set_to_tsp(G.get_vertices_set());
+    std::vector<int> sol_tsp = sim.set_to_tsp(G.get_vertices_set());  
 
     if (sol_tsp.size() == G.get_n_nodes() and sol_tsp[0] == 0 and sol_tsp[1] == 4 and sol_tsp[2] == 1 and sol_tsp[3] == 3 and sol_tsp[4] == 2)
     {
         std::cout << "check_set_to_tsp [OK]" << std::endl;
         return true;
     }
-    return true;
+    return false;
 }
 
 bool test::check_cost_budget_cycle()
@@ -387,7 +387,7 @@ bool test::check_cost_budget_cycle()
 
     double _value_tsp = sim.cost_budget_cycle(G.get_vertices_set());
 
-    if (3.909435 > _value_tsp and _value_tsp > 3.909433)
+    if (4.24536 > _value_tsp and _value_tsp > 4.24534)
     {
         std::cout << "check_cost_budget_cycle [OK]" << std::endl;
         return true;
@@ -398,17 +398,15 @@ bool test::check_cost_budget_cycle()
 bool test::check_cost_cycle_OP()
 {
     graph G = graph(2, 1);
-    G.read_graph_from_file("data/graph/test_primMST.csv");
+    G.read_graph_from_file("data/graph/test_OP.csv");
 
     simulator sim = simulator(G, 1, 1, 100);
     double _value_OP = sim.cost_cycle_OP(G.get_vertices_set());
 
     simulator sim2 = simulator(G, 1, 1, 3);
     double _value_OP2 = sim2.cost_cycle_OP(G.get_vertices_set());
-
-    std::cout << _value_OP2 << std::endl;
-
-    if (_value_OP == 4 and _value_OP2 == 2)
+    
+    if (_value_OP == 13 and _value_OP2 == 12)
     {
         std::cout << "check_cost_cycle_OP [OK]" << std::endl;
         return true;
@@ -419,6 +417,7 @@ bool test::check_cost_cycle_OP()
 bool test::check_op_path_BB_insert_step()
 {
     graph G = graph(2, 1);
+
     G.read_graph_from_file("data/graph/test_OP.csv");
     int budget = 2;
     std::unordered_set<int> graph_vertices = G.get_vertices_set();

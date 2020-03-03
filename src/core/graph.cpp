@@ -7,7 +7,7 @@ graph::graph(int _area_x, int _area_y)
 
     // DEPOT: must have priority and weight == 0 (we use this in the code)
     node depot(0, 0, 0, 0, 0); // v_0 = depot
-    this->vertices.push_back(depot);
+    this->vertices[0] = node(0, 0, 0, 0, 0);
 
     this->n_nodes = 1;
 }
@@ -45,20 +45,18 @@ double graph::dist(int u, int v)
 
 int graph::add_node(int id, double _x, double _y, double _node_weight, int _priority)
 {
-    node new_node(id, _x, _y, _node_weight, _priority);
-
-    if (not check_double_node(new_node))
+    if (not check_double_node(_x, _y))
     {
-        // std::cout << "[ERROR:graph]:: double node! Skipped" << std::endl;
+        // std::cerr << "[ERROR:graph]:: double node! Skipped" << std::endl;
         return -1;
     }
-    if (new_node.x > this->area_x or new_node.y > this->area_y)
+    if (_x > this->area_x or _y > this->area_y)
     {
-        // std::cout << "[ERROR:graph]:: node outside area" << std::endl;
+        // std::cerr << "[ERROR:graph]:: node outside area" << std::endl;
         return -2;
     }
 
-    this->vertices.push_back(new_node);
+    this->vertices[id] = node(id, _x, _y, _node_weight, _priority);
     this->n_nodes++;
 
     return 1;
@@ -66,31 +64,28 @@ int graph::add_node(int id, double _x, double _y, double _node_weight, int _prio
 
 int graph::add_node(double _x, double _y, double _node_weight, int _priority)
 {
-    node new_node(this->n_nodes, _x, _y, _node_weight, _priority);
-
-    if (not check_double_node(new_node))
+    if (not check_double_node(_x, _y))
     {
-        // std::cout << "[ERROR:graph]:: double node! Skipped" << std::endl;
+        // std::cerr << "[ERROR:graph]:: double node! Skipped" << std::endl;
         return -1;
     }
-    if (new_node.x > this->area_x or new_node.y > this->area_y)
+    if (_x > this->area_x or _y > this->area_y)
     {
-        // std::cout << "[ERROR:graph]:: node outside area" << std::endl;
+        // std::cerr << "[ERROR:graph]:: node outside area" << std::endl;
         return -2;
     }
 
-    this->vertices.push_back(new_node);
+    this->vertices[this->n_nodes] = node(this->n_nodes, _x, _y, _node_weight, _priority);
     this->n_nodes++;
 
     return 1;
 }
 
-bool graph::check_double_node(node new_node)
+bool graph::check_double_node(double _x, double _y)
 {
-    for (size_t i = 0; i < this->vertices.size(); i++)
+    for (auto const &pair : this->vertices)
     {
-        node temp = this->vertices[i];
-        if (temp.x == new_node.x and temp.y == new_node.y)
+        if (_x == pair.second.x and _y == pair.second.y)
         {
             return false;
         }
@@ -101,9 +96,9 @@ bool graph::check_double_node(node new_node)
 void graph::print_graph()
 {
     std::cout << "***** GRAPH *****" << std::endl;
-    for (size_t i = 0; i < this->vertices.size(); i++)
+    for (auto const &pair : this->vertices)
     {
-        std::cout << this->vertices[i].id << ": (" << this->vertices[i].x << ", " << this->vertices[i].y << ") p:" << this->vertices[i].priority << " w:" << this->vertices[i].node_weight << std::endl;
+        std::cout << pair.second.id << ": (" << pair.second.x << ", " << pair.second.y << ") p:" << pair.second.priority << " w:" << pair.second.node_weight << std::endl;
     }
     std::cout << "*****************" << std::endl;
 }
@@ -152,9 +147,10 @@ int graph::get_n_nodes()
 std::vector<int> graph::get_vertices()
 {
     std::vector<int> nodes_id;
-    for (size_t i = 0; i < this->n_nodes; i++)
+    for (auto const &pair : this->vertices)
     {
-        nodes_id.push_back(this->vertices[i].id);
+        assert(pair.first == pair.second.id);
+        nodes_id.push_back(pair.first);
     }
     return nodes_id;
 }
@@ -182,9 +178,10 @@ double graph::get_coord_y(int id)
 std::unordered_set<int> graph::get_vertices_set()
 {
     std::unordered_set<int> nodes_id;
-    for (size_t i = 0; i < this->n_nodes; i++)
+    for (auto const &pair : this->vertices)
     {
-        nodes_id.insert(this->vertices[i].id);
+        assert(pair.first == pair.second.id);
+        nodes_id.insert(pair.first);
     }
     return nodes_id;
 }

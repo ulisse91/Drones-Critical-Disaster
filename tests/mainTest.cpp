@@ -39,7 +39,7 @@ int main(int argc, char **argv)
     assert(T.check_op_path_BB_insert_step());
 
     /*
-        vanno testati:
+        vanno testati: 
         - simulator::top_path_BB
     */
 
