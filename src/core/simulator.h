@@ -42,6 +42,7 @@ public:
     double cost_budget_cycle(std::vector<int> _temp);
     std::vector<int> set_to_tsp(std::unordered_set<int> _temp);
     std::unordered_set<int> op_path_BB_insert_step(std::unordered_set<int> graph_vertices, std::unordered_set<int> sol_temp);
+    bool check_feasibility();
 };
 
 #endif // SIMULATOR_H

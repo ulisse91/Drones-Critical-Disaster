@@ -9,20 +9,18 @@
 #include <unordered_set>
 #include <map>
 struct node
-    {
-        int id;
-        double x, y;
-        double node_weight;
-        int priority;
-        node(int _id, double _x, double _y, double _node_weight, int _priority) : id(_id), x(_x), y(_y), node_weight(_node_weight), priority(_priority) {}
-        node()=default;
-    };
+{
+    int id;
+    double x, y;
+    double node_weight;
+    int priority;
+    node(int _id, double _x, double _y, double _node_weight, int _priority) : id(_id), x(_x), y(_y), node_weight(_node_weight), priority(_priority) {}
+    node() = default;
+};
 class graph
 {
 
 private:
-
-
     int area_x;
     int area_y;
     int n_nodes;
@@ -47,7 +45,7 @@ public:
 
     double dist(int u, int v);
     void print_graph();
-    void create_random_graph();
+    void create_random_graph(int number_of_nodes, double max_weight, int max_priority);
     int add_node(int id, double _x, double _y, double _node_weight, int _priority);
     int add_node(double _x, double _y, double _node_weight, int _priority);
     int read_graph_from_file(std::string file);

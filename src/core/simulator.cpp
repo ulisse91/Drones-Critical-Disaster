@@ -425,3 +425,16 @@ double simulator::cost_budget_cycle(std::vector<int> tsp_temp)
     }
     return sum_of_elems;
 }
+
+bool simulator::check_feasibility()
+{
+    std::vector<int> graph_vertices = this->G.get_vertices();
+    for (int i = 0; i < graph_vertices.size(); i++)
+    {
+        if (2 * G.dist(0, graph_vertices[i]) > this->budget)
+        {
+            return false;
+        }
+    }
+    return true;
+}

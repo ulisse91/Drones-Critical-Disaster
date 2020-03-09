@@ -435,7 +435,6 @@ bool test::check_op_path_BB_insert_step()
 bool test::check_top_path_BB()
 {
     graph G = graph(2, 1);
-
     G.read_graph_from_file("data/graph/test_primMST.csv");
 
     double budget = 3.2;
@@ -470,5 +469,25 @@ bool test::check_top_path_BB()
         }
     }
 
+    return false;
+}
+
+bool test::check_feasibility()
+{
+    graph G = graph(2, 1);
+    G.read_graph_from_file("data/graph/test_primMST.csv");
+
+    double budget = 3.2;
+    int n_drones = 1;
+    simulator sim = simulator(G, n_drones, n_drones, budget);
+
+    budget = 3;
+    n_drones = 1;
+    simulator sim2 = simulator(G, n_drones, n_drones, budget);
+
+    if (sim.check_feasibility() and not sim2.check_feasibility())
+    {
+        return true;
+    }
     return false;
 }

@@ -33,6 +33,7 @@ int main(int argc, char **argv)
     assert(T.check_find_TSP());
 
     // // simulator
+    assert(T.check_feasibility());
     assert(T.check_set_to_tsp());
     assert(T.check_cost_budget_cycle());
     assert(T.check_cost_cycle_OP());
@@ -42,8 +43,6 @@ int main(int argc, char **argv)
     /*
         aggiunte:
         - funzione su grafo che spalma peso su archi
-        - funziona su grafo che rispetto al budget fa check feasibility
-        - classe utilities (?)
         - dividere due pesi
    */
 

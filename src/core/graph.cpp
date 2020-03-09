@@ -6,36 +6,31 @@ graph::graph(int _area_x, int _area_y)
     this->area_y = _area_y;
 
     // DEPOT: must have priority and weight == 0 (we use this in the code)
-    node depot(0, 0, 0, 0, 0); // v_0 = depot
-    this->vertices[0] = node(0, 0, 0, 0, 0);
-
+    this->vertices[0] = node(0, 0, 0, 0, 0); // v_0 = depot
     this->n_nodes = 1;
 }
 
 graph::graph() {}
-
 graph::~graph() {}
 
-void graph::create_random_graph()
+void graph::create_random_graph(int number_of_nodes, double max_weight, int max_priority)
 {
-    std::cout << "TO_DO\n";
-    // // da fare
-    // uniform_real_distribution<double> unif_1(0, area_x);
-    // uniform_real_distribution<double> unif_2(0, area_y);
-    // default_random_engine re;
+    std::uniform_real_distribution<double> unif_1(0, this->area_x);
+    std::uniform_real_distribution<double> unif_2(0, this->area_y);
+    std::uniform_real_distribution<double> unif_3(0, max_weight);
+    std::uniform_real_distribution<double> unif_4(0, max_priority);
+    std::default_random_engine re;
 
-    // node node_t(0, 0, 0, 0); // v_0 = depot
-    // vertices.push_back(node_t);
+    for (size_t i = 0; i < number_of_nodes; i++)
+    {
+        double _x = unif_1(re);
+        double _y = unif_2(re);
+        double _w = unif_3(re);
+        int _p = unif_4(re);
 
-    // for (size_t i = 0; i < this->n_nodes; i++)
-    // {
-    //     double x = unif_1(re); // used of % here is just fine
-    //     double y = unif_2(re);
-    //     node node_t(x, y, 5, 1);
-    //     vertices.push_back(node_t);
-    // }
-
-    // assert(this->vertices.size() == this->n_nodes + 1);
+        this->add_node(_x, _y, _w, _p);
+    }
+    assert(this->vertices.size() == this->n_nodes + 1);
 }
 
 double graph::dist(int u, int v)
