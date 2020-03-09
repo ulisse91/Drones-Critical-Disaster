@@ -1,6 +1,6 @@
 #include "simulator.h"
 
-simulator::simulator(graph _G, int _n_drones, int _n_batteries, int _budget)
+simulator::simulator(graph _G, int _n_drones, int _n_batteries, double _budget)
 {
     this->G = _G;
     this->n_drones = _n_drones;
@@ -186,7 +186,7 @@ void simulator::print_solution(std::vector<std::vector<std::vector<std::pair<int
         std::cout << "Drone " << i << std::endl;
         for (size_t j = 0; j < sol[i].size(); j++)
         {
-            std::cout << j << ": ";
+            std::cout << "cycle " << j << ": ";
             for (size_t k = 0; k < sol[i][j].size(); k++)
             {
                 std::cout << sol[i][j][k].first << " ";
@@ -295,27 +295,60 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::top_pat
     graph_vertices.erase(graph_vertices.find(0));
 
     int current_drone = 0;
-    while (not graph_vertices.empty())
+
+    int counter = 0;
+    while (not graph_vertices.empty() and counter <= G.get_n_nodes())
     {
         std::unordered_set<int> cycle_set = op_path_BB_insert_step(graph_vertices, {0});
-        std::vector<int> cycle = set_to_tsp(cycle_set);
+        std::vector<int> cycle_tsp = set_to_tsp(cycle_set);
+
+        // std::cout << "cycle_set: ";
+        // for (auto &i : cycle_set)
+        // {
+        //     std::cout << i << " ";
+        // }
+        // std::cout << std::endl;
+
+        // std::cout << "TSP: ";
+        // for (size_t i = 0; i < cycle_tsp.size(); i++)
+        // {
+        //     std::cout << cycle_tsp[i] << " ";
+        // }
+        // std::cout << std::endl;
+
         std::vector<std::pair<int, double>> _temp;
-        for (size_t j = 0; j < cycle.size(); j++)
+        for (size_t j = 0; j < cycle_tsp.size(); j++)
         {
-            _temp.push_back(std::make_pair(cycle[j], 1));
+            _temp.push_back(std::make_pair(cycle_tsp[j], 1));
         }
         _temp.push_back(std::make_pair(0, 1));
         sol[current_drone].push_back(_temp);
 
-        std::unordered_set<int> diff;
+        graph_vertices = set_difference(graph_vertices, cycle_tsp);
 
-        std::set_difference(graph_vertices.begin(), graph_vertices.end(), cycle_set.begin(), cycle_set.end(),
-                            std::inserter(diff, diff.begin()));
-        graph_vertices = diff;
+        // std::cout << "graph_vertices: ";
+        // for (auto &i : graph_vertices)
+        // {
+        //     std::cout << i << " ";
+        // } std::cout << std::endl;
 
         current_drone = (current_drone + 1) % this->n_drones;
+
+        counter++;
     }
     return sol;
+}
+
+std::unordered_set<int> simulator::set_difference(std::unordered_set<int> main, std::vector<int> minus)
+{
+    for (int i = 0; i < minus.size(); i++)
+    {
+        if (main.find(minus[i]) != main.end())
+        {
+            main.erase(main.find(minus[i]));
+        }
+    }
+    return main;
 }
 
 std::vector<int> simulator::set_to_tsp(std::unordered_set<int> _temp)
@@ -334,7 +367,7 @@ double simulator::cost_cycle_OP(std::unordered_set<int> _temp)
 {
     std::vector<int> tsp_temp = set_to_tsp(_temp);
 
-    if (cost_budget_cycle(tsp_temp) == -1)
+    if (cost_budget_cycle(tsp_temp) == -1 or tsp_temp.size() != _temp.size())
         return -1;
 
     double sum_of_elems = 0;
@@ -349,6 +382,11 @@ double simulator::cost_cycle_OP(std::unordered_set<int> _temp)
 double simulator::cost_budget_cycle(std::unordered_set<int> _temp)
 {
     std::vector<int> tsp_temp = set_to_tsp(_temp);
+
+    // for (size_t i = 0; i < tsp_temp.size(); i++)
+    // {
+    //     std::cout << tsp_temp[i] << " ";
+    // } std::cout << std::endl;
 
     double sum_of_elems = 0;
 

@@ -11,7 +11,7 @@ SOURCES = $(shell find $(SRC_PATH) -name '*.cpp')
 SOURCES_TEST = $(shell find $(SRC_PATH_TEST) -name '*.cpp')
 
 # flags #
-COMPILE_FLAGS = g++ -std=c++17 -O4 # -DNDEBUG
+COMPILE_FLAGS = g++ -std=c++17 -O4# -DNDEBUG
 OPTIONS = -lboost_program_options
 PATHLIB = /usr/include/boost
 

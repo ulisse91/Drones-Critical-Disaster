@@ -11,12 +11,12 @@ int main(int argc, char **argv)
 
     test T = test();
 
-    // graph
+    // // graph
     assert(T.check_if_double_node());
     assert(T.check_if_node_outside_area());
     assert(T.check_read_graph_from_file());
 
-    // feasible solutions
+    // // feasible solutions
     assert(T.check_fsolutions_depot());
     assert(T.check_fsolutions_node_out_index());
     assert(T.check_fsolutions_cycle_over_budget());
@@ -25,23 +25,27 @@ int main(int argc, char **argv)
     assert(T.check_fsolutions_obj_func_value_1());
     assert(T.check_fsolutions_obj_func_value_2());
 
-    // algorithms
+    // // algorithms
     assert(T.check_primMST());
     assert(T.check_metric_k_center());
     assert(T.check_primMST_with_forced_nodes());
     assert(T.check_primMST_with_forced_nodes_and_budget());
     assert(T.check_find_TSP());
 
-    // simulator
+    // // simulator
     assert(T.check_set_to_tsp());
     assert(T.check_cost_budget_cycle());
     assert(T.check_cost_cycle_OP());
     assert(T.check_op_path_BB_insert_step());
+    assert(T.check_top_path_BB());
 
     /*
-        vanno testati: 
-        - simulator::top_path_BB
-    */
+        aggiunte:
+        - funzione su grafo che spalma peso su archi
+        - funziona su grafo che rispetto al budget fa check feasibility
+        - classe utilities (?)
+        - dividere due pesi
+   */
 
     return 0;
 }

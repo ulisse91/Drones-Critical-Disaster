@@ -363,12 +363,12 @@ bool test::check_set_to_tsp()
 {
     graph G = graph(2, 1);
     G.read_graph_from_file("data/graph/test_primMST.csv");
-    int budget = 100;
+    double budget = 100;
     std::map<int, int> sol = algo::primMST(G, {0}, 100);
 
     simulator sim = simulator(G, 1, 1, 100);
 
-    std::vector<int> sol_tsp = sim.set_to_tsp(G.get_vertices_set());  
+    std::vector<int> sol_tsp = sim.set_to_tsp(G.get_vertices_set());
 
     if (sol_tsp.size() == G.get_n_nodes() and sol_tsp[0] == 0 and sol_tsp[1] == 4 and sol_tsp[2] == 1 and sol_tsp[3] == 3 and sol_tsp[4] == 2)
     {
@@ -403,10 +403,7 @@ bool test::check_cost_cycle_OP()
     simulator sim = simulator(G, 1, 1, 100);
     double _value_OP = sim.cost_cycle_OP(G.get_vertices_set());
 
-    simulator sim2 = simulator(G, 1, 1, 3);
-    double _value_OP2 = sim2.cost_cycle_OP(G.get_vertices_set());
-    
-    if (_value_OP == 13 and _value_OP2 == 12)
+    if (_value_OP == 13)
     {
         std::cout << "check_cost_cycle_OP [OK]" << std::endl;
         return true;
@@ -419,7 +416,7 @@ bool test::check_op_path_BB_insert_step()
     graph G = graph(2, 1);
 
     G.read_graph_from_file("data/graph/test_OP.csv");
-    int budget = 2;
+    double budget = 2;
     std::unordered_set<int> graph_vertices = G.get_vertices_set();
     graph_vertices.erase(0);
 
@@ -432,5 +429,46 @@ bool test::check_op_path_BB_insert_step()
         std::cout << "check_op_path_BB_insert_step [OK]" << std::endl;
         return true;
     }
+    return false;
+}
+
+bool test::check_top_path_BB()
+{
+    graph G = graph(2, 1);
+
+    G.read_graph_from_file("data/graph/test_primMST.csv");
+
+    double budget = 3.2;
+    int n_drones = 1;
+    simulator sim = simulator(G, n_drones, n_drones, budget);
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.top_path_BB();
+
+    if (sol.size() == n_drones and sol[0].size() == 2 and
+        sol[0][0][0].first == 0 and sol[0][0][1].first == 3 and sol[0][0][2].first == 2 and sol[0][0][3].first == 4 and sol[0][0][4].first == 0 and
+        sol[0][1][0].first == 0 and sol[0][1][1].first == 1 and sol[0][1][2].first == 0)
+    {
+        budget = 2;
+        n_drones = 1;
+        sim = simulator(G, n_drones, n_drones, budget);
+        sol = sim.top_path_BB();
+
+        if (sol.size() == n_drones and sol[0].size() == 6 and
+            sol[0][0][0].first == 0 and sol[0][0][1].first == 4 and sol[0][0][2].first == 0 and
+            sol[0][1][0].first == 0 and sol[0][1][1].first == 1 and sol[0][1][2].first == 0)
+        {
+            budget = 3.2;
+            n_drones = 2;
+            sim = simulator(G, n_drones, n_drones, budget);
+            sol = sim.top_path_BB();
+
+            if (sol.size() == n_drones and sol[0].size() == 1 and sol[1].size() == 1 and
+                sol[0][0][0].first == 0 and sol[0][0][1].first == 3 and sol[0][0][2].first == 2 and sol[0][0][3].first == 4 and sol[0][0][4].first == 0 and
+                sol[1][0][0].first == 0 and sol[1][0][1].first == 1 and sol[1][0][2].first == 0)
+            {
+                return true;
+            }
+        }
+    }
+
     return false;
 }
