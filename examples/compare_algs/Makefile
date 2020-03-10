@@ -1,0 +1,12 @@
+include ../../Makefile.config
+
+## Main application file
+MAIN = compare_algs
+
+SOURCES_EX = $(shell find -name '*.cpp')
+CORE = $(shell find ../../src/core -name '*.cpp')
+
+all: $(MAIN)
+
+$(MAIN):
+	$(COMPILE_FLAGS) -o ../$(BUILD_PATH)/$(MAIN) $(CORE) $(SOURCES_EX) -L$(PATHLIB) $(OPTIONS)

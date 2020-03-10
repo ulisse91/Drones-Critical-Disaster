@@ -179,24 +179,6 @@ double simulator::evaluate_solution(int which, std::vector<std::vector<std::vect
     return val_sol;
 }
 
-void simulator::print_solution(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
-{
-    for (size_t i = 0; i < sol.size(); i++)
-    {
-        std::cout << "Drone " << i << std::endl;
-        for (size_t j = 0; j < sol[i].size(); j++)
-        {
-            std::cout << "cycle " << j << ": ";
-            for (size_t k = 0; k < sol[i][j].size(); k++)
-            {
-                std::cout << sol[i][j][k].first << " ";
-            }
-            std::cout << std::endl;
-        }
-        std::cout << std::endl;
-    }
-}
-
 std::unordered_set<int> simulator::op_path_BB_insert_step(std::unordered_set<int> graph_vertices, std::unordered_set<int> sol_temp)
 {
 
@@ -261,7 +243,7 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::top_pat
         _temp.push_back(std::make_pair(0, 1));
         sol[current_drone].push_back(_temp);
 
-        graph_vertices = set_difference(graph_vertices, cycle_tsp);
+        graph_vertices = utilities::set_difference(graph_vertices, cycle_tsp);
 
         // std::cout << "graph_vertices: ";
         // for (auto &i : graph_vertices)
@@ -274,18 +256,6 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::top_pat
         counter++;
     }
     return sol;
-}
-
-std::unordered_set<int> simulator::set_difference(std::unordered_set<int> main, std::vector<int> minus)
-{
-    for (int i = 0; i < minus.size(); i++)
-    {
-        if (main.find(minus[i]) != main.end())
-        {
-            main.erase(main.find(minus[i]));
-        }
-    }
-    return main;
 }
 
 std::vector<int> simulator::set_to_tsp(std::unordered_set<int> _temp)
@@ -437,4 +407,71 @@ void simulator::prim_based_alg()
     // ripeti finchè tutti i nodi non sono visitati
 
     // questo va esteso a passare a prim anche grafo G_2 e G_1
+}
+
+std::vector<int> simulator::greedy_find_path(std::unordered_set<int> graph_vertices)
+{
+    std::vector<int> cycle;
+
+    double residual_budget = this->budget;
+    int next_step = 0;
+    int last_step = 0;
+
+    while (next_step != -1)
+    {
+        cycle.push_back(next_step);
+        if (graph_vertices.find(next_step) != graph_vertices.end())
+            graph_vertices.erase(graph_vertices.find(next_step));
+        residual_budget -= G.dist(last_step, next_step);
+        last_step = next_step;
+        next_step = -1;
+        double min_dist = G.get_area_x() + G.get_area_y();
+
+        for (auto &i : graph_vertices)
+        {
+            if (last_step == i)
+                continue;
+
+            if (G.get_priority_node(i) / G.dist(last_step, i) < min_dist and G.dist(last_step, i) + G.dist(0, i) < residual_budget)
+            {
+                min_dist = G.get_priority_node(i) / G.dist(0, i);
+                next_step = i;
+            }
+        }
+    }
+    return cycle;
+}
+
+std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::greedy_algorithm()
+{
+    std::unordered_set<int> graph_vertices = this->G.get_vertices_set();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol;
+
+    for (size_t i = 0; i < this->n_drones; i++)
+        sol.push_back(std::vector<std::vector<std::pair<int, double>>>());
+
+    graph_vertices.erase(graph_vertices.find(0));
+
+    int current_drone = 0;
+    int counter = 0;
+
+    while (not graph_vertices.empty() and counter <= G.get_n_nodes())
+    {
+        std::vector<int> cycle_tsp = greedy_find_path(graph_vertices);
+
+        std::vector<std::pair<int, double>> _temp;
+        for (size_t j = 0; j < cycle_tsp.size(); j++)
+        {
+            _temp.push_back(std::make_pair(cycle_tsp[j], 1));
+        }
+        _temp.push_back(std::make_pair(0, 1));
+        sol[current_drone].push_back(_temp);
+
+        graph_vertices = utilities::set_difference(graph_vertices, cycle_tsp);
+
+        current_drone = (current_drone + 1) % this->n_drones;
+
+        counter++;
+    }
+    return sol;
 }

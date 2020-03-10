@@ -9,6 +9,7 @@ dirs:
 
 MakeAll: clean dirs
 	$(MAKE) -C top
+	$(MAKE) -C compare_algs
 
 clean:
 	@echo "Deleting $(BUILD_PATH) directory"

@@ -38,6 +38,7 @@ int main(int argc, char **argv)
     assert(T.check_cost_cycle_OP());
     assert(T.check_op_path_BB_insert_step());
     assert(T.check_top_path_BB());
+    assert(T.check_greedy_algorithm());
 
     return 0;
 }

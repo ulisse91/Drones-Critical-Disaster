@@ -17,9 +17,9 @@ int main(int argc, char **argv)
     sim.check_feasibility();
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.top_path_BB();
 
-    sim.print_solution(sol);
+    utilities::print_solution(sol);
 
     std::cout << "fun_cycle: " << sim.evaluate_solution(0, sol) << " func_weighted_latency: " << sim.evaluate_solution(1, sol) << std::endl;
-
+    std::cout << std::endl;
     return 0;
 }

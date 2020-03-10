@@ -1,10 +1,12 @@
- #include "user_input.h"
+#include "user_input.h"
 
 input userinput::read_user_input(int argc, char **argv)
 {
+    time_t my_time = time(NULL);
+    std::cout << std::endl
+              << ctime(&my_time) << std::endl;
 
     input n_input = input();
-
 
     po::options_description desc{"Options"};
     desc.add_options()("help,h", "Help screen")("nodes,n", po::value<int>(), "Number of nodes (default = 10)")("drones,d", po::value<int>(), "Number of drones (default = 1)")("budget,b", po::value<double>(), "Budget (default = 1)")("batteries,p", po::value<int>(), "Number of batteries (default = number of drones)")("file,f", po::value<std::string>(), "Graph file");

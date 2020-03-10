@@ -18,7 +18,7 @@ void graph::create_random_graph(int number_of_nodes, double max_weight, int max_
     std::uniform_real_distribution<double> unif_1(0, this->area_x);
     std::uniform_real_distribution<double> unif_2(0, this->area_y);
     std::uniform_real_distribution<double> unif_3(0, max_weight);
-    std::uniform_real_distribution<double> unif_4(0, max_priority);
+    std::uniform_real_distribution<double> unif_4(1, max_priority+1);
     std::default_random_engine re;
 
     for (size_t i = 0; i < number_of_nodes; i++)
@@ -30,7 +30,7 @@ void graph::create_random_graph(int number_of_nodes, double max_weight, int max_
 
         this->add_node(_x, _y, _w, _p);
     }
-    assert(this->vertices.size() == this->n_nodes + 1);
+    assert(this->vertices.size() == this->n_nodes);
 }
 
 double graph::dist(int u, int v)
@@ -61,12 +61,12 @@ int graph::add_node(double _x, double _y, double _node_weight, int _priority)
 {
     if (not check_double_node(_x, _y))
     {
-        // std::cerr << "[ERROR:graph]:: double node! Skipped" << std::endl;
+        std::cerr << "[ERROR:graph]:: double node! Skipped" << std::endl;
         return -1;
     }
     if (_x > this->area_x or _y > this->area_y)
     {
-        // std::cerr << "[ERROR:graph]:: node outside area" << std::endl;
+        std::cerr << "[ERROR:graph]:: node outside area" << std::endl;
         return -2;
     }
 

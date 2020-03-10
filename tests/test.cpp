@@ -464,6 +464,7 @@ bool test::check_top_path_BB()
                 sol[0][0][0].first == 0 and sol[0][0][1].first == 3 and sol[0][0][2].first == 2 and sol[0][0][3].first == 4 and sol[0][0][4].first == 0 and
                 sol[1][0][0].first == 0 and sol[1][0][1].first == 1 and sol[1][0][2].first == 0)
             {
+                std::cout << "check_top_path_BB [OK]" << std::endl;
                 return true;
             }
         }
@@ -487,6 +488,27 @@ bool test::check_feasibility()
 
     if (sim.check_feasibility() and not sim2.check_feasibility())
     {
+        std::cout << "check_feasibility [OK]" << std::endl;
+        return true;
+    }
+    return false;
+}
+
+bool test::check_greedy_algorithm()
+{
+    graph G = graph(2, 1);
+    G.read_graph_from_file("../data/graph/test_primMST.csv");
+
+    double budget = 3.2;
+    int n_drones = 1;
+    simulator sim = simulator(G, n_drones, n_drones, budget);
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.greedy_algorithm();
+
+    if (sol.size() == n_drones and sol[0].size() == 2 and
+        sol[0][0][0].first == 0 and sol[0][0][1].first == 2 and sol[0][0][2].first == 4 and sol[0][0][3].first == 0 and
+        sol[0][1][0].first == 0 and sol[0][1][1].first == 3 and sol[0][1][2].first == 1 and sol[0][0][3].first == 0)
+    {
+        std::cout << "check_greedy_algorithm [OK]" << std::endl;
         return true;
     }
     return false;

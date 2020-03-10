@@ -46,6 +46,7 @@ public:
     bool check_op_path_BB_insert_step();
     bool check_top_path_BB();
     bool check_feasibility();
+    bool check_greedy_algorithm();
 };
 
 #endif // TEST_H

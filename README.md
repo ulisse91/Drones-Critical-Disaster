@@ -1,5 +1,16 @@
 # Drones-Critical-Disaster
-TO_DO
+
+To run the tests: 
+```bash
+make TestAll
+```
+Compile the Examples with: 
+```bash
+make examples
+```
+Then run the examples singularly from the examples/build directory
+
+# TO_DO
 Algorithms:
 - alg: KIM
 - alg: prim-based
@@ -7,12 +18,9 @@ Algorithms:
 -- prendi ultimo nodo S (tramite accesso a vettore)
 -- forza quel nodo a as centers e rinizia alg in G_2 + centers nuovi 
 -- attenzione al budget  che deve essere ridotto
-- alg: greedy algorithm (for benchmark)
--- for each uav
--- best cycle/path (scegli nodo basandoti su best-vicino, rispetto a p_v/d(previous, v)
--- un ciclo per volta per ogni uav e continua finchè non finisci nodi
 
 Features:
+- fun: print graph to file
 - fun: print solution in file
 - fun: read solution from file
 
@@ -21,4 +29,3 @@ To-Fix / Important:
 - dividere due pesi
 
 Examples:
-- Fare esempi per alg top

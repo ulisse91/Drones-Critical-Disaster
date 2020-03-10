@@ -2,6 +2,7 @@
 #define USERINPUT_H
 
 #include <iostream>
+#include <time.h>
 
 #include <boost/program_options.hpp>
 
@@ -24,13 +25,11 @@ class userinput
 {
 
 private:
-
 public:
     userinput();
     ~userinput();
 
     static input read_user_input(int argc, char **argv);
-    
 };
 
 #endif // USERINPUT_H
