@@ -8,6 +8,7 @@
 #include <fstream>
 #include <unordered_set>
 #include <map>
+
 struct node
 {
     int id;
@@ -17,6 +18,7 @@ struct node
     node(int _id, double _x, double _y, double _node_weight, int _priority) : id(_id), x(_x), y(_y), node_weight(_node_weight), priority(_priority) {}
     node() = default;
 };
+
 class graph
 {
 

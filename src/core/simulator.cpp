@@ -197,69 +197,6 @@ void simulator::print_solution(std::vector<std::vector<std::vector<std::pair<int
     }
 }
 
-void simulator::prim_based_alg()
-{
-    std::cout << "non funzionante -- da completare\n";
-    return;
-    std::map<int, bool> visited;
-    std::vector<int> graph_vertices = this->G.get_vertices();
-
-    visited[0] = true;
-
-    graph G_1 = graph(this->G.get_area_x(), this->G.get_area_y());
-    graph G_2 = graph(this->G.get_area_x(), this->G.get_area_y());
-    graph G_3 = graph(this->G.get_area_x(), this->G.get_area_y());
-
-    for (size_t i = 0; i < this->G.get_n_nodes(); i++)
-    {
-        visited[graph_vertices[i]] = false;
-        if (G.get_priority_node(graph_vertices[i]) == priority_max)
-        {
-            G_3.add_node(i, this->G.get_coord_x(graph_vertices[i]), this->G.get_coord_y(graph_vertices[i]), this->G.get_weight_node(graph_vertices[i]), this->G.get_priority_node(graph_vertices[i]));
-        }
-        if (G.get_priority_node(graph_vertices[i]) == priority_med)
-        {
-            G_2.add_node(i, this->G.get_coord_x(graph_vertices[i]), this->G.get_coord_y(graph_vertices[i]), this->G.get_weight_node(graph_vertices[i]), this->G.get_priority_node(graph_vertices[i]));
-        }
-        if (G.get_priority_node(graph_vertices[i]) == priority_min)
-        {
-            G_1.add_node(i, this->G.get_coord_x(graph_vertices[i]), this->G.get_coord_y(graph_vertices[i]), this->G.get_weight_node(graph_vertices[i]), this->G.get_priority_node(graph_vertices[i]));
-        }
-    }
-
-    // std::vector<int> centers = algo::metric_k_center(G_3, this->n_drones);
-    // centers.push_back({0});
-    // std::vector<int> tree = algo::primMST(G_3, centers, this->budget);
-
-    // considerare caso unico drone
-    /*
-        - recuperare foglie di tree
-        - aggiungere le foglie a G_2 e considerarle come centers e far ripartire primMST
-        - ripetere per G_1
-        - ricostruire soluzione
-        - questo è il primo ciclo
-    */
-
-    // // n droni > 1
-    // for (size_t i = 0; i < this->n_drones; i++)
-    // {
-    //     if (centers[i] != 0)
-    //     {
-    //         std::vector<int> cycle = algo::find_TSP(centers[i], tree);
-    //     }
-    // }
-
-    // creare 3 grafi "uno per priorità"
-    // std::vector<int> centers = metric_k_center(G_3, this->n_drones)
-    // std::vector<int> tree = primMST(G_3, centers, this->budget)
-    // calcola cicli chiamando find_TSP(start, tree) con start = v per ogni nodo v \in centers
-    // componi da sopra cicli soluzione primo round
-    // calcola valore funzione obj
-    // ripeti finchè tutti i nodi non sono visitati
-
-    // questo va esteso a passare a prim anche grafo G_2 e G_1
-}
-
 std::unordered_set<int> simulator::op_path_BB_insert_step(std::unordered_set<int> graph_vertices, std::unordered_set<int> sol_temp)
 {
 
@@ -437,4 +374,67 @@ bool simulator::check_feasibility()
         }
     }
     return true;
+}
+
+void simulator::prim_based_alg()
+{
+    std::cout << "non funzionante -- da completare\n";
+    return;
+    std::map<int, bool> visited;
+    std::vector<int> graph_vertices = this->G.get_vertices();
+
+    visited[0] = true;
+
+    graph G_1 = graph(this->G.get_area_x(), this->G.get_area_y());
+    graph G_2 = graph(this->G.get_area_x(), this->G.get_area_y());
+    graph G_3 = graph(this->G.get_area_x(), this->G.get_area_y());
+
+    for (size_t i = 0; i < this->G.get_n_nodes(); i++)
+    {
+        visited[graph_vertices[i]] = false;
+        if (G.get_priority_node(graph_vertices[i]) == priority_max)
+        {
+            G_3.add_node(i, this->G.get_coord_x(graph_vertices[i]), this->G.get_coord_y(graph_vertices[i]), this->G.get_weight_node(graph_vertices[i]), this->G.get_priority_node(graph_vertices[i]));
+        }
+        if (G.get_priority_node(graph_vertices[i]) == priority_med)
+        {
+            G_2.add_node(i, this->G.get_coord_x(graph_vertices[i]), this->G.get_coord_y(graph_vertices[i]), this->G.get_weight_node(graph_vertices[i]), this->G.get_priority_node(graph_vertices[i]));
+        }
+        if (G.get_priority_node(graph_vertices[i]) == priority_min)
+        {
+            G_1.add_node(i, this->G.get_coord_x(graph_vertices[i]), this->G.get_coord_y(graph_vertices[i]), this->G.get_weight_node(graph_vertices[i]), this->G.get_priority_node(graph_vertices[i]));
+        }
+    }
+
+    // std::vector<int> centers = algo::metric_k_center(G_3, this->n_drones);
+    // centers.push_back({0});
+    // std::vector<int> tree = algo::primMST(G_3, centers, this->budget);
+
+    // considerare caso unico drone
+    /*
+        - recuperare foglie di tree
+        - aggiungere le foglie a G_2 e considerarle come centers e far ripartire primMST
+        - ripetere per G_1
+        - ricostruire soluzione
+        - questo è il primo ciclo
+    */
+
+    // // n droni > 1
+    // for (size_t i = 0; i < this->n_drones; i++)
+    // {
+    //     if (centers[i] != 0)
+    //     {
+    //         std::vector<int> cycle = algo::find_TSP(centers[i], tree);
+    //     }
+    // }
+
+    // creare 3 grafi "uno per priorità"
+    // std::vector<int> centers = metric_k_center(G_3, this->n_drones)
+    // std::vector<int> tree = primMST(G_3, centers, this->budget)
+    // calcola cicli chiamando find_TSP(start, tree) con start = v per ogni nodo v \in centers
+    // componi da sopra cicli soluzione primo round
+    // calcola valore funzione obj
+    // ripeti finchè tutti i nodi non sono visitati
+
+    // questo va esteso a passare a prim anche grafo G_2 e G_1
 }

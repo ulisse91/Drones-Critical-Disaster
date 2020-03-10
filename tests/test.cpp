@@ -51,9 +51,9 @@ bool test::check_if_node_outside_area()
 bool test::check_read_graph_from_file()
 {
     graph G = graph(2, 1);
-    if (G.read_graph_from_file("data/graph/filedoesnotexist.csv") == -1)
+    if (G.read_graph_from_file("../data/graph/filedoesnotexist.csv") == -1)
     {
-        if (G.read_graph_from_file("data/graph/test_read_graph_from_file.csv") == 1)
+        if (G.read_graph_from_file("../data/graph/test_read_graph_from_file.csv") == 1)
         {
             if (G.get_coord_x(1) == 0.5 and G.get_coord_y(1) == 0.8 and G.get_priority_node(1) == 2 and G.get_weight_node(1) == 1.5)
             {
@@ -248,7 +248,7 @@ bool test::check_fsolutions_obj_func_value_2()
 bool test::check_primMST()
 {
     graph G = graph(2, 1);
-    G.read_graph_from_file("data/graph/test_primMST.csv");
+    G.read_graph_from_file("../data/graph/test_primMST.csv");
     std::map<int, int> sol = algo::primMST(G, {0}, 100);
 
     double sum_of_elems = 0;
@@ -271,7 +271,7 @@ bool test::check_primMST()
 bool test::check_metric_k_center()
 {
     graph G = graph(2, 1);
-    G.read_graph_from_file("data/graph/test_primMST.csv");
+    G.read_graph_from_file("../data/graph/test_primMST.csv");
     int k = 2;
     std::vector<int> sol = algo::metric_k_center(G, k);
 
@@ -293,7 +293,7 @@ bool test::check_metric_k_center()
 bool test::check_primMST_with_forced_nodes()
 {
     graph G = graph(2, 1);
-    G.read_graph_from_file("data/graph/test_primMST.csv");
+    G.read_graph_from_file("../data/graph/test_primMST.csv");
 
     std::vector<int> f_nodes = {0, 1, 3};
     std::map<int, int> sol = algo::primMST(G, f_nodes, 10);
@@ -317,7 +317,7 @@ bool test::check_primMST_with_forced_nodes()
 bool test::check_primMST_with_forced_nodes_and_budget()
 {
     graph G = graph(2, 1);
-    G.read_graph_from_file("data/graph/test_primMST.csv");
+    G.read_graph_from_file("../data/graph/test_primMST.csv");
 
     std::vector<int> f_nodes = {0, 1, 3};
     std::map<int, int> sol = algo::primMST(G, f_nodes, 1.6);
@@ -341,7 +341,7 @@ bool test::check_primMST_with_forced_nodes_and_budget()
 bool test::check_find_TSP()
 {
     graph G = graph(2, 1);
-    G.read_graph_from_file("data/graph/test_primMST.csv");
+    G.read_graph_from_file("../data/graph/test_primMST.csv");
     double budget = 100;
     std::map<int, int> sol = algo::primMST(G, {0}, budget);
 
@@ -362,7 +362,7 @@ bool test::check_find_TSP()
 bool test::check_set_to_tsp()
 {
     graph G = graph(2, 1);
-    G.read_graph_from_file("data/graph/test_primMST.csv");
+    G.read_graph_from_file("../data/graph/test_primMST.csv");
     double budget = 100;
     std::map<int, int> sol = algo::primMST(G, {0}, 100);
 
@@ -381,7 +381,7 @@ bool test::check_set_to_tsp()
 bool test::check_cost_budget_cycle()
 {
     graph G = graph(2, 1);
-    G.read_graph_from_file("data/graph/test_primMST.csv");
+    G.read_graph_from_file("../data/graph/test_primMST.csv");
 
     simulator sim = simulator(G, 1, 1, 100);
 
@@ -398,7 +398,7 @@ bool test::check_cost_budget_cycle()
 bool test::check_cost_cycle_OP()
 {
     graph G = graph(2, 1);
-    G.read_graph_from_file("data/graph/test_OP.csv");
+    G.read_graph_from_file("../data/graph/test_OP.csv");
 
     simulator sim = simulator(G, 1, 1, 100);
     double _value_OP = sim.cost_cycle_OP(G.get_vertices_set());
@@ -415,7 +415,7 @@ bool test::check_op_path_BB_insert_step()
 {
     graph G = graph(2, 1);
 
-    G.read_graph_from_file("data/graph/test_OP.csv");
+    G.read_graph_from_file("../data/graph/test_OP.csv");
     double budget = 2;
     std::unordered_set<int> graph_vertices = G.get_vertices_set();
     graph_vertices.erase(0);
@@ -435,7 +435,7 @@ bool test::check_op_path_BB_insert_step()
 bool test::check_top_path_BB()
 {
     graph G = graph(2, 1);
-    G.read_graph_from_file("data/graph/test_primMST.csv");
+    G.read_graph_from_file("../data/graph/test_primMST.csv");
 
     double budget = 3.2;
     int n_drones = 1;
@@ -475,7 +475,7 @@ bool test::check_top_path_BB()
 bool test::check_feasibility()
 {
     graph G = graph(2, 1);
-    G.read_graph_from_file("data/graph/test_primMST.csv");
+    G.read_graph_from_file("../data/graph/test_primMST.csv");
 
     double budget = 3.2;
     int n_drones = 1;

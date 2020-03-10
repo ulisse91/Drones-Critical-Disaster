@@ -33,6 +33,8 @@
 
 # Generated files
 build/
+tests/build/
+examples/build/
 
 # Visual Studio Code
 .vscode/*

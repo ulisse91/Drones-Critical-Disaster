@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include "../src/main.h"
 #include "../src/core/graph.h"
 #include "../src/core/simulator.h"
 #include "../src/core/algo.h"
@@ -39,12 +38,6 @@ int main(int argc, char **argv)
     assert(T.check_cost_cycle_OP());
     assert(T.check_op_path_BB_insert_step());
     assert(T.check_top_path_BB());
-
-    /*
-        aggiunte:
-        - funzione su grafo che spalma peso su archi
-        - dividere due pesi
-   */
 
     return 0;
 }
