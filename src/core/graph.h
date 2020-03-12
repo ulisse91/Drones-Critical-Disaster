@@ -51,6 +51,7 @@ public:
     int add_node(int id, double _x, double _y, double _node_weight, int _priority);
     int add_node(double _x, double _y, double _node_weight, int _priority);
     int read_graph_from_file(std::string file);
+    void erase_graph();
 };
 
 #endif // GRAPH_H

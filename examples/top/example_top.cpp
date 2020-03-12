@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "../../src/core/user_input.h"
 #include "../../src/core/simulator.h"
 
@@ -21,5 +23,7 @@ int main(int argc, char **argv)
 
     std::cout << "fun_cycle: " << sim.evaluate_solution(0, sol) << " func_weighted_latency: " << sim.evaluate_solution(1, sol) << std::endl;
     std::cout << std::endl;
+
+    assert(sim.check_solution_feasible(sol));
     return 0;
 }

@@ -9,4 +9,5 @@ TestAll:
 	$(MAKE) run -C tests
 
 clean:
-	$(MAKE) clean -C build
+	$(MAKE) clean -C examples
+	$(MAKE) clean -C tests

@@ -47,6 +47,7 @@ public:
     bool check_top_path_BB();
     bool check_feasibility();
     bool check_greedy_algorithm();
+    bool check_prim_based_alg();
 };
 
 #endif // TEST_H

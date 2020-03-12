@@ -18,7 +18,7 @@ class algo
 private:
     static int minKey_index(std::map<int, double> key, std::map<int, bool> mstSet, int max_int, int number_of_nodes);
     static int find_in_subtree(std::map<int, std::pair<double, std::unordered_set<int>>> sub_trees, int who);
-    static void DFSUtil(graph G, int v, std::map<int, int> tree, std::map<int, bool> visited, std::vector<int> &sol, double cost_cycle, double budget);
+    static void DFSUtil(graph G, int v, std::map<int, int> tree, std::map<int, bool> visited, std::vector<int> &sol, double &cost_cycle, double budget);
 
 public:
     algo();

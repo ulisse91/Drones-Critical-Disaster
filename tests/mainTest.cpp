@@ -39,6 +39,7 @@ int main(int argc, char **argv)
     assert(T.check_op_path_BB_insert_step());
     assert(T.check_top_path_BB());
     assert(T.check_greedy_algorithm());
+    assert(T.check_prim_based_alg());
 
     return 0;
 }

@@ -15,10 +15,12 @@ graph::~graph() {}
 
 void graph::create_random_graph(int number_of_nodes, double max_weight, int max_priority)
 {
+    // https://stackoverflow.com/questions/14638739/generating-a-random-double-between-a-range-of-values
+
     std::uniform_real_distribution<double> unif_1(0, this->area_x);
     std::uniform_real_distribution<double> unif_2(0, this->area_y);
     std::uniform_real_distribution<double> unif_3(0, max_weight);
-    std::uniform_real_distribution<double> unif_4(1, max_priority+1);
+    std::uniform_real_distribution<double> unif_4(1, max_priority + 1);
     std::default_random_engine re;
 
     for (size_t i = 0; i < number_of_nodes; i++)
@@ -61,12 +63,12 @@ int graph::add_node(double _x, double _y, double _node_weight, int _priority)
 {
     if (not check_double_node(_x, _y))
     {
-        std::cerr << "[ERROR:graph]:: double node! Skipped" << std::endl;
+        // std::cerr << "[ERROR:graph]:: double node! Skipped" << std::endl;
         return -1;
     }
     if (_x > this->area_x or _y > this->area_y)
     {
-        std::cerr << "[ERROR:graph]:: node outside area" << std::endl;
+        // std::cerr << "[ERROR:graph]:: node outside area" << std::endl;
         return -2;
     }
 
@@ -118,6 +120,13 @@ int graph::read_graph_from_file(std::string file)
         return 1;
     }
     return -1; // Unable to open file
+}
+
+void graph::erase_graph()
+{
+    this->n_nodes = 1;
+    this->vertices = std::map<int, node>();
+    this->vertices[0] = node(0, 0, 0, 0, 0); // v_0 = depot
 }
 
 /////////////////////////////////////////////////

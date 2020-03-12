@@ -28,6 +28,7 @@ private:
     double objective_function_cycle(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     double objective_function_weighted_latency(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     std::vector<int> greedy_find_path(std::unordered_set<int> graph_vertices);
+    std::map<int, int> extract_sub_tree(std::map<int, int>, int start);
 
 public:
     simulator(graph _G, int _n_drones, int _n_batteries, double _budget);
@@ -39,6 +40,7 @@ public:
     double cost_cycle_OP(std::unordered_set<int> tsp_temp);
     double cost_budget_cycle(std::unordered_set<int> tsp_temp);
     double cost_budget_cycle(std::vector<int> _temp);
+    double cost_budget_cycle(std::vector<std::pair<int, double>> _temp);
     std::vector<int> set_to_tsp(std::unordered_set<int> _temp);
     std::unordered_set<int> op_path_BB_insert_step(std::unordered_set<int> graph_vertices, std::unordered_set<int> sol_temp);
     bool check_feasibility();
@@ -46,7 +48,7 @@ public:
     // Algorithms
     std::vector<std::vector<std::vector<std::pair<int, double>>>> top_path_BB();
     std::vector<std::vector<std::vector<std::pair<int, double>>>> greedy_algorithm();
-    void prim_based_alg();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> prim_based_alg();
 };
 
 #endif // SIMULATOR_H

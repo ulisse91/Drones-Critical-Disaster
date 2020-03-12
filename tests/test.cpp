@@ -387,7 +387,7 @@ bool test::check_cost_budget_cycle()
 
     double _value_tsp = sim.cost_budget_cycle(G.get_vertices_set());
 
-    if (4.24536 > _value_tsp and _value_tsp > 4.24534)
+    if (2.66422 > _value_tsp and _value_tsp > 2.66420)
     {
         std::cout << "check_cost_budget_cycle [OK]" << std::endl;
         return true;
@@ -510,6 +510,35 @@ bool test::check_greedy_algorithm()
     {
         std::cout << "check_greedy_algorithm [OK]" << std::endl;
         return true;
+    }
+    return false;
+}
+
+bool test::check_prim_based_alg()
+{
+    graph G = graph(2, 1);
+    G.read_graph_from_file("../data/graph/test_primMST2.csv");
+
+    double budget = 3.2;
+    int n_drones = 1;
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol;
+
+    simulator sim = simulator(G, n_drones, n_drones, budget);
+
+    sol = sim.prim_based_alg();
+
+    if (sol.size() == n_drones and sol[0].size() == 3)
+    {
+        budget = 3.2;
+        n_drones = 2;
+        sim = simulator(G, n_drones, n_drones, budget);
+        sol = sim.prim_based_alg();
+
+        if (sol.size() == n_drones and sol[0].size() == 2)
+        {
+            std::cout << "check_prim_based_alg [OK]" << std::endl;
+            return true;
+        }
     }
     return false;
 }

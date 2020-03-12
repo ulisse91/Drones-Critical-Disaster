@@ -170,52 +170,118 @@ std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double 
 
 std::vector<int> algo::metric_k_center(graph G, int k)
 {
+    if (k == 1)
+        return {0};
+
     std::vector<int> sol;
-    std::vector<int> temp_nodes = G.get_vertices();
-    std::vector<int> id_vertices = G.get_vertices();
+    std::unordered_set<int> graph_vertices = G.get_vertices_set();
+    graph_vertices.erase(graph_vertices.find(0));
 
     /* initialize random seed: */
     srand(time(NULL));
-    sol.push_back(id_vertices[rand() % (G.get_n_nodes() - 1) + 1]);
-    k--;
-
-    while (k > 0)
+    int _n = rand() % (G.get_n_nodes() - 1) + 1, counter = 0;
+    for (auto &i : graph_vertices)
     {
-        std::vector<int> temp(G.get_n_nodes());
-        for (size_t i = 0; i < temp_nodes.size(); i++)
+        if (_n == counter)
+        {
+            sol.push_back(i);
+            graph_vertices.erase(graph_vertices.find(i));
+            break;
+        }
+        counter++;
+    }
+
+    while (sol.size() < k and graph_vertices.size() > 0)
+    {
+        std::map<int, double> temp;
+        for (auto &i : graph_vertices)
         {
             double min_dist = G.get_area_x() + G.get_area_y();
             for (size_t j = 0; j < sol.size(); j++)
             {
-                min_dist = std::min(min_dist, G.dist(temp_nodes[i], id_vertices[sol[j]]));
+                if (i != sol[j])
+                    min_dist = std::min(min_dist, G.dist(i, sol[j]));
             }
-            temp[temp_nodes[i]] = min_dist;
+            temp[i] = min_dist;
         }
-
-        int new_center = max_element(temp.begin(), temp.end()) - temp.begin();
+        double max_dist = -1;
+        int new_center = -1;
+        for (auto &i : temp)
+        {
+            if (i.second > max_dist)
+            {
+                max_dist = i.second;
+                new_center = i.first;
+            }
+        }
+        if (new_center == -1)
+            break;
         sol.push_back(new_center);
-        temp_nodes.erase(temp_nodes.begin() + new_center);
-        k--;
+        graph_vertices.erase(graph_vertices.find(new_center));
     }
-
-    // for (size_t i = 0; i < sol.size(); i++)
-    // {
-    //     std::cout << sol[i] << " ";
-    // }
-    // std::cout << std::endl;
-
     return sol;
 }
 
-void algo::DFSUtil(graph G, int v, std::map<int, int> tree, std::map<int, bool> visited, std::vector<int> &sol, double cost_cycle, double budget)
-{
-    // std::cerr << v << " : ";
+// std::vector<int> algo::metric_k_center(graph G, int k)
+// {
+//     if (k == 1)
+//         return {0};
 
+//     std::vector<int> sol;
+//     std::vector<int> graph_vertices = G.get_vertices();
+
+//     /* initialize random seed: */
+//     srand(time(NULL));
+//     int _n = rand() % (G.get_n_nodes() - 1) + 1;
+//     sol.push_back(graph_vertices[_n]);
+//     k--;
+
+//     graph_vertices.erase(std::remove(graph_vertices.begin(), graph_vertices.end(), 0), graph_vertices.end());
+//     graph_vertices.erase(std::remove(graph_vertices.begin(), graph_vertices.end(), _n), graph_vertices.end());
+
+//     while (k > 0 and graph_vertices.size() > 0)
+//     {
+//         std::map<int, double> temp;
+//         for (size_t i = 0; i < graph_vertices.size(); i++)
+//         {
+//             double min_dist = G.get_area_x() + G.get_area_y();
+//             for (size_t j = 0; j < sol.size(); j++)
+//             {
+//                 if (graph_vertices[i] != graph_vertices[sol[j]])
+//                     min_dist = std::min(min_dist, G.dist(graph_vertices[i], graph_vertices[sol[j]]));
+//             }
+//             temp[graph_vertices[i]] = min_dist;
+//         }
+
+//         double max_dist = -1;
+//         int new_center = -1;
+//         for (auto &i : temp)
+//         {
+//             if (i.second > max_dist)
+//             {
+//                 max_dist = i.second;
+//                 new_center = i.first;
+//             }
+//         }
+//         if (new_center == -1)
+//             break;
+
+//         sol.push_back(new_center);
+//         graph_vertices.erase(std::remove(graph_vertices.begin(), graph_vertices.end(), new_center), graph_vertices.end());
+//         k--;
+//     }
+
+//     return sol;
+// }
+
+void algo::DFSUtil(graph G, int v, std::map<int, int> tree, std::map<int, bool> visited, std::vector<int> &sol, double &cost_cycle, double budget)
+{
+    // std::cerr << v << " sol: ";
     // for (size_t i = 0; i < sol.size(); i++)
     // {
     //     std::cerr << sol[i] << " ";
     // }
-    // std::cerr << " | " << cost_cycle << std::endl;
+    // std::cerr << " | c: " << cost_cycle << std::endl;
 
     if (sol.size() > 0)
     {
@@ -223,8 +289,9 @@ void algo::DFSUtil(graph G, int v, std::map<int, int> tree, std::map<int, bool> 
 
         if (cost_cycle + G.dist(sol[sol.size() - 1], v) + G.dist(v, 0) > budget)
             return;
-        // std::cerr << " " << sol[sol.size() - 1] << " " << G.dist(sol[sol.size() - 1], v) << std::endl;
         cost_cycle += G.dist(sol[sol.size() - 1], v);
+
+        // std::cerr << " " << cost_cycle << std::endl;
     }
     sol.push_back(v);
     visited[v] = true;
@@ -246,6 +313,14 @@ std::vector<int> algo::find_TSP(graph G, double budget, int start, std::map<int,
         // std::cerr << pair.first << ":" << pair.second << " ";
         visited[pair.first] = false;
     }
-    DFSUtil(G, start, tree, visited, sol, 0, budget);
+
+    double cost_cycle = 0;
+    if (start != 0)
+    {
+        cost_cycle += G.dist(0, start);
+        visited[0] = true;
+    }
+    // std::cout << "TSP-i-cost: " << cost_cycle << "\n";
+    DFSUtil(G, start, tree, visited, sol, cost_cycle, budget);
     return sol;
 }
