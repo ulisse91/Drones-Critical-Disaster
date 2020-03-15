@@ -1,8 +1,8 @@
 #include <iostream>
 
 #include "../src/core/graph.h"
-#include "../src/core/simulator.h"
 #include "../src/core/algo.h"
+#include "../src/simulator/simulator.h"
 #include "test.h"
 
 int main(int argc, char **argv)

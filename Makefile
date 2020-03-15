@@ -1,13 +1,15 @@
 examples: Examples
 
-test: TestAll
+curr: 
+	$(MAKE) -C src
 
 Examples:
 	$(MAKE) -C examples
 
-TestAll:
+testAll:
 	$(MAKE) run -C tests
 
 clean:
+	$(MAKE) clean -C src
 	$(MAKE) clean -C examples
 	$(MAKE) clean -C tests

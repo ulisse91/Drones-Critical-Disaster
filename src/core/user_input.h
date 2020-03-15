@@ -15,6 +15,7 @@ struct input
     int n_drones = 1;
     int n_batteries = n_drones;
     double budget = 1;
+    int seed = 0;
     std::string graph_file = "";
 
     input(int _n_nodes, int _n_drones, int _n_batteries, double _budget, std::string _graph_file) : n_nodes(_n_nodes), n_drones(_n_drones), n_batteries(_n_batteries), budget(_budget), graph_file(_graph_file) {}

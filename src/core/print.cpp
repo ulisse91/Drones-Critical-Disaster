@@ -1,0 +1,85 @@
+#include "print.h"
+
+void print::print_solution(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
+{
+    std::cout << "**** SOLUTION ***" << std::endl;
+    for (size_t i = 0; i < sol.size(); i++)
+    {
+        std::cout << "Drone " << i << std::endl;
+        for (size_t j = 0; j < sol[i].size(); j++)
+        {
+            std::cout << "- cycle " << j << ": ";
+            for (size_t k = 0; k < sol[i][j].size(); k++)
+            {
+                std::cout << sol[i][j][k].first << " ";
+            }
+            std::cout << std::endl;
+        }
+    }
+    std::cout << "*****************" << std::endl;
+}
+
+void print::print_e_solution(graph G, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
+{
+    std::cout << "**** SOLUTION ***" << std::endl;
+    for (size_t i = 0; i < sol.size(); i++)
+    {
+        std::cout << "Drone " << i << std::endl;
+        for (size_t j = 0; j < sol[i].size(); j++)
+        {
+            std::cout << "- cycle " << j << ": ";
+            for (size_t k = 0; k < sol[i][j].size(); k++)
+            {
+                std::cout << sol[i][j][k].first << " ";
+            }
+            std::cout << "\tb: " << utilities::cost_budget_sequence(G, sol[i][j]) << std::endl;
+        }
+    }
+    std::cout << "*****************" << std::endl;
+}
+
+void print::print_cycle_sol(std::vector<std::pair<int, double>> _cycle)
+{
+    for (size_t k = 0; k < _cycle.size(); k++)
+    {
+        std::cout << _cycle[k].first << " ";
+    }
+    std::cout << std::endl;
+}
+
+void print::print_set(std::unordered_set<int> _set)
+{
+    for (auto &i : _set)
+    {
+        std::cout << i << " ";
+    }
+    std::cout << std::endl;
+}
+
+void print::print_vector_int(std::vector<int> _vec)
+{
+    for (size_t i = 0; i < _vec.size(); i++)
+    {
+        std::cout << _vec[i] << " ";
+    }
+    std::cout << std::endl;
+}
+
+void print::print_map_int_int(std::map<int, int> _map)
+{
+    for (auto elem : _map)
+    {
+        std::cout << elem.first << " : " << elem.second << std::endl;
+    }
+}
+
+void print::print_graph(graph G)
+{
+    std::cout << "***** GRAPH *****" << std::endl;
+
+    for (auto const &v : G.get_vertices())
+    {
+        std::cout << v << ": (" << G.get_coord_x(v) << ", " << G.get_coord_y(v) << ") p:" << G.get_priority_node(v) << " w:" << G.get_weight_node(v) << std::endl;
+    }
+    std::cout << "*****************" << std::endl;
+}

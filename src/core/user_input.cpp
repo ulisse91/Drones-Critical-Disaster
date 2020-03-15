@@ -9,7 +9,7 @@ input userinput::read_user_input(int argc, char **argv)
     input n_input = input();
 
     po::options_description desc{"Options"};
-    desc.add_options()("help,h", "Help screen")("nodes,n", po::value<int>(), "Number of nodes (default = 10)")("drones,d", po::value<int>(), "Number of drones (default = 1)")("budget,b", po::value<double>(), "Budget (default = 1)")("batteries,p", po::value<int>(), "Number of batteries (default = number of drones)")("file,f", po::value<std::string>(), "Graph file");
+    desc.add_options()("help,h", "Help screen")("nodes,n", po::value<int>(), "Number of nodes (default = 10)")("drones,d", po::value<int>(), "Number of drones (default = 1)")("budget,b", po::value<double>(), "Budget (default = 1)")("seed,s", po::value<int>(), "seed for random graph generator")("batteries,p", po::value<int>(), "Number of batteries (default = number of drones)")("file,f", po::value<std::string>(), "Graph file");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -26,7 +26,7 @@ input userinput::read_user_input(int argc, char **argv)
     }
     else
     {
-        std::cout << "file was not set. ";
+        std::cout << "file was not set." << std::endl;
         if (vm.count("nodes"))
         {
             n_input.n_nodes = vm["nodes"].as<int>();
@@ -35,7 +35,7 @@ input userinput::read_user_input(int argc, char **argv)
         else
         {
             std::cout << "Number of nodes was not set. ";
-            std::cout << "Set Default value: " << n_input.n_nodes << "\n";
+            std::cout << "Set Default value: " << n_input.n_nodes << std::endl;
         }
     }
     if (vm.count("drones"))
@@ -51,7 +51,7 @@ input userinput::read_user_input(int argc, char **argv)
     else
     {
         std::cout << "Number of drones was not set. ";
-        std::cout << "Set Default value: " << n_input.n_drones << "\n";
+        std::cout << "Set Default value: " << n_input.n_drones << std::endl;
     }
     if (vm.count("batteries"))
     {
@@ -66,7 +66,16 @@ input userinput::read_user_input(int argc, char **argv)
     else
     {
         std::cout << "Budget was not set. ";
-        std::cout << "Set Default value: " << n_input.budget << "\n";
+        std::cout << "Set Default value: " << n_input.budget << std::endl;
+    }
+    if (vm.count("seed"))
+    {
+        n_input.seed = vm["seed"].as<int>();
+        std::cout << "Seed: " << vm["seed"].as<int>() << std::endl;
+    }
+    else
+    {
+        std::cout << "Seed: default" << std::endl;
     }
     std::cout << std::endl;
 

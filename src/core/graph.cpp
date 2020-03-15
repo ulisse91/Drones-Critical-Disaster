@@ -15,13 +15,23 @@ graph::~graph() {}
 
 void graph::create_random_graph(int number_of_nodes, double max_weight, int max_priority)
 {
-    // https://stackoverflow.com/questions/14638739/generating-a-random-double-between-a-range-of-values
+    create_random_graph(number_of_nodes, max_weight, max_priority, std::random_device{}());
+}
+
+void graph::create_random_graph(int number_of_nodes, double max_weight, int max_priority, long seed)
+{
+    erase_graph();
+
+    if (seed == -1)
+        seed = std::random_device{}();
 
     std::uniform_real_distribution<double> unif_1(0, this->area_x);
     std::uniform_real_distribution<double> unif_2(0, this->area_y);
-    std::uniform_real_distribution<double> unif_3(0, max_weight);
+    std::uniform_int_distribution<int> unif_3(1, max_weight + 1);
     std::uniform_real_distribution<double> unif_4(1, max_priority + 1);
-    std::default_random_engine re;
+
+    //Mersenne Twister: Good quality random number generator
+    std::mt19937 re(seed);
 
     for (size_t i = 0; i < number_of_nodes; i++)
     {
@@ -33,11 +43,6 @@ void graph::create_random_graph(int number_of_nodes, double max_weight, int max_
         this->add_node(_x, _y, _w, _p);
     }
     assert(this->vertices.size() == this->n_nodes);
-}
-
-double graph::dist(int u, int v)
-{
-    return sqrt(pow(this->vertices[u].x - this->vertices[v].x, 2) + pow(this->vertices[u].y - this->vertices[v].y, 2));
 }
 
 int graph::add_node(int id, double _x, double _y, double _node_weight, int _priority)
@@ -90,15 +95,9 @@ bool graph::check_double_node(double _x, double _y)
     return true;
 }
 
-void graph::print_graph()
-{
-    std::cout << "***** GRAPH *****" << std::endl;
-    for (auto const &pair : this->vertices)
-    {
-        std::cout << pair.second.id << ": (" << pair.second.x << ", " << pair.second.y << ") p:" << pair.second.priority << " w:" << pair.second.node_weight << std::endl;
-    }
-    std::cout << "*****************" << std::endl;
-}
+/////////////////////////////////////////////////
+//////////////////// I/O ////////////////////////
+/////////////////////////////////////////////////
 
 int graph::read_graph_from_file(std::string file)
 {
@@ -188,4 +187,23 @@ std::unordered_set<int> graph::get_vertices_set()
         nodes_id.insert(pair.first);
     }
     return nodes_id;
+}
+
+/////////////////////////////////////////////////
+//////////////// DISTANCES //////////////////////
+/////////////////////////////////////////////////
+
+double graph::distw(int u, int v)
+{
+    return dist(u, v) + this->vertices[u].node_weight / 2 + this->vertices[v].node_weight / 2;
+}
+
+double graph::dist(int u, int v)
+{
+    return sqrt(pow(this->vertices[u].x - this->vertices[v].x, 2) + pow(this->vertices[u].y - this->vertices[v].y, 2));
+}
+
+double graph::dist(int u, int v, int with_weight)
+{
+    return with_weight ? distw(u, v) : dist(u, v);
 }

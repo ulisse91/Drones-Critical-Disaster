@@ -1,7 +1,7 @@
 #include <assert.h>
 
 #include "../../src/core/user_input.h"
-#include "../../src/core/simulator.h"
+#include "../../src/simulator/simulator.h"
 
 /*
     run example with: (NB: pay attention to relative path wrt where you run the code)
@@ -16,10 +16,10 @@ int main(int argc, char **argv)
     G.read_graph_from_file(n_input.graph_file);
 
     simulator sim = simulator(G, n_input.n_drones, n_input.n_drones /* batteries */, n_input.budget);
-    sim.check_feasibility();
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.top_path_BB();
+    assert(sim.check_feasibility());
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.top_based_alg();
 
-    utilities::print_solution(sol);
+    print::print_solution(sol);
 
     std::cout << "fun_cycle: " << sim.evaluate_solution(0, sol) << " func_weighted_latency: " << sim.evaluate_solution(1, sol) << std::endl;
     std::cout << std::endl;

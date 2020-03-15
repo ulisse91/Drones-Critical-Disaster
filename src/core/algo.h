@@ -10,7 +10,7 @@
 #include <map>
 
 #include "graph.h"
-#include "simulator.h"
+#include "print.h"
 
 class algo
 {

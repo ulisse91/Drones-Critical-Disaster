@@ -2,13 +2,20 @@
 
 To run the tests: 
 ```bash
-make TestAll
+make testAll
 ```
 Compile the Examples with: 
 ```bash
 make examples
 ```
 Then run the examples singularly from the examples/build directory
+
+If you want to do tests during developing phase you can use
+```bash
+make curr
+```
+The main file is src/main.cpp
+This file should remain empty otherwise
 
 # TO_DO
 Algorithms:
@@ -24,11 +31,9 @@ Features:
 - fun: read solution from file
 
 To-Fix / Important:
-- funzione su grafo che spalma peso su archi
 - dividere due pesi (secondo peso con probabilità)
 - porzioni di nodi
-- fun: distw che comprende peso nodo
-- graph random generator include seed (possibly from input)
 - fun: obj func completion time
+- ricontrollare costi funzioni obiettivo!!!
 
 Examples:

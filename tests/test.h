@@ -7,8 +7,9 @@
 #include <utility>
 
 #include "../src/core/graph.h"
-#include "../src/core/simulator.h"
 #include "../src/core/algo.h"
+#include "../src/simulator/simulator.h"
+#include "../src/simulator/utilities.h"
 
 class test
 {

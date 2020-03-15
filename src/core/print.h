@@ -1,20 +1,21 @@
-#ifndef UTILITIES_H
-#define UTILITIES_H
+#ifndef PRINT_H
+#define PRINT_H
 
 #include <iostream>
 #include <vector>
 #include <unordered_set>
 #include <map>
 
-class utilities
+#include "graph.h"
+#include "../simulator/utilities.h"
+
+class print
 {
 
 private:
 public:
-    utilities();
-    ~utilities();
-
-    static std::unordered_set<int> set_difference(std::unordered_set<int>, std::vector<int>);
+    print();
+    ~print();
 
     // print functions
     static void print_solution(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
@@ -22,6 +23,8 @@ public:
     static void print_vector_int(std::vector<int> _vec);
     static void print_map_int_int(std::map<int, int> _map);
     static void print_cycle_sol(std::vector<std::pair<int, double>> _cycle);
+    static void print_graph(graph G);
+    static void print_e_solution(graph G, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
 };
 
-#endif // UTILITIES_H
+#endif // PRINT_H

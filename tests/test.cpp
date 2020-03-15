@@ -255,9 +255,9 @@ bool test::check_primMST()
 
     std::vector<int> graph_vertices = G.get_vertices();
 
-    for (size_t i = 0; i < sol.size(); i++)
+    for (auto &pair : sol)
     {
-        sum_of_elems += G.dist(graph_vertices[i], graph_vertices[sol[i]]);
+        sum_of_elems += G.dist(pair.first, pair.second);
     }
 
     if (2.1995 >= sum_of_elems and sum_of_elems >= 2.1993)
@@ -366,9 +366,7 @@ bool test::check_set_to_tsp()
     double budget = 100;
     std::map<int, int> sol = algo::primMST(G, {0}, 100);
 
-    simulator sim = simulator(G, 1, 1, 100);
-
-    std::vector<int> sol_tsp = sim.set_to_tsp(G.get_vertices_set());
+    std::vector<int> sol_tsp = utilities::set_to_tsp(G, budget, G.get_vertices_set());
 
     if (sol_tsp.size() == G.get_n_nodes() and sol_tsp[0] == 0 and sol_tsp[1] == 4 and sol_tsp[2] == 1 and sol_tsp[3] == 3 and sol_tsp[4] == 2)
     {
@@ -385,9 +383,10 @@ bool test::check_cost_budget_cycle()
 
     simulator sim = simulator(G, 1, 1, 100);
 
-    double _value_tsp = sim.cost_budget_cycle(G.get_vertices_set());
+    std::vector<int> target(G.get_vertices_set().begin(), G.get_vertices_set().end());
+    double _value_tsp = utilities::cost_budget_sequence(G, target);
 
-    if (2.66422 > _value_tsp and _value_tsp > 2.66420)
+    if (3.42387 > _value_tsp and _value_tsp > 3.42385)
     {
         std::cout << "check_cost_budget_cycle [OK]" << std::endl;
         return true;
@@ -400,7 +399,7 @@ bool test::check_cost_cycle_OP()
     graph G = graph(2, 1);
     G.read_graph_from_file("../data/graph/test_OP.csv");
 
-    simulator sim = simulator(G, 1, 1, 100);
+    topb sim = topb(G, 1, 1, 100);
     double _value_OP = sim.cost_cycle_OP(G.get_vertices_set());
 
     if (_value_OP == 13)
@@ -420,10 +419,12 @@ bool test::check_op_path_BB_insert_step()
     std::unordered_set<int> graph_vertices = G.get_vertices_set();
     graph_vertices.erase(0);
 
-    simulator sim = simulator(G, 1, 1, budget);
+    topb sim = topb(G, 1, 1, budget);
     std::unordered_set<int> cycle_set = sim.op_path_BB_insert_step(graph_vertices, {0});
 
-    double _budget_spent_tsp = sim.cost_budget_cycle(cycle_set);
+    std::vector<int> target(cycle_set.begin(), cycle_set.end());
+    double _budget_spent_tsp = utilities::cost_budget_sequence(G, target);
+
     if (budget > _budget_spent_tsp and sim.cost_cycle_OP(cycle_set) == 10)
     {
         std::cout << "check_op_path_BB_insert_step [OK]" << std::endl;
@@ -440,7 +441,7 @@ bool test::check_top_path_BB()
     double budget = 3.2;
     int n_drones = 1;
     simulator sim = simulator(G, n_drones, n_drones, budget);
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.top_path_BB();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.top_based_alg();
 
     if (sol.size() == n_drones and sol[0].size() == 2 and
         sol[0][0][0].first == 0 and sol[0][0][1].first == 3 and sol[0][0][2].first == 2 and sol[0][0][3].first == 4 and sol[0][0][4].first == 0 and
@@ -449,16 +450,16 @@ bool test::check_top_path_BB()
         budget = 2;
         n_drones = 1;
         sim = simulator(G, n_drones, n_drones, budget);
-        sol = sim.top_path_BB();
+        sol = sim.top_based_alg();
 
-        if (sol.size() == n_drones and sol[0].size() == 6 and
+        if (sol.size() == n_drones and sol[0].size() == 2 and
             sol[0][0][0].first == 0 and sol[0][0][1].first == 4 and sol[0][0][2].first == 0 and
             sol[0][1][0].first == 0 and sol[0][1][1].first == 1 and sol[0][1][2].first == 0)
         {
             budget = 3.2;
             n_drones = 2;
             sim = simulator(G, n_drones, n_drones, budget);
-            sol = sim.top_path_BB();
+            sol = sim.top_based_alg();
 
             if (sol.size() == n_drones and sol[0].size() == 1 and sol[1].size() == 1 and
                 sol[0][0][0].first == 0 and sol[0][0][1].first == 3 and sol[0][0][2].first == 2 and sol[0][0][3].first == 4 and sol[0][0][4].first == 0 and
@@ -502,7 +503,7 @@ bool test::check_greedy_algorithm()
     double budget = 3.2;
     int n_drones = 1;
     simulator sim = simulator(G, n_drones, n_drones, budget);
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.greedy_algorithm();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.greedy_based_alg();
 
     if (sol.size() == n_drones and sol[0].size() == 2 and
         sol[0][0][0].first == 0 and sol[0][0][1].first == 2 and sol[0][0][2].first == 4 and sol[0][0][3].first == 0 and

@@ -60,7 +60,7 @@ std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double 
     for (size_t i = 0; i < forced_nodes.size(); i++)
     {
         parent[forced_nodes[i]] = 0;
-        key[forced_nodes[i]] = G.dist(0, forced_nodes[i]);
+        key[forced_nodes[i]] = G.distw(0, forced_nodes[i]);
         std::unordered_set<int> myset = {forced_nodes[i]};
         sub_trees[forced_nodes[i]] = std::make_pair(budget - key[forced_nodes[i]], myset);
     }
@@ -101,11 +101,11 @@ std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double 
             //           << index << " " << std::flush
             //           << sub_trees[index].first << " " << std::flush
             //           << mstSet[pair.first] << " " << std::flush
-            //           << G.dist(u, pair.first) << " " << std::flush
+            //           << G.distw(u, pair.first) << " " << std::flush
             //           << key[pair.first] << std::endl
             //           << std::flush;
 
-            if (mstSet[pair.first] == false and G.dist(u, pair.first) < key[pair.first])
+            if (mstSet[pair.first] == false and G.distw(u, pair.first) < key[pair.first])
             {
 
                 if (parent[pair.first] != -1)
@@ -113,45 +113,45 @@ std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double 
                     int index_p = find_in_subtree(sub_trees, pair.first);
                     if (index == index_p)
                     {
-                        if (sub_trees[index].first + G.dist(parent[pair.first], pair.first) - G.dist(u, pair.first) >= 0)
+                        if (sub_trees[index].first + G.distw(parent[pair.first], pair.first) - G.distw(u, pair.first) >= 0)
                         {
-                            sub_trees[index_p].first += G.dist(pair.first, parent[pair.first]) - G.dist(u, pair.first);
-                            parent[pair.first] = u, key[pair.first] = G.dist(u, pair.first);
+                            sub_trees[index_p].first += G.distw(pair.first, parent[pair.first]) - G.distw(u, pair.first);
+                            parent[pair.first] = u, key[pair.first] = G.distw(u, pair.first);
                         }
                     }
                     else
                     {
-                        if (sub_trees[index].first - G.dist(u, pair.first) >= 0)
+                        if (sub_trees[index].first - G.distw(u, pair.first) >= 0)
                         {
-                            sub_trees[index_p].first += G.dist(pair.first, parent[pair.first]);
+                            sub_trees[index_p].first += G.distw(pair.first, parent[pair.first]);
                             sub_trees[index_p].second.erase(pair.first);
-                            sub_trees[index].first -= G.dist(u, pair.first);
+                            sub_trees[index].first -= G.distw(u, pair.first);
                             sub_trees[index].second.insert(pair.first);
-                            parent[pair.first] = u, key[pair.first] = G.dist(u, pair.first);
+                            parent[pair.first] = u, key[pair.first] = G.distw(u, pair.first);
                         }
                     }
                 }
                 else
                 {
-                    if (sub_trees[index].first - G.dist(u, pair.first) >= 0)
+                    if (sub_trees[index].first - G.distw(u, pair.first) >= 0)
                     {
-                        sub_trees[index].first -= G.dist(u, pair.first);
+                        sub_trees[index].first -= G.distw(u, pair.first);
                         sub_trees[index].second.insert(pair.first);
-                        parent[pair.first] = u, key[pair.first] = G.dist(u, pair.first);
+                        parent[pair.first] = u, key[pair.first] = G.distw(u, pair.first);
                     }
                 }
 
-                // if (sub_trees[index].first - G.dist(u, pair.first) >= 0)
+                // if (sub_trees[index].first - G.distw(u, pair.first) >= 0)
                 // {
                 //     if (parent[pair.first] != -1)
                 //     {
                 //         int index_p = find_in_subtree(sub_trees, pair.first);
-                //         sub_trees[index_p].first += G.dist(pair.first, parent[pair.first]);
+                //         sub_trees[index_p].first += G.distw(pair.first, parent[pair.first]);
                 //         sub_trees[index_p].second.erase(pair.first);
                 //     }
-                //     sub_trees[index].first -= G.dist(u, pair.first);
+                //     sub_trees[index].first -= G.distw(u, pair.first);
                 //     sub_trees[index].second.insert(pair.first);
-                //     parent[pair.first] = u, key[pair.first] = G.dist(u, pair.first);
+                //     parent[pair.first] = u, key[pair.first] = G.distw(u, pair.first);
                 // }
             }
         }
@@ -200,7 +200,7 @@ std::vector<int> algo::metric_k_center(graph G, int k)
             for (size_t j = 0; j < sol.size(); j++)
             {
                 if (i != sol[j])
-                    min_dist = std::min(min_dist, G.dist(i, sol[j]));
+                    min_dist = std::min(min_dist, G.distw(i, sol[j]));
             }
             temp[i] = min_dist;
         }
@@ -248,7 +248,7 @@ std::vector<int> algo::metric_k_center(graph G, int k)
 //             for (size_t j = 0; j < sol.size(); j++)
 //             {
 //                 if (graph_vertices[i] != graph_vertices[sol[j]])
-//                     min_dist = std::min(min_dist, G.dist(graph_vertices[i], graph_vertices[sol[j]]));
+//                     min_dist = std::min(min_dist, G.distw(graph_vertices[i], graph_vertices[sol[j]]));
 //             }
 //             temp[graph_vertices[i]] = min_dist;
 //         }
@@ -285,13 +285,13 @@ void algo::DFSUtil(graph G, int v, std::map<int, int> tree, std::map<int, bool> 
 
     if (sol.size() > 0)
     {
-        // std::cerr << " " << sol[sol.size() - 1] << " " << G.dist(sol[sol.size() - 1], v) << " " << G.dist(v, 0) << " " << budget << std::endl;
+        //std::cerr << " " << sol[sol.size() - 1] << " " << G.distw(sol[sol.size() - 1], v) << " " << G.distw(v, 0) << " " << budget << std::endl;
 
-        if (cost_cycle + G.dist(sol[sol.size() - 1], v) + G.dist(v, 0) > budget)
+        if (cost_cycle + G.distw(sol[sol.size() - 1], v) + G.distw(v, 0) > budget)
             return;
-        cost_cycle += G.dist(sol[sol.size() - 1], v);
+        cost_cycle += G.distw(sol[sol.size() - 1], v);
 
-        // std::cerr << " " << cost_cycle << std::endl;
+        //std::cerr << " " << cost_cycle << std::endl;
     }
     sol.push_back(v);
     visited[v] = true;
@@ -317,10 +317,14 @@ std::vector<int> algo::find_TSP(graph G, double budget, int start, std::map<int,
     double cost_cycle = 0;
     if (start != 0)
     {
-        cost_cycle += G.dist(0, start);
+        cost_cycle += G.distw(0, start);
         visited[0] = true;
     }
     // std::cout << "TSP-i-cost: " << cost_cycle << "\n";
     DFSUtil(G, start, tree, visited, sol, cost_cycle, budget);
+
+    // std::cout << "tree: "; print::print_map_int_int(tree);
+    // std::cout << "sol find_TSP: "; print::print_vector_int(sol);
+
     return sol;
 }

@@ -45,12 +45,16 @@ public:
     std::vector<int> get_vertices();
     std::unordered_set<int> get_vertices_set();
 
+    double dist(int u, int v, int with_weight);
     double dist(int u, int v);
-    void print_graph();
+    double distw(int u, int v);
+
+    int read_graph_from_file(std::string file);
+
     void create_random_graph(int number_of_nodes, double max_weight, int max_priority);
+    void create_random_graph(int number_of_nodes, double max_weight, int max_priority, long seed);
     int add_node(int id, double _x, double _y, double _node_weight, int _priority);
     int add_node(double _x, double _y, double _node_weight, int _priority);
-    int read_graph_from_file(std::string file);
     void erase_graph();
 };
 
