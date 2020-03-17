@@ -74,11 +74,10 @@ int simulator::check_solution_feasible(std::vector<std::vector<std::vector<std::
 
 double simulator::objective_function_weighted_latency(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
 {
-
-    std::vector<int> graph_vertices = G.get_vertices();
-
     if (not check_solution_feasible(sol))
         return -1;
+
+    std::vector<int> graph_vertices = G.get_vertices();
 
     std::map<int, double> _temp_nodes;
     for (size_t i = 0; i < graph_vertices.size(); i++)
@@ -114,6 +113,25 @@ double simulator::objective_function_weighted_latency(std::vector<std::vector<st
         }
     }
     return val_sol;
+}
+
+double simulator::objective_function_completion_time(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
+{
+    if (not check_solution_feasible(sol))
+        return -1;
+
+    double value_fun = 0;
+    for (size_t drone = 0; drone < sol.size(); drone++)
+    {
+        double _temp = 0;
+        for (size_t cycle = 0; cycle < sol[drone].size(); cycle++)
+        {
+            _temp += utilities::cost_budget_sequence(G, sol[drone][cycle]);
+        }
+        if (_temp > value_fun)
+            value_fun = _temp;
+    }
+    return value_fun;
 }
 
 double simulator::objective_function_cycle(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
@@ -169,13 +187,14 @@ double simulator::evaluate_solution(int which, std::vector<std::vector<std::vect
 {
     double val_sol = -1;
     if (which == 0)
-    {
         val_sol = objective_function_cycle(sol);
-    }
+
     if (which == 1)
-    {
         val_sol = objective_function_weighted_latency(sol);
-    }
+
+    if (which == 2)
+        val_sol = objective_function_completion_time(sol);
+
     return val_sol;
 }
 
@@ -208,4 +227,68 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::greedy_
 {
     greedy p = greedy(G, this->n_drones, this->n_drones /* batteries */, this->budget);
     return p.greedy_algorithm();
+}
+
+std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::top_plus_prim()
+{
+    std::unordered_set<int> graph_vertices = this->G.get_vertices_set();
+    graph_vertices.erase(graph_vertices.find(0));
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol;
+    for (size_t i = 0; i < this->n_drones; i++)
+        sol.push_back(std::vector<std::vector<std::pair<int, double>>>());
+
+    topb p = topb(G, this->n_drones, this->n_drones /* batteries */, this->budget);
+    int current_drone = 0;
+
+    for (size_t dr = 0; dr < this->n_drones; dr++)
+    {
+        std::unordered_set<int> cycle_set = p.op_path_BB_insert_step(graph_vertices, {0});
+
+        // print::print_set(cycle_set);
+
+        std::vector<int> cycle_tsp = utilities::set_to_tsp(this->G, this->budget, cycle_set);
+
+        // print::print_vector_int(cycle_tsp);
+
+        if (cycle_tsp.size() != 1)
+        {
+
+            std::vector<std::pair<int, double>> _temp;
+            for (size_t j = 0; j < cycle_tsp.size(); j++)
+            {
+                _temp.push_back(std::make_pair(cycle_tsp[j], 1));
+            }
+            _temp.push_back(std::make_pair(0, 1));
+            sol[current_drone].push_back(_temp);
+
+            graph_vertices = utilities::set_difference(graph_vertices, cycle_tsp);
+
+            current_drone = (current_drone + 1) % this->n_drones;
+        }
+    }
+
+    // print::print_solution(sol);
+
+    graph G_temp = graph(this->G.get_area_x(), this->G.get_area_y());
+    for (auto &v : graph_vertices)
+    {
+        G_temp.add_node(v, this->G.get_coord_x(v), this->G.get_coord_y(v), this->G.get_weight_node(v), this->G.get_priority_node(v));
+    }
+
+    primb pr = primb(G_temp, this->n_drones, this->n_drones /* batteries */, this->budget);
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_prim_temp = pr.prim_based_alg();
+
+    // print::print_solution(sol_prim_temp);
+
+    for (size_t i = 0; i < this->n_drones; ++i)
+    {
+        for (size_t j = 0; j < sol_prim_temp[i].size(); ++j)
+        {
+            sol[i].push_back(sol_prim_temp[i][j]);
+        }
+    }
+
+    // print::print_solution(sol);
+
+    return sol;
 }

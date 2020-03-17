@@ -19,8 +19,6 @@ This file should remain empty otherwise
 
 # TO_DO
 Algorithms:
-- alg: KIM
-- alg: top primo step + primbased resto
 - alg nel secondo scenario:
 -- inserire step quando si è scelto ciclo per ogni drone
 -- aggiornare grafi (i.e., non eliminare tutti i nodi) eliminando solo quelli effettivamente visitati e/o porzioni
@@ -33,7 +31,5 @@ Features:
 To-Fix / Important:
 - dividere due pesi (secondo peso con probabilità)
 - porzioni di nodi
-- fun: obj func completion time
-- ricontrollare costi funzioni obiettivo!!!
 
 Examples:

@@ -528,6 +528,8 @@ bool test::check_prim_based_alg()
 
     sol = sim.prim_based_alg();
 
+    print::print_solution(sol);
+
     if (sol.size() == n_drones and sol[0].size() == 3)
     {
         budget = 3.2;

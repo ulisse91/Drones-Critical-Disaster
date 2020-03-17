@@ -75,7 +75,7 @@ input userinput::read_user_input(int argc, char **argv)
     }
     else
     {
-        std::cout << "Seed: default" << std::endl;
+        std::cout << "Seed: 0 (default value)" << std::endl;
     }
     std::cout << std::endl;
 

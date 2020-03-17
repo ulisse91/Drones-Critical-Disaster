@@ -170,7 +170,9 @@ std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double 
 
 std::vector<int> algo::metric_k_center(graph G, int k)
 {
-    if (k == 1)
+    if (k == 0)
+        return {};
+    if (k == 1 or G.get_n_nodes() == 1)
         return {0};
 
     std::vector<int> sol;

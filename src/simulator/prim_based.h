@@ -26,6 +26,8 @@ private:
         priority_med = 2,
         priority_min = 1;
 
+    void clean_sol(std::vector<std::vector<int>> &_temp);
+
 public:
     primb(graph _G, int _n_drones, int _n_batteries, double _budget);
     ~primb();

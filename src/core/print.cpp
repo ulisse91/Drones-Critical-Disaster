@@ -40,46 +40,38 @@ void print::print_e_solution(graph G, std::vector<std::vector<std::vector<std::p
 
 void print::print_cycle_sol(std::vector<std::pair<int, double>> _cycle)
 {
-    for (size_t k = 0; k < _cycle.size(); k++)
+    if (_cycle.size() > 1)
     {
-        std::cout << _cycle[k].first << " ";
+        for (auto &v : _cycle)
+            std::cout << v.first << " ";
+        std::cout << std::endl;
     }
-    std::cout << std::endl;
 }
 
 void print::print_set(std::unordered_set<int> _set)
 {
     for (auto &i : _set)
-    {
         std::cout << i << " ";
-    }
     std::cout << std::endl;
 }
 
 void print::print_vector_int(std::vector<int> _vec)
 {
-    for (size_t i = 0; i < _vec.size(); i++)
-    {
-        std::cout << _vec[i] << " ";
-    }
+    for (auto &v : _vec)
+        std::cout << v << " ";
     std::cout << std::endl;
 }
 
 void print::print_map_int_int(std::map<int, int> _map)
 {
     for (auto elem : _map)
-    {
         std::cout << elem.first << " : " << elem.second << std::endl;
-    }
 }
 
 void print::print_graph(graph G)
 {
     std::cout << "***** GRAPH *****" << std::endl;
-
     for (auto const &v : G.get_vertices())
-    {
         std::cout << v << ": (" << G.get_coord_x(v) << ", " << G.get_coord_y(v) << ") p:" << G.get_priority_node(v) << " w:" << G.get_weight_node(v) << std::endl;
-    }
     std::cout << "*****************" << std::endl;
 }

@@ -34,6 +34,7 @@
 # Generated files
 build/
 tests/build/
+src/build/
 examples/build/
 
 # Visual Studio Code

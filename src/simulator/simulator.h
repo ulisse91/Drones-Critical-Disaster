@@ -31,8 +31,7 @@ private:
 
     double objective_function_cycle(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     double objective_function_weighted_latency(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
-
-    std::map<int, int> extract_sub_tree(std::map<int, int>, int start);
+    double objective_function_completion_time(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
 
 public:
     simulator(graph _G, int _n_drones, int _n_batteries, double _budget);
@@ -46,6 +45,7 @@ public:
     std::vector<std::vector<std::vector<std::pair<int, double>>>> prim_based_alg();
     std::vector<std::vector<std::vector<std::pair<int, double>>>> top_based_alg();
     std::vector<std::vector<std::vector<std::pair<int, double>>>> greedy_based_alg();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> top_plus_prim();
 };
 
 #endif // SIMULATOR_H
