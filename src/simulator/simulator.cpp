@@ -200,14 +200,9 @@ double simulator::evaluate_solution(int which, std::vector<std::vector<std::vect
 
 bool simulator::check_feasibility()
 {
-    std::vector<int> graph_vertices = this->G.get_vertices();
-    for (int i = 0; i < graph_vertices.size(); i++)
-    {
-        if (2 * G.distw(0, graph_vertices[i]) > this->budget)
-        {
+    for (auto &v : this->G.get_vertices())
+        if (2 * G.distw(0, v) > this->budget)
             return false;
-        }
-    }
     return true;
 }
 

@@ -29,7 +29,7 @@ std::vector<int> greedy::greedy_find_path(std::unordered_set<int> graph_vertices
         residual_budget -= G.distw(last_step, next_step);
         last_step = next_step;
         next_step = -1;
-        double min_dist = G.get_area_x() + G.get_area_y();
+        double min_dist = G.get_n_nodes() * (G.get_area_x() + G.get_area_y());
 
         for (auto &i : graph_vertices)
         {

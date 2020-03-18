@@ -51,7 +51,7 @@ std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double 
 
     for (int i = 0; i < id_vertices.size(); i++)
     {
-        key[id_vertices[i]] = G.get_area_x() + G.get_area_y();
+        key[id_vertices[i]] = G.get_n_nodes() * (G.get_area_x() + G.get_area_y());
         mstSet[id_vertices[i]] = false;
         parent[id_vertices[i]] = -1;
     }
@@ -80,7 +80,7 @@ std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double 
 
     for (size_t i = 0; i < G.get_n_nodes(); i++)
     {
-        int u = minKey_index(key, mstSet, G.get_area_x() + G.get_area_y(), G.get_n_nodes());
+        int u = minKey_index(key, mstSet, G.get_n_nodes() * (G.get_area_x() + G.get_area_y()), G.get_n_nodes());
         if (u == -1)
         {
             break;
@@ -198,7 +198,7 @@ std::vector<int> algo::metric_k_center(graph G, int k)
         std::map<int, double> temp;
         for (auto &i : graph_vertices)
         {
-            double min_dist = G.get_area_x() + G.get_area_y();
+            double min_dist = G.get_n_nodes() * (G.get_area_x() + G.get_area_y());
             for (size_t j = 0; j < sol.size(); j++)
             {
                 if (i != sol[j])
@@ -308,6 +308,8 @@ void algo::DFSUtil(graph G, int v, std::map<int, int> tree, std::map<int, bool> 
 
 std::vector<int> algo::find_TSP(graph G, double budget, int start, std::map<int, int> tree)
 {
+    // std::cout << "tree: "; print::print_map_int_int(tree);
+
     std::vector<int> sol;
     std::map<int, bool> visited;
     for (auto const &pair : tree)
@@ -325,7 +327,6 @@ std::vector<int> algo::find_TSP(graph G, double budget, int start, std::map<int,
     // std::cout << "TSP-i-cost: " << cost_cycle << "\n";
     DFSUtil(G, start, tree, visited, sol, cost_cycle, budget);
 
-    // std::cout << "tree: "; print::print_map_int_int(tree);
     // std::cout << "sol find_TSP: "; print::print_vector_int(sol);
 
     return sol;
