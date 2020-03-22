@@ -49,20 +49,35 @@ std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double 
     std::map<int, std::pair<double, std::unordered_set<int>>> sub_trees;
     std::vector<int> id_vertices = G.get_vertices();
 
-    for (int i = 0; i < id_vertices.size(); i++)
+    double _max = G.get_n_nodes() * (G.get_area_x() + G.get_area_y());
+
+    // for (int i = 0; i < id_vertices.size(); i++)
+    // {
+    //     key[id_vertices[i]] = _max;
+    //     mstSet[id_vertices[i]] = false;
+    //     parent[id_vertices[i]] = -1;
+    // }
+    for (auto const &i : id_vertices)
     {
-        key[id_vertices[i]] = G.get_n_nodes() * (G.get_area_x() + G.get_area_y());
-        mstSet[id_vertices[i]] = false;
-        parent[id_vertices[i]] = -1;
+        key[i] = _max;
+        mstSet[i] = false;
+        parent[i] = -1;
     }
 
     //////////////////////////////////////////////
-    for (size_t i = 0; i < forced_nodes.size(); i++)
+    // for (size_t i = 0; i < forced_nodes.size(); i++)
+    // {
+    //     parent[forced_nodes[i]] = 0;
+    //     key[forced_nodes[i]] = G.distw(0, forced_nodes[i]);
+    //     std::unordered_set<int> myset = {forced_nodes[i]};
+    //     sub_trees[forced_nodes[i]] = std::make_pair(budget - key[forced_nodes[i]], myset);
+    // }
+    for (auto const &i : forced_nodes)
     {
-        parent[forced_nodes[i]] = 0;
-        key[forced_nodes[i]] = G.distw(0, forced_nodes[i]);
-        std::unordered_set<int> myset = {forced_nodes[i]};
-        sub_trees[forced_nodes[i]] = std::make_pair(budget - key[forced_nodes[i]], myset);
+        parent[i] = 0;
+        key[i] = G.distw(0, i);
+        std::unordered_set<int> myset = {i};
+        sub_trees[i] = std::make_pair(budget - key[i], myset);
     }
     parent[0] = -1;
     mstSet[0] = forced_nodes.size() > 1 ? true : false;
@@ -78,9 +93,9 @@ std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double 
 
     ////////////////////////////////////////////
 
-    for (size_t i = 0; i < G.get_n_nodes(); i++)
+    for (size_t j = 0; j < G.get_n_nodes(); j++)
     {
-        int u = minKey_index(key, mstSet, G.get_n_nodes() * (G.get_area_x() + G.get_area_y()), G.get_n_nodes());
+        int u = minKey_index(key, mstSet, _max, G.get_n_nodes());
         if (u == -1)
         {
             break;
@@ -182,7 +197,7 @@ std::vector<int> algo::metric_k_center(graph G, int k)
     /* initialize random seed: */
     srand(time(NULL));
     int _n = rand() % (G.get_n_nodes() - 1) + 1, counter = 0;
-    for (auto &i : graph_vertices)
+    for (auto const &i : graph_vertices)
     {
         if (_n == counter)
         {
@@ -196,7 +211,7 @@ std::vector<int> algo::metric_k_center(graph G, int k)
     while (sol.size() < k and graph_vertices.size() > 0)
     {
         std::map<int, double> temp;
-        for (auto &i : graph_vertices)
+        for (auto const &i : graph_vertices)
         {
             double min_dist = G.get_n_nodes() * (G.get_area_x() + G.get_area_y());
             for (size_t j = 0; j < sol.size(); j++)
@@ -208,7 +223,7 @@ std::vector<int> algo::metric_k_center(graph G, int k)
         }
         double max_dist = -1;
         int new_center = -1;
-        for (auto &i : temp)
+        for (auto const &i : temp)
         {
             if (i.second > max_dist)
             {

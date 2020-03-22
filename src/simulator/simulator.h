@@ -44,7 +44,7 @@ public:
     // algorithms
     std::vector<std::vector<std::vector<std::pair<int, double>>>> prim_based_alg();
     std::vector<std::vector<std::vector<std::pair<int, double>>>> top_based_alg();
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> greedy_based_alg();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> greedy_based_alg(bool max);
     std::vector<std::vector<std::vector<std::pair<int, double>>>> top_plus_prim();
 };
 

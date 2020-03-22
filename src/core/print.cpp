@@ -75,3 +75,13 @@ void print::print_graph(graph G)
         std::cout << v << ": (" << G.get_coord_x(v) << ", " << G.get_coord_y(v) << ") p:" << G.get_priority_node(v) << " w:" << G.get_weight_node(v) << std::endl;
     std::cout << "*****************" << std::endl;
 }
+
+void print::print_graph_to_file(graph G, std::string path)
+{
+    std::ofstream myfile;
+    myfile.open(path);
+
+    for (auto const &v : G.get_vertices())
+        myfile << G.get_coord_x(v) << ", " << G.get_coord_y(v) << ", " << G.get_priority_node(v) << ", " << G.get_weight_node(v) << std::endl;
+    myfile.close();
+}

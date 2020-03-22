@@ -2,11 +2,18 @@
 
 std::unordered_set<int> utilities::set_difference(std::unordered_set<int> main, std::vector<int> minus)
 {
-    for (int i = 0; i < minus.size(); i++)
+    // for (int i = 0; i < minus.size(); i++)
+    // {
+    //     if (main.find(minus[i]) != main.end())
+    //     {
+    //         main.erase(main.find(minus[i]));
+    //     }
+    // }
+    for (auto const &i : minus)
     {
-        if (main.find(minus[i]) != main.end())
+        if (main.find(i) != main.end())
         {
-            main.erase(main.find(minus[i]));
+            main.erase(main.find(i));
         }
     }
     return main;

@@ -17,10 +17,7 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> primb::prim_based_
 {
     std::unordered_set<int> graph_vertices = this->G.get_vertices_set();
     graph_vertices.erase(graph_vertices.find(0));
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol;
-
-    for (size_t i = 0; i < this->n_drones; i++)
-        sol.push_back(std::vector<std::vector<std::pair<int, double>>>());
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol(this->n_drones, std::vector<std::vector<std::pair<int, double>>>());
 
     //////////////////////////////////////////////////////////////////////////////
 
@@ -38,7 +35,7 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> primb::prim_based_
         std::vector<int> centers_g_2;
         std::vector<int> centers_g_1;
 
-        for (auto &i : graph_vertices)
+        for (auto const &i : graph_vertices)
         {
             if (this->G.get_priority_node(i) == priority_max)
             {
@@ -56,11 +53,11 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> primb::prim_based_
 
         // print::print_graph(G_3);
 
-        std::vector<std::vector<int>> curr_sol;
-        for (size_t dr = 0; dr < this->n_drones; ++dr)
-        {
-            curr_sol.push_back({0});
-        }
+        std::vector<std::vector<int>> curr_sol(this->n_drones, {0});
+        // for (size_t dr = 0; dr < this->n_drones; ++dr)
+        // {
+        //     curr_sol.push_back({0});
+        // }
 
         if (G_3.get_n_nodes() > 1)
         {
@@ -92,7 +89,7 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> primb::prim_based_
                 graph_vertices = utilities::set_difference(graph_vertices, tsp_i);
             }
 
-            for (auto &v : centers_g_2)
+            for (auto const &v : centers_g_2)
             {
                 G_2.add_node(v, this->G.get_coord_x(v), this->G.get_coord_y(v), this->G.get_weight_node(v), this->G.get_priority_node(v));
             }
@@ -135,7 +132,7 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> primb::prim_based_
 
             clean_sol(curr_sol);
 
-            for (auto &v : centers_g_1)
+            for (auto const &v : centers_g_1)
             {
                 G_1.add_node(v, this->G.get_coord_x(v), this->G.get_coord_y(v), this->G.get_weight_node(v), this->G.get_priority_node(v));
             }

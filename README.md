@@ -20,13 +20,13 @@ This file should remain empty otherwise
 # TO_DO
 Algorithms:
 - alg nel secondo scenario:
--- inserire step quando si è scelto ciclo per ogni drone
--- aggiornare grafi (i.e., non eliminare tutti i nodi) eliminando solo quelli effettivamente visitati e/o porzioni
+- fun: aggiornare grafi (i.e., non eliminare tutti i nodi) eliminando solo quelli effettivamente visitati e/o porzioni
+-- creare una funzione che controlla quanto ciclo riesci a fare effettivamente e aggiorna grafo (e ciclo effettivo di conseguenza)
 
 Features:
-- fun: print graph to file
 - fun: print solution in file
 - fun: read solution from file
+- obj functions values without partial nodes 
 
 To-Fix / Important:
 - dividere due pesi (secondo peso con probabilità)

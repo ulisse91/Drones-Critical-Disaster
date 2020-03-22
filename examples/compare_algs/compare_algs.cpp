@@ -1,5 +1,5 @@
 #include <assert.h>
-#include <chrono> 
+#include <chrono>
 
 #include "../../src/core/user_input.h"
 #include "../../src/simulator/simulator.h"
@@ -31,14 +31,23 @@ int main(int argc, char **argv)
               << std::endl;
     assert(sim.check_solution_feasible(sol_top) == 1);
 
-    auto start_g = std::chrono::high_resolution_clock::now();
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_greedy = sim.greedy_based_alg();
-    auto stop_g = std::chrono::high_resolution_clock::now();
-    std::cout << "GREEDY ALGORITHM" << std::endl;
-    print::print_e_solution(G, sol_greedy);
-    std::cout << "fun_cycle: " << sim.evaluate_solution(0, sol_greedy) << " func_weighted_latency: " << sim.evaluate_solution(1, sol_greedy) << " func_completion_time: " << sim.evaluate_solution(2, sol_greedy) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_g - start_g).count() << std::endl
+    auto start_gmax = std::chrono::high_resolution_clock::now();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_greedy_max = sim.greedy_based_alg(true);
+    auto stop_gmax = std::chrono::high_resolution_clock::now();
+    std::cout << "GREEDY-MAX ALGORITHM" << std::endl;
+    print::print_e_solution(G, sol_greedy_max);
+    std::cout << "fun_cycle: " << sim.evaluate_solution(0, sol_greedy_max) << " func_weighted_latency: " << sim.evaluate_solution(1, sol_greedy_max) << " func_completion_time: " << sim.evaluate_solution(2, sol_greedy_max) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_gmax - start_gmax).count() << std::endl
               << std::endl;
-    assert(sim.check_solution_feasible(sol_greedy) == 1);
+    assert(sim.check_solution_feasible(sol_greedy_max) == 1);
+
+    auto start_gmin = std::chrono::high_resolution_clock::now();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_greedy_min = sim.greedy_based_alg(false);
+    auto stop_gmin = std::chrono::high_resolution_clock::now();
+    std::cout << "GREEDY-MIN ALGORITHM" << std::endl;
+    print::print_e_solution(G, sol_greedy_min);
+    std::cout << "fun_cycle: " << sim.evaluate_solution(0, sol_greedy_min) << " func_weighted_latency: " << sim.evaluate_solution(1, sol_greedy_min) << " func_completion_time: " << sim.evaluate_solution(2, sol_greedy_min) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_gmin - start_gmin).count() << std::endl
+              << std::endl;
+    assert(sim.check_solution_feasible(sol_greedy_min) == 1);
 
     auto start_p = std::chrono::high_resolution_clock::now();
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_prim = sim.prim_based_alg();

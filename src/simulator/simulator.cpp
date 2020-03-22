@@ -218,10 +218,10 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::top_bas
     return p.top_path_BB();
 }
 
-std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::greedy_based_alg()
+std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::greedy_based_alg(bool max)
 {
     greedy p = greedy(G, this->n_drones, this->n_drones /* batteries */, this->budget);
-    return p.greedy_algorithm();
+    return p.greedy_algorithm(max);
 }
 
 std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::top_plus_prim()

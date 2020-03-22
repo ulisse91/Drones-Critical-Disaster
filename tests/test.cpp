@@ -503,11 +503,11 @@ bool test::check_greedy_algorithm()
     double budget = 3.2;
     int n_drones = 1;
     simulator sim = simulator(G, n_drones, n_drones, budget);
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.greedy_based_alg();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.greedy_based_alg(true);
 
     if (sol.size() == n_drones and sol[0].size() == 2 and
-        sol[0][0][0].first == 0 and sol[0][0][1].first == 2 and sol[0][0][2].first == 4 and sol[0][0][3].first == 0 and
-        sol[0][1][0].first == 0 and sol[0][1][1].first == 3 and sol[0][1][2].first == 1 and sol[0][0][3].first == 0)
+        sol[0][0][0].first == 0 and sol[0][0][1].first == 4 and sol[0][0][2].first == 3 and sol[0][0][3].first == 1 and sol[0][0][4].first == 0 and
+        sol[0][1][0].first == 0 and sol[0][1][1].first == 2 and sol[0][1][2].first == 0)
     {
         std::cout << "check_greedy_algorithm [OK]" << std::endl;
         return true;
@@ -527,8 +527,6 @@ bool test::check_prim_based_alg()
     simulator sim = simulator(G, n_drones, n_drones, budget);
 
     sol = sim.prim_based_alg();
-
-    print::print_solution(sol);
 
     if (sol.size() == n_drones and sol[0].size() == 3)
     {

@@ -13,7 +13,7 @@ greedy::greedy(graph _G, int _n_drones, int _n_batteries, double _budget)
 
 greedy::~greedy() {}
 
-std::vector<int> greedy::greedy_find_path(std::unordered_set<int> graph_vertices)
+std::vector<int> greedy::greedy_find_path(std::unordered_set<int> graph_vertices, bool max)
 {
     std::vector<int> cycle;
 
@@ -29,16 +29,16 @@ std::vector<int> greedy::greedy_find_path(std::unordered_set<int> graph_vertices
         residual_budget -= G.distw(last_step, next_step);
         last_step = next_step;
         next_step = -1;
-        double min_dist = G.get_n_nodes() * (G.get_area_x() + G.get_area_y());
+        double min_dist = max ? 0 : G.get_n_nodes() * (G.get_area_x() + G.get_area_y());
 
-        for (auto &i : graph_vertices)
+        for (auto const &i : graph_vertices)
         {
             if (last_step == i)
                 continue;
 
-            if (G.get_priority_node(i) / G.distw(last_step, i) < min_dist and G.distw(last_step, i) + G.distw(0, i) < residual_budget)
+            if (((max and G.get_priority_node(i) / G.distw(last_step, i) > min_dist) or (not max and G.get_priority_node(i) / G.distw(last_step, i) < min_dist)) and G.distw(last_step, i) + G.distw(0, i) < residual_budget)
             {
-                min_dist = G.get_priority_node(i) / G.distw(0, i);
+                min_dist = G.get_priority_node(i) / G.distw(last_step, i);
                 next_step = i;
             }
         }
@@ -46,13 +46,10 @@ std::vector<int> greedy::greedy_find_path(std::unordered_set<int> graph_vertices
     return cycle;
 }
 
-std::vector<std::vector<std::vector<std::pair<int, double>>>> greedy::greedy_algorithm()
+std::vector<std::vector<std::vector<std::pair<int, double>>>> greedy::greedy_algorithm(bool max)
 {
     std::unordered_set<int> graph_vertices = this->G.get_vertices_set();
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol;
-
-    for (size_t i = 0; i < this->n_drones; i++)
-        sol.push_back(std::vector<std::vector<std::pair<int, double>>>());
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol(this->n_drones, std::vector<std::vector<std::pair<int, double>>>());
 
     graph_vertices.erase(graph_vertices.find(0));
 
@@ -61,12 +58,12 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> greedy::greedy_alg
 
     while (not graph_vertices.empty() and counter <= G.get_n_nodes())
     {
-        std::vector<int> cycle_tsp = greedy_find_path(graph_vertices);
+        std::vector<int> cycle_tsp = greedy_find_path(graph_vertices, max);
 
         std::vector<std::pair<int, double>> _temp;
-        for (size_t j = 0; j < cycle_tsp.size(); j++)
+        for (auto const &j : cycle_tsp)
         {
-            _temp.push_back(std::make_pair(cycle_tsp[j], 1));
+            _temp.push_back(std::make_pair(j, 1));
         }
         _temp.push_back(std::make_pair(0, 1));
         sol[current_drone].push_back(_temp);

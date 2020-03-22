@@ -16,10 +16,7 @@ topb::~topb() {}
 std::vector<std::vector<std::vector<std::pair<int, double>>>> topb::top_path_BB()
 {
     std::unordered_set<int> graph_vertices = this->G.get_vertices_set();
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol;
-
-    for (size_t i = 0; i < this->n_drones; i++)
-        sol.push_back(std::vector<std::vector<std::pair<int, double>>>());
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol(this->n_drones, std::vector<std::vector<std::pair<int, double>>>());
 
     graph_vertices.erase(graph_vertices.find(0));
 
@@ -94,9 +91,9 @@ double topb::cost_cycle_OP(std::unordered_set<int> _temp)
         return -1;
 
     double sum_of_elems = 0;
-    for (size_t i = 0; i < tsp_temp.size(); i++)
+    for (auto const &i : tsp_temp)
     {
-        sum_of_elems += this->G.get_priority_node(tsp_temp[i]);
+        sum_of_elems += this->G.get_priority_node(i);
     }
 
     return sum_of_elems;

@@ -26,13 +26,13 @@ private:
         priority_med = 2,
         priority_min = 1;
 
-    std::vector<int> greedy_find_path(std::unordered_set<int> graph_vertices);
+    std::vector<int> greedy_find_path(std::unordered_set<int> graph_vertices, bool max);
 
 public:
     greedy(graph _G, int _n_drones, int _n_batteries, double _budget);
     ~greedy();
 
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> greedy_algorithm();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> greedy_algorithm(bool max);
 };
 
 #endif // GREEDY_H
