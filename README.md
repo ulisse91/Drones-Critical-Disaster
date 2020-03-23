@@ -21,15 +21,13 @@ This file should remain empty otherwise
 Algorithms:
 - alg nel secondo scenario:
 - fun: aggiornare grafi (i.e., non eliminare tutti i nodi) eliminando solo quelli effettivamente visitati e/o porzioni
--- creare una funzione che controlla quanto ciclo riesci a fare effettivamente e aggiorna grafo (e ciclo effettivo di conseguenza)
 
 Features:
 - fun: print solution in file
 - fun: read solution from file
-- obj functions values without partial nodes 
+- obj functions values without partial nodes considering that sigma is on the edges and sigma prime check the pair
 
 To-Fix / Important:
-- dividere due pesi (secondo peso con probabilità)
 - porzioni di nodi
 
 Examples:

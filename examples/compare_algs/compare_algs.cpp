@@ -18,7 +18,7 @@ int main(int argc, char **argv)
 
     print::print_graph(G);
 
-    simulator sim = simulator(G, n_input.n_drones, n_input.n_drones /* batteries */, n_input.budget);
+    simulator sim = simulator(G, n_input.n_drones, n_input.n_drones /* batteries */, n_input.budget, n_input.seed);
 
     assert(sim.check_feasibility());
 

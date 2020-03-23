@@ -14,8 +14,9 @@ struct node
     int id;
     double x, y;
     double node_weight;
+    double node_sigma_prime;
     int priority;
-    node(int _id, double _x, double _y, double _node_weight, int _priority) : id(_id), x(_x), y(_y), node_weight(_node_weight), priority(_priority) {}
+    node(int _id, double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime) : id(_id), x(_x), y(_y), node_weight(_node_weight), priority(_priority), node_sigma_prime(_node_sigma_prime) {}
     node() = default;
 };
 
@@ -39,6 +40,7 @@ public:
     int get_area_y();
     int get_n_nodes();
     double get_weight_node(int id);
+    double get_weight_prime_node(int id);
     int get_priority_node(int id);
     double get_coord_x(int id);
     double get_coord_y(int id);
@@ -53,8 +55,8 @@ public:
 
     void create_random_graph(int number_of_nodes, double max_weight, int max_priority);
     void create_random_graph(int number_of_nodes, double max_weight, int max_priority, long seed);
-    int add_node(int id, double _x, double _y, double _node_weight, int _priority);
-    int add_node(double _x, double _y, double _node_weight, int _priority);
+    int add_node(int id, double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime);
+    int add_node(double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime);
     void erase_graph();
 };
 

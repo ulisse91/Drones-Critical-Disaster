@@ -15,7 +15,7 @@ int main(int argc, char **argv)
     graph G = graph(2, 1);
     G.read_graph_from_file(n_input.graph_file);
 
-    simulator sim = simulator(G, n_input.n_drones, n_input.n_drones /* batteries */, n_input.budget);
+    simulator sim = simulator(G, n_input.n_drones, n_input.n_drones /* batteries */, n_input.budget, n_input.seed);
     assert(sim.check_feasibility());
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.top_based_alg();
 

@@ -6,7 +6,7 @@ graph::graph(int _area_x, int _area_y)
     this->area_y = _area_y;
 
     // DEPOT: must have priority and weight == 0 (we use this in the code)
-    this->vertices[0] = node(0, 0, 0, 0, 0); // v_0 = depot
+    this->vertices[0] = node(0, 0, 0, 0, 0, 0); // v_0 = depot
     this->n_nodes = 1;
 }
 
@@ -39,13 +39,14 @@ void graph::create_random_graph(int number_of_nodes, double max_weight, int max_
         double _y = unif_2(re);
         double _w = unif_3(re);
         int _p = unif_4(re);
+        double _wp = unif_3(re);
 
-        this->add_node(_x, _y, _w, _p);
+        this->add_node(_x, _y, _w, _p, _wp);
     }
     assert(this->vertices.size() == this->n_nodes);
 }
 
-int graph::add_node(int id, double _x, double _y, double _node_weight, int _priority)
+int graph::add_node(int id, double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime)
 {
     if (not check_double_node(_x, _y))
     {
@@ -58,13 +59,13 @@ int graph::add_node(int id, double _x, double _y, double _node_weight, int _prio
         return -2;
     }
 
-    this->vertices[id] = node(id, _x, _y, _node_weight, _priority);
+    this->vertices[id] = node(id, _x, _y, _node_weight, _priority, _node_sigma_prime);
     this->n_nodes++;
 
     return 1;
 }
 
-int graph::add_node(double _x, double _y, double _node_weight, int _priority)
+int graph::add_node(double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime)
 {
     if (not check_double_node(_x, _y))
     {
@@ -77,7 +78,7 @@ int graph::add_node(double _x, double _y, double _node_weight, int _priority)
         return -2;
     }
 
-    this->vertices[this->n_nodes] = node(this->n_nodes, _x, _y, _node_weight, _priority);
+    this->vertices[this->n_nodes] = node(this->n_nodes, _x, _y, _node_weight, _priority, _node_sigma_prime);
     this->n_nodes++;
 
     return 1;
@@ -106,14 +107,15 @@ int graph::read_graph_from_file(std::string file)
 
     if (fin.is_open())
     {
-        std::string _x, _y, _priority, _node_weight;
+        std::string _x, _y, _priority, _node_weight, _node_weight_prime;
         while (fin.good())
         {
             getline(fin, _x, ',');
             getline(fin, _y, ',');
             getline(fin, _priority, ',');
-            getline(fin, _node_weight);
-            add_node(stod(_x), stod(_y), stod(_node_weight), stoi(_priority));
+            getline(fin, _node_weight, ',');
+            getline(fin, _node_weight_prime);
+            add_node(stod(_x), stod(_y), stod(_node_weight), stoi(_priority), stod(_node_weight_prime));
         }
         fin.close();
         return 1;
@@ -125,7 +127,7 @@ void graph::erase_graph()
 {
     this->n_nodes = 1;
     this->vertices = std::map<int, node>();
-    this->vertices[0] = node(0, 0, 0, 0, 0); // v_0 = depot
+    this->vertices[0] = node(0, 0, 0, 0, 0, 0); // v_0 = depot
 }
 
 /////////////////////////////////////////////////
@@ -166,6 +168,11 @@ int graph::get_priority_node(int id)
 double graph::get_weight_node(int id)
 {
     return this->vertices[id].node_weight;
+}
+
+double graph::get_weight_prime_node(int id)
+{
+    return this->vertices[id].node_sigma_prime;
 }
 
 double graph::get_coord_x(int id)

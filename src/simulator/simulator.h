@@ -24,6 +24,8 @@ private:
     int n_drones;
     int n_batteries;
     double budget;
+    double prob_sigma_prime = 0.5;
+    long seed;
 
     int priority_max = 3,
         priority_med = 2,
@@ -34,12 +36,13 @@ private:
     double objective_function_completion_time(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
 
 public:
-    simulator(graph _G, int _n_drones, int _n_batteries, double _budget);
+    simulator(graph _G, int _n_drones, int _n_batteries, double _budget, long seed);
     ~simulator();
 
     int check_solution_feasible(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     double evaluate_solution(int which, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     bool check_feasibility();
+    std::vector<std::pair<int, double>> check_cycle_sigma_prime(std::vector<int> cycle);
 
     // algorithms
     std::vector<std::vector<std::vector<std::pair<int, double>>>> prim_based_alg();

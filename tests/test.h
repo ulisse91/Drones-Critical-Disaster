@@ -49,6 +49,7 @@ public:
     bool check_feasibility();
     bool check_greedy_algorithm();
     bool check_prim_based_alg();
+    bool check_cycle_sigma_prime();
 };
 
 #endif // TEST_H

@@ -39,15 +39,15 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> primb::prim_based_
         {
             if (this->G.get_priority_node(i) == priority_max)
             {
-                G_3.add_node(i, this->G.get_coord_x(i), this->G.get_coord_y(i), this->G.get_weight_node(i), this->G.get_priority_node(i));
+                G_3.add_node(i, this->G.get_coord_x(i), this->G.get_coord_y(i), this->G.get_weight_node(i), this->G.get_priority_node(i), this->G.get_weight_prime_node(i));
             }
             if (this->G.get_priority_node(i) == priority_med)
             {
-                G_2.add_node(i, this->G.get_coord_x(i), this->G.get_coord_y(i), this->G.get_weight_node(i), this->G.get_priority_node(i));
+                G_2.add_node(i, this->G.get_coord_x(i), this->G.get_coord_y(i), this->G.get_weight_node(i), this->G.get_priority_node(i), this->G.get_weight_prime_node(i));
             }
             if (this->G.get_priority_node(i) == priority_min)
             {
-                G_1.add_node(i, this->G.get_coord_x(i), this->G.get_coord_y(i), this->G.get_weight_node(i), this->G.get_priority_node(i));
+                G_1.add_node(i, this->G.get_coord_x(i), this->G.get_coord_y(i), this->G.get_weight_node(i), this->G.get_priority_node(i), this->G.get_weight_prime_node(i));
             }
         }
 
@@ -91,7 +91,7 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> primb::prim_based_
 
             for (auto const &v : centers_g_2)
             {
-                G_2.add_node(v, this->G.get_coord_x(v), this->G.get_coord_y(v), this->G.get_weight_node(v), this->G.get_priority_node(v));
+                G_2.add_node(v, this->G.get_coord_x(v), this->G.get_coord_y(v), this->G.get_weight_node(v), this->G.get_priority_node(v), this->G.get_weight_prime_node(v));
             }
         }
         else
@@ -134,7 +134,7 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> primb::prim_based_
 
             for (auto const &v : centers_g_1)
             {
-                G_1.add_node(v, this->G.get_coord_x(v), this->G.get_coord_y(v), this->G.get_weight_node(v), this->G.get_priority_node(v));
+                G_1.add_node(v, this->G.get_coord_x(v), this->G.get_coord_y(v), this->G.get_weight_node(v), this->G.get_priority_node(v), this->G.get_weight_prime_node(v));
             }
         }
         else

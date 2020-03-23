@@ -1,11 +1,12 @@
 #include "simulator.h"
 
-simulator::simulator(graph _G, int _n_drones, int _n_batteries, double _budget)
+simulator::simulator(graph _G, int _n_drones, int _n_batteries, double _budget, long _seed)
 {
     this->G = _G;
     this->n_drones = _n_drones;
     this->n_batteries = _n_batteries;
     this->budget = _budget;
+    this->seed = _seed;
 
     assert(this->budget > 0);
     assert(this->n_batteries >= this->n_drones);
@@ -206,6 +207,33 @@ bool simulator::check_feasibility()
     return true;
 }
 
+std::vector<std::pair<int, double>> simulator::check_cycle_sigma_prime(std::vector<int> cycle)
+{
+    std::vector<std::pair<int, double>> effective_cycle = {std::make_pair(0, 1)};
+
+    std::uniform_real_distribution<double> unif_1(0, 1);
+    std::mt19937 re(this->seed);
+
+    double cost_cycle = 0;
+    for (size_t v = 0; v < cycle.size() - 1; ++v)
+    {
+
+        double coin = unif_1(re);
+        coin = coin < this->prob_sigma_prime ? 1 : 0;
+        if (cost_cycle + this->G.distw(v, v + 1) + coin * this->G.get_weight_prime_node(v + 1) + this->G.distw(v + 1, 0) < this->budget)
+        {
+            // std::cout << this->G.distw(v, v + 1) << " " << coin << " " << G.get_weight_prime_node(v + 1) << " " << this->G.distw(v + 1, 0) << std::endl;
+            cost_cycle += this->G.distw(v, v + 1) + coin * this->G.get_weight_prime_node(v + 1);
+            effective_cycle.push_back(std::make_pair(v + 1, coin));
+        }
+        else
+        {
+            return effective_cycle;
+        }
+    }
+    return effective_cycle;
+}
+
 std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::prim_based_alg()
 {
     primb p = primb(G, this->n_drones, this->n_drones /* batteries */, this->budget);
@@ -267,7 +295,7 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::top_plu
     graph G_temp = graph(this->G.get_area_x(), this->G.get_area_y());
     for (auto &v : graph_vertices)
     {
-        G_temp.add_node(v, this->G.get_coord_x(v), this->G.get_coord_y(v), this->G.get_weight_node(v), this->G.get_priority_node(v));
+        G_temp.add_node(v, this->G.get_coord_x(v), this->G.get_coord_y(v), this->G.get_weight_node(v), this->G.get_priority_node(v), this->G.get_weight_prime_node(v));
     }
 
     primb pr = primb(G_temp, this->n_drones, this->n_drones /* batteries */, this->budget);

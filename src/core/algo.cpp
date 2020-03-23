@@ -51,12 +51,6 @@ std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double 
 
     double _max = G.get_n_nodes() * (G.get_area_x() + G.get_area_y());
 
-    // for (int i = 0; i < id_vertices.size(); i++)
-    // {
-    //     key[id_vertices[i]] = _max;
-    //     mstSet[id_vertices[i]] = false;
-    //     parent[id_vertices[i]] = -1;
-    // }
     for (auto const &i : id_vertices)
     {
         key[i] = _max;
@@ -64,14 +58,6 @@ std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double 
         parent[i] = -1;
     }
 
-    //////////////////////////////////////////////
-    // for (size_t i = 0; i < forced_nodes.size(); i++)
-    // {
-    //     parent[forced_nodes[i]] = 0;
-    //     key[forced_nodes[i]] = G.distw(0, forced_nodes[i]);
-    //     std::unordered_set<int> myset = {forced_nodes[i]};
-    //     sub_trees[forced_nodes[i]] = std::make_pair(budget - key[forced_nodes[i]], myset);
-    // }
     for (auto const &i : forced_nodes)
     {
         parent[i] = 0;
@@ -155,19 +141,6 @@ std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double 
                         parent[pair.first] = u, key[pair.first] = G.distw(u, pair.first);
                     }
                 }
-
-                // if (sub_trees[index].first - G.distw(u, pair.first) >= 0)
-                // {
-                //     if (parent[pair.first] != -1)
-                //     {
-                //         int index_p = find_in_subtree(sub_trees, pair.first);
-                //         sub_trees[index_p].first += G.distw(pair.first, parent[pair.first]);
-                //         sub_trees[index_p].second.erase(pair.first);
-                //     }
-                //     sub_trees[index].first -= G.distw(u, pair.first);
-                //     sub_trees[index].second.insert(pair.first);
-                //     parent[pair.first] = u, key[pair.first] = G.distw(u, pair.first);
-                // }
             }
         }
     }
@@ -239,67 +212,8 @@ std::vector<int> algo::metric_k_center(graph G, int k)
     return sol;
 }
 
-// std::vector<int> algo::metric_k_center(graph G, int k)
-// {
-//     if (k == 1)
-//         return {0};
-
-//     std::vector<int> sol;
-//     std::vector<int> graph_vertices = G.get_vertices();
-
-//     /* initialize random seed: */
-//     srand(time(NULL));
-//     int _n = rand() % (G.get_n_nodes() - 1) + 1;
-//     sol.push_back(graph_vertices[_n]);
-//     k--;
-
-//     graph_vertices.erase(std::remove(graph_vertices.begin(), graph_vertices.end(), 0), graph_vertices.end());
-//     graph_vertices.erase(std::remove(graph_vertices.begin(), graph_vertices.end(), _n), graph_vertices.end());
-
-//     while (k > 0 and graph_vertices.size() > 0)
-//     {
-//         std::map<int, double> temp;
-//         for (size_t i = 0; i < graph_vertices.size(); i++)
-//         {
-//             double min_dist = G.get_area_x() + G.get_area_y();
-//             for (size_t j = 0; j < sol.size(); j++)
-//             {
-//                 if (graph_vertices[i] != graph_vertices[sol[j]])
-//                     min_dist = std::min(min_dist, G.distw(graph_vertices[i], graph_vertices[sol[j]]));
-//             }
-//             temp[graph_vertices[i]] = min_dist;
-//         }
-
-//         double max_dist = -1;
-//         int new_center = -1;
-//         for (auto &i : temp)
-//         {
-//             if (i.second > max_dist)
-//             {
-//                 max_dist = i.second;
-//                 new_center = i.first;
-//             }
-//         }
-//         if (new_center == -1)
-//             break;
-
-//         sol.push_back(new_center);
-//         graph_vertices.erase(std::remove(graph_vertices.begin(), graph_vertices.end(), new_center), graph_vertices.end());
-//         k--;
-//     }
-
-//     return sol;
-// }
-
 void algo::DFSUtil(graph G, int v, std::map<int, int> tree, std::map<int, bool> visited, std::vector<int> &sol, double &cost_cycle, double budget)
 {
-    // std::cerr << v << " sol: ";
-    // for (size_t i = 0; i < sol.size(); i++)
-    // {
-    //     std::cerr << sol[i] << " ";
-    // }
-    // std::cerr << " | c: " << cost_cycle << std::endl;
-
     if (sol.size() > 0)
     {
         //std::cerr << " " << sol[sol.size() - 1] << " " << G.distw(sol[sol.size() - 1], v) << " " << G.distw(v, 0) << " " << budget << std::endl;
