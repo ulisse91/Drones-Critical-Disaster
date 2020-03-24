@@ -20,14 +20,13 @@ This file should remain empty otherwise
 # TO_DO
 Algorithms:
 - alg nel secondo scenario:
-- fun: aggiornare grafi (i.e., non eliminare tutti i nodi) eliminando solo quelli effettivamente visitati e/o porzioni
+- fun: aggiornare grafi (i.e., non eliminare tutti i nodi) eliminando solo quelli effettivamente visitati
 
 Features:
 - fun: print solution in file
 - fun: read solution from file
-- obj functions values without partial nodes considering that sigma is on the edges and sigma prime check the pair
 
 To-Fix / Important:
-- porzioni di nodi
-
 Examples:
+Tests:
+- test obj func with sigma prime

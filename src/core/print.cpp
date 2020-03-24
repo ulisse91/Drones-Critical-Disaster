@@ -19,7 +19,7 @@ void print::print_solution(std::vector<std::vector<std::vector<std::pair<int, do
     std::cout << "*****************" << std::endl;
 }
 
-void print::print_e_solution(graph G, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
+void print::print_e_solution(graph G, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol, std::map<int, int> sigma_prime_prob)
 {
     std::cout << "**** SOLUTION ***" << std::endl;
     for (size_t i = 0; i < sol.size(); i++)
@@ -32,7 +32,7 @@ void print::print_e_solution(graph G, std::vector<std::vector<std::vector<std::p
             {
                 std::cout << sol[i][j][k].first << " ";
             }
-            std::cout << "\tb: " << utilities::cost_budget_sequence(G, sol[i][j]) << std::endl;
+            std::cout << "\tb: " << utilities::cost_budget_sequence(G, sol[i][j], sigma_prime_prob) << std::endl;
         }
     }
     std::cout << "*****************" << std::endl;

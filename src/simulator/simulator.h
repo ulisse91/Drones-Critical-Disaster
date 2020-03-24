@@ -24,7 +24,7 @@ private:
     int n_drones;
     int n_batteries;
     double budget;
-    double prob_sigma_prime = 0.5;
+    double prob_sigma_prime;
     long seed;
 
     int priority_max = 3,
@@ -35,8 +35,12 @@ private:
     double objective_function_weighted_latency(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     double objective_function_completion_time(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
 
+    void update_sigma_prime();
+
 public:
-    simulator(graph _G, int _n_drones, int _n_batteries, double _budget, long seed);
+    std::map<int, int> sigma_prime_prob;
+
+    simulator(graph _G, int _n_drones, int _n_batteries, double _budget, double prob_sigma_prime, long seed);
     ~simulator();
 
     int check_solution_feasible(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);

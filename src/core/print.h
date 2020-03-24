@@ -24,7 +24,7 @@ public:
     static void print_map_int_int(std::map<int, int> _map);
     static void print_cycle_sol(std::vector<std::pair<int, double>> _cycle);
     static void print_graph(graph G);
-    static void print_e_solution(graph G, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
+    static void print_e_solution(graph G, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol, std::map<int, int> sigma_prime_prob);
     static void print_graph_to_file(graph G, std::string path);
 };
 

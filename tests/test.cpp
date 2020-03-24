@@ -78,7 +78,7 @@ bool test::check_fsolutions_depot()
     G.add_node(1, 0.2, 1, 1, 0);   // c
     G.add_node(0.7, 0.3, 1, 1, 0); // d
 
-    simulator sim = simulator(G, 1, 1, 10, 0);
+    simulator sim = simulator(G, 1, 1, 10, 0, 0);
 
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol2 = {{{std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
@@ -102,7 +102,7 @@ bool test::check_fsolutions_node_out_index()
     G.add_node(1, 0.2, 1, 1, 0);   // c
     G.add_node(0.7, 0.3, 1, 1, 0); // d
 
-    simulator sim = simulator(G, 1, 1, 8, 0);
+    simulator sim = simulator(G, 1, 1, 8, 0, 0);
 
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol2 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(5, 1), std::make_pair(0, 1)}}};
@@ -124,8 +124,8 @@ bool test::check_fsolutions_cycle_over_budget()
     G.add_node(1, 0.2, 1, 1, 0);   // c
     G.add_node(0.7, 0.3, 1, 1, 0); // d
 
-    simulator sim = simulator(G, 1, 1, 7, 0);
-    simulator sim2 = simulator(G, 1, 1, 8, 0);
+    simulator sim = simulator(G, 1, 1, 7, 0, 0);
+    simulator sim2 = simulator(G, 1, 1, 8, 0, 0);
 
     // needs B = ~7.65
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
@@ -147,7 +147,7 @@ bool test::check_fsolutions_all_nodes_1()
     G.add_node(1, 0.2, 1, 1, 0);   // c
     G.add_node(0.7, 0.3, 1, 1, 0); // d
 
-    simulator sim = simulator(G, 1, 1, 8, 0);
+    simulator sim = simulator(G, 1, 1, 8, 0, 0);
 
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol2 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(0, 1)}}};
@@ -170,7 +170,7 @@ bool test::check_fsolutions_all_nodes_2()
     G.add_node(1, 0.2, 1, 1, 0);   // c
     G.add_node(0.7, 0.3, 1, 1, 0); // d
 
-    simulator sim = simulator(G, 1, 1, 8, 0);
+    simulator sim = simulator(G, 1, 1, 8, 0, 0);
 
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 0.3), std::make_pair(4, 1), std::make_pair(0, 1)}}, {{std::make_pair(0, 1), std::make_pair(3, 0.7), std::make_pair(0, 1)}}};
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol2 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 0.5), std::make_pair(0, 1)}}};
@@ -193,23 +193,20 @@ bool test::check_fsolutions_obj_func_value_1()
     G.add_node(1, 0.2, 1, 1, 0);   // c
     G.add_node(0.7, 0.3, 1, 3, 0); // d
 
-    simulator sim = simulator(G, 1, 1, 8, 0);
+    simulator sim = simulator(G, 1, 1, 8, 0, 0);
 
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol2 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(0, 1)}, {std::make_pair(0, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol3 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(0, 1)}}, {{std::make_pair(0, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol4 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 0.5), std::make_pair(0, 1)}, {std::make_pair(0, 1), std::make_pair(4, 0.5), std::make_pair(0, 1)}}};
 
-    if (sim.check_solution_feasible(sol) == 1 and sim.check_solution_feasible(sol2) == 1 and sim.check_solution_feasible(sol3) == 1 and sim.check_solution_feasible(sol4) == 1)
+    if (sim.check_solution_feasible(sol) == 1 and sim.check_solution_feasible(sol2) == 1 and sim.check_solution_feasible(sol3) == 1)
         if (45.9 >= sim.evaluate_solution(0, sol) and sim.evaluate_solution(0, sol) >= 45.88)
             if (47.1115 >= sim.evaluate_solution(0, sol2) and sim.evaluate_solution(0, sol2) >= 47.1113)
                 if (27.3405 >= sim.evaluate_solution(0, sol3) and sim.evaluate_solution(0, sol3) >= 27.3403)
-                    if (48.9595 >= sim.evaluate_solution(0, sol4) and sim.evaluate_solution(0, sol4) >= 48.9593)
-                    {
-                        std::cout << "check_fsolutions_obj_func_value_1 (cycle) [OK]" << std::endl;
-                        return true;
-                    }
-
+                {
+                    std::cout << "check_fsolutions_obj_func_value_1 (cycle) [OK]" << std::endl;
+                    return true;
+                }
     return false;
 }
 
@@ -221,22 +218,23 @@ bool test::check_fsolutions_obj_func_value_2()
     G.add_node(1, 0.2, 1, 1, 0);   // c
     G.add_node(0.7, 0.3, 1, 3, 0); // d
 
-    simulator sim = simulator(G, 1, 1, 8, 0);
+    simulator sim = simulator(G, 1, 1, 8, 0, 0);
 
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol2 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(0, 1)}, {std::make_pair(0, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol3 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(0, 1)}}, {{std::make_pair(0, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol4 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(4, 0.5), std::make_pair(0, 1)}, {std::make_pair(0, 1), std::make_pair(4, 0.5), std::make_pair(0, 1)}}};
 
-    if (sim.check_solution_feasible(sol) == 1 and sim.check_solution_feasible(sol2) == 1 and sim.check_solution_feasible(sol3) == 1 and sim.check_solution_feasible(sol4) == 1)
+    std::cerr<< sim.evaluate_solution(1, sol2) << std::endl;
+    std::cerr<< sim.evaluate_solution(1, sol3) << std::endl;
+
+    if (sim.check_solution_feasible(sol) == 1 and sim.check_solution_feasible(sol2) == 1 and sim.check_solution_feasible(sol3) == 1)
         if (32.1617 >= sim.evaluate_solution(1, sol) and sim.evaluate_solution(1, sol) >= 32.1615)
             if (36.5572 >= sim.evaluate_solution(1, sol2) and sim.evaluate_solution(1, sol2) >= 36.5570)
                 if (16.7862 >= sim.evaluate_solution(1, sol3) and sim.evaluate_solution(1, sol3) >= 16.7860)
-                    if (36.7312 >= sim.evaluate_solution(1, sol4) and sim.evaluate_solution(1, sol4) >= 36.7310)
-                    {
-                        std::cout << "check_fsolutions_obj_func_value_1 (weighted latency) [OK]" << std::endl;
-                        return true;
-                    }
+                {
+                    std::cout << "check_fsolutions_obj_func_value_1 (weighted latency) [OK]" << std::endl;
+                    return true;
+                }
 
     return false;
 }
@@ -381,7 +379,7 @@ bool test::check_cost_budget_cycle()
     graph G = graph(2, 1);
     G.read_graph_from_file("../data/graph/test_primMST.csv");
 
-    simulator sim = simulator(G, 1, 1, 100, 0);
+    simulator sim = simulator(G, 1, 1, 100, 0, 0);
 
     std::vector<int> target(G.get_vertices_set().begin(), G.get_vertices_set().end());
     double _value_tsp = utilities::cost_budget_sequence(G, target);
@@ -440,7 +438,7 @@ bool test::check_top_path_BB()
 
     double budget = 3.2;
     int n_drones = 1;
-    simulator sim = simulator(G, n_drones, n_drones, budget, 0);
+    simulator sim = simulator(G, n_drones, n_drones, budget, 0, 0);
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.top_based_alg();
 
     if (sol.size() == n_drones and sol[0].size() == 2 and
@@ -449,7 +447,7 @@ bool test::check_top_path_BB()
     {
         budget = 2;
         n_drones = 1;
-        sim = simulator(G, n_drones, n_drones, budget, 0);
+        sim = simulator(G, n_drones, n_drones, budget, 0, 0);
         sol = sim.top_based_alg();
 
         if (sol.size() == n_drones and sol[0].size() == 2 and
@@ -458,7 +456,7 @@ bool test::check_top_path_BB()
         {
             budget = 3.2;
             n_drones = 2;
-            sim = simulator(G, n_drones, n_drones, budget, 0);
+            sim = simulator(G, n_drones, n_drones, budget, 0, 0);
             sol = sim.top_based_alg();
 
             if (sol.size() == n_drones and sol[0].size() == 1 and sol[1].size() == 1 and
@@ -481,11 +479,11 @@ bool test::check_feasibility()
 
     double budget = 3.2;
     int n_drones = 1;
-    simulator sim = simulator(G, n_drones, n_drones, budget, 0);
+    simulator sim = simulator(G, n_drones, n_drones, budget, 0, 0);
 
     budget = 3;
     n_drones = 1;
-    simulator sim2 = simulator(G, n_drones, n_drones, budget, 0);
+    simulator sim2 = simulator(G, n_drones, n_drones, budget, 0, 0);
 
     if (sim.check_feasibility() and not sim2.check_feasibility())
     {
@@ -502,7 +500,7 @@ bool test::check_greedy_algorithm()
 
     double budget = 3.2;
     int n_drones = 1;
-    simulator sim = simulator(G, n_drones, n_drones, budget, 0);
+    simulator sim = simulator(G, n_drones, n_drones, budget, 0, 0);
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.greedy_based_alg(true);
 
     if (sol.size() == n_drones and sol[0].size() == 2 and
@@ -524,7 +522,7 @@ bool test::check_prim_based_alg()
     int n_drones = 1;
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol;
 
-    simulator sim = simulator(G, n_drones, n_drones, budget, 0);
+    simulator sim = simulator(G, n_drones, n_drones, budget, 0, 0);
 
     sol = sim.prim_based_alg();
 
@@ -532,7 +530,7 @@ bool test::check_prim_based_alg()
     {
         budget = 3.2;
         n_drones = 2;
-        sim = simulator(G, n_drones, n_drones, budget, 0);
+        sim = simulator(G, n_drones, n_drones, budget, 0, 0);
         sol = sim.prim_based_alg();
 
         if (sol.size() == n_drones and sol[0].size() == 2)
@@ -553,7 +551,7 @@ bool test::check_cycle_sigma_prime()
 
     std::vector<int> sol_tsp = utilities::set_to_tsp(G, budget, G.get_vertices_set());
 
-    simulator sim = simulator(G, 1, 1, budget, 1);
+    simulator sim = simulator(G, 1, 1, budget, 1, 0);
 
     if (sim.check_cycle_sigma_prime(sol_tsp).size() == 4)
     {

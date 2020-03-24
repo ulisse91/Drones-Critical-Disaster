@@ -1,12 +1,14 @@
 #include "simulator.h"
 
-simulator::simulator(graph _G, int _n_drones, int _n_batteries, double _budget, long _seed)
+simulator::simulator(graph _G, int _n_drones, int _n_batteries, double _budget, double _prob_sigma_prime, long _seed)
 {
     this->G = _G;
     this->n_drones = _n_drones;
     this->n_batteries = _n_batteries;
     this->budget = _budget;
     this->seed = _seed;
+    this->prob_sigma_prime = _prob_sigma_prime;
+    update_sigma_prime();
 
     assert(this->budget > 0);
     assert(this->n_batteries >= this->n_drones);
@@ -14,101 +16,65 @@ simulator::simulator(graph _G, int _n_drones, int _n_batteries, double _budget, 
 
 simulator::~simulator() {}
 
-int simulator::check_solution_feasible(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
+void simulator::update_sigma_prime()
 {
-    std::vector<int> graph_vertices = G.get_vertices();
-    std::vector<double> _temp_nodes(this->G.get_n_nodes());
-    for (size_t i = 0; i < _temp_nodes.size(); i++)
-    {
-        _temp_nodes[i] = G.get_weight_node(graph_vertices[i]);
-    }
+    std::unordered_set<int> graph_vertices = this->G.get_vertices_set();
+    std::uniform_real_distribution<double> unif_1(0, 1);
+    std::mt19937 re(this->seed);
 
-    for (int drone = 0; drone < sol.size(); drone++)
-    {
-        for (int cycle = 0; cycle < sol[drone].size(); cycle++)
-        {
-            if (sol[drone][cycle][0].first != 0 or sol[drone][cycle][sol[drone][cycle].size() - 1].first != 0)
-            {
-                // std::cout << "[ERROR:simulator]:: first and last node of cycle NOT depot" << std::endl;
-                return -1;
-            }
-
-            double used_budget = 0;
-            for (int nodo = 1; nodo < sol[drone][cycle].size(); nodo++)
-            {
-                int previous_node_index = sol[drone][cycle][nodo - 1].first;
-                int current_node_index = sol[drone][cycle][nodo].first;
-
-                if (previous_node_index >= this->G.get_n_nodes() or current_node_index >= this->G.get_n_nodes())
-                {
-                    // std::cout << "[ERROR:simulator]:: node-index not valid" << std::endl;
-                    return -3;
-                }
-
-                double distance_prev_to_curr_node = this->G.dist(previous_node_index, current_node_index);
-
-                // std::cout << "(" << u.x << ", " << u.y << ")<->(" << v.x << ", " << v.y << ") : " << distance_prev_to_curr_node << "\n";
-
-                used_budget += distance_prev_to_curr_node + sol[drone][cycle][nodo].second * G.get_weight_node(current_node_index);
-                _temp_nodes[current_node_index] -= sol[drone][cycle][nodo].second * G.get_weight_node(current_node_index);
-            }
-            // std::cout << used_budget << std::endl;
-            if (used_budget > this->budget)
-            {
-                // std::cout << "[ERROR:simulator]:: drone " << drone << " cycle " << cycle << " not feasible (over budget)!" << std::endl;
-                return -2;
-            }
-        }
-    }
-
-    for (size_t i = 0; i < _temp_nodes.size(); i++)
-    {
-        if (_temp_nodes[i] > 0)
-        {
-            // std::cout << this->graph_vertices[i].x << ", " << this->graph_vertices[i].y << std::endl;
-            return -4;
-        }
-    }
-
-    return 1;
+    for (auto const &i : graph_vertices)
+        this->sigma_prime_prob[i] = unif_1(re) < this->prob_sigma_prime ? 1 : 0;
 }
+
+///////////////////////////////////////////////////////
+/////////////// OBJECTIVE FUNCTIONS ///////////////////
+///////////////////////////////////////////////////////
 
 double simulator::objective_function_weighted_latency(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
 {
-    if (not check_solution_feasible(sol))
-        return -1;
-
-    std::vector<int> graph_vertices = G.get_vertices();
-
-    std::map<int, double> _temp_nodes;
-    for (size_t i = 0; i < graph_vertices.size(); i++)
-    {
-        _temp_nodes[graph_vertices[i]] = G.get_weight_node(graph_vertices[i]);
-    }
-
     double val_sol = 0;
-    for (int drone = 0; drone < sol.size(); drone++)
+    for (auto const &drone : sol)
     {
         double previous_time_cycle = 0;
-        for (int cycle = 0; cycle < sol[drone].size(); cycle++)
+        for (auto const &cycle : drone)
         {
             double cost_nodes_in_cycle = 0;
-            for (int nodo = 1; nodo < sol[drone][cycle].size(); nodo++)
+            for (int nodo = 1; nodo < cycle.size(); nodo++)
             {
-                int previous_node_index = sol[drone][cycle][nodo - 1].first;
-                int current_node_index = sol[drone][cycle][nodo].first;
+                int previous_node_index = cycle[nodo - 1].first;
+                int current_node_index = cycle[nodo].first;
                 double distance_prev_to_curr_node = this->G.dist(previous_node_index, current_node_index);
 
-                cost_nodes_in_cycle += distance_prev_to_curr_node + sol[drone][cycle][nodo].second * G.get_weight_node(current_node_index);
-                _temp_nodes[current_node_index] -= sol[drone][cycle][nodo].second * G.get_weight_node(current_node_index);
+                cost_nodes_in_cycle += distance_prev_to_curr_node + G.get_weight_node(current_node_index) + this->sigma_prime_prob[current_node_index] * G.get_weight_prime_node(current_node_index);
 
-                // std::cout << current_node_index << ": " << distance_prev_to_curr_node << " " << cost_nodes_in_cycle << " " << previous_time_cycle << " " << sol[drone][cycle][nodo].second << " " << v.node_weight << "\n\n";
+                val_sol += G.get_priority_node(current_node_index) * (cost_nodes_in_cycle + previous_time_cycle);
+            }
+            previous_time_cycle = cost_nodes_in_cycle;
+        }
+    }
+    return val_sol;
+}
 
-                if (_temp_nodes[current_node_index] == 0)
-                {
-                    // std::cout << "val: " << G.get_priority_node(current_node_index) << " " << cost_nodes_in_cycle << " " << previous_time_cycle << "\n";
-                    val_sol += G.get_priority_node(current_node_index) * (cost_nodes_in_cycle + previous_time_cycle);
-                }
+double simulator::objective_function_cycle(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
+{
+    double val_sol = 0;
+    for (auto const &drone : sol)
+    {
+        double previous_time_cycle = 0;
+        for (auto const &cycle : drone)
+        {
+            double cost_nodes_in_cycle = 0;
+            for (int nodo = 1; nodo < cycle.size(); nodo++)
+            {
+                int previous_node_index = cycle[nodo - 1].first;
+                int current_node_index = cycle[nodo].first;
+                double distance_prev_to_curr_node = this->G.distw(previous_node_index, current_node_index);
+
+                cost_nodes_in_cycle += distance_prev_to_curr_node + this->sigma_prime_prob[current_node_index] * G.get_weight_prime_node(current_node_index);
+            }
+            for (auto const &nodo : cycle)
+            {
+                val_sol += this->G.get_priority_node(nodo.first) * (cost_nodes_in_cycle + previous_time_cycle);
             }
             previous_time_cycle = cost_nodes_in_cycle;
         }
@@ -118,70 +84,18 @@ double simulator::objective_function_weighted_latency(std::vector<std::vector<st
 
 double simulator::objective_function_completion_time(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
 {
-    if (not check_solution_feasible(sol))
-        return -1;
-
     double value_fun = 0;
-    for (size_t drone = 0; drone < sol.size(); drone++)
+    for (auto const &drone : sol)
     {
         double _temp = 0;
-        for (size_t cycle = 0; cycle < sol[drone].size(); cycle++)
+        for (auto const &cycle : drone)
         {
-            _temp += utilities::cost_budget_sequence(G, sol[drone][cycle]);
+            _temp += utilities::cost_budget_sequence(G, cycle, this->sigma_prime_prob);
         }
         if (_temp > value_fun)
             value_fun = _temp;
     }
     return value_fun;
-}
-
-double simulator::objective_function_cycle(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
-{
-    if (not check_solution_feasible(sol))
-        return -1;
-
-    std::map<int, double> _temp_nodes;
-    std::vector<int> graph_vertices = this->G.get_vertices();
-
-    for (size_t i = 0; i < graph_vertices.size(); i++)
-    {
-        _temp_nodes[i] = this->G.get_weight_node(graph_vertices[i]);
-    }
-
-    double val_sol = 0;
-    for (int drone = 0; drone < sol.size(); drone++)
-    {
-        double previous_time_cycle = 0;
-        for (int cycle = 0; cycle < sol[drone].size(); cycle++)
-        {
-            double cost_nodes_in_cycle = 0;
-            for (int nodo = 1; nodo < sol[drone][cycle].size(); nodo++)
-            {
-                int previous_node_index = sol[drone][cycle][nodo - 1].first;
-                int current_node_index = sol[drone][cycle][nodo].first;
-                double distance_prev_to_curr_node = this->G.dist(previous_node_index, current_node_index);
-
-                cost_nodes_in_cycle += distance_prev_to_curr_node + sol[drone][cycle][nodo].second * G.get_weight_node(current_node_index);
-                _temp_nodes[current_node_index] -= sol[drone][cycle][nodo].second * G.get_weight_node(current_node_index);
-
-                // std::cout << current_node_index << ": " << distance_prev_to_curr_node << " " << cost_nodes_in_cycle << " " << previous_time_cycle << "\n";
-                // std::cout << cost_nodes_in_cycle << ": " << distance_prev_to_curr_node << ": " << sol[drone][cycle][nodo].second << ": " << v.node_weight << "\n\n";
-            }
-            for (int nodo = 1; nodo < sol[drone][cycle].size() - 1; nodo++)
-            {
-                int current_node_index = sol[drone][cycle][nodo].first;
-                if (_temp_nodes[current_node_index] == 0)
-                {
-                    // std::cout << val_sol << " " << this->G.vertices[current_node_index].priority  << " " <<  cost_nodes_in_cycle  << " " <<  previous_time_cycle << std::endl;
-                    val_sol += this->G.get_priority_node(current_node_index) * (cost_nodes_in_cycle + previous_time_cycle);
-                }
-
-                // std::cout << current_node_index << " " << val_sol << "; ";
-            }
-            previous_time_cycle = cost_nodes_in_cycle;
-        }
-    }
-    return val_sol;
 }
 
 double simulator::evaluate_solution(int which, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
@@ -197,6 +111,52 @@ double simulator::evaluate_solution(int which, std::vector<std::vector<std::vect
         val_sol = objective_function_completion_time(sol);
 
     return val_sol;
+}
+
+///////////////////////////////////////////////////////
+///////////////////// UTILITIES ///////////////////////
+///////////////////////////////////////////////////////
+
+int simulator::check_solution_feasible(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
+{
+    std::unordered_set<int> nodes = G.get_vertices_set();
+
+    for (auto const &drone : sol)
+    {
+        for (int cycle = 0; cycle < drone.size(); cycle++)
+        {
+            if (drone[cycle][0].first != 0 or drone[cycle][drone[cycle].size() - 1].first != 0)
+            {
+                // std::cout << "[ERROR:simulator]:: first and last node of cycle NOT depot" << std::endl;
+                return -1;
+            }
+            double used_budget = 0;
+
+            for (int nodo = 1; nodo < drone[cycle].size(); nodo++)
+            {
+                int previous_node_index = drone[cycle][nodo - 1].first;
+                int current_node_index = drone[cycle][nodo].first;
+
+                if (previous_node_index >= this->G.get_n_nodes() or current_node_index >= this->G.get_n_nodes())
+                {
+                    // std::cout << "[ERROR:simulator]:: node-index not valid" << std::endl;
+                    return -3;
+                }
+                double distance_prev_to_curr_node = this->G.distw(previous_node_index, current_node_index);
+                used_budget += distance_prev_to_curr_node + this->sigma_prime_prob[current_node_index] * G.get_weight_prime_node(current_node_index);
+                nodes.erase(current_node_index);
+            }
+            if (used_budget > this->budget)
+            {
+                // std::cout << "[ERROR:simulator]:: drone " << drone << " cycle " << cycle << " not feasible (over budget)!" << std::endl;
+                return -2;
+            }
+        }
+    }
+    if (nodes.size() > 0)
+        return -4;
+
+    return 1;
 }
 
 bool simulator::check_feasibility()
@@ -217,14 +177,11 @@ std::vector<std::pair<int, double>> simulator::check_cycle_sigma_prime(std::vect
     double cost_cycle = 0;
     for (size_t v = 0; v < cycle.size() - 1; ++v)
     {
-
-        double coin = unif_1(re);
-        coin = coin < this->prob_sigma_prime ? 1 : 0;
-        if (cost_cycle + this->G.distw(v, v + 1) + coin * this->G.get_weight_prime_node(v + 1) + this->G.distw(v + 1, 0) < this->budget)
+        if (cost_cycle + this->G.distw(v, v + 1) + this->sigma_prime_prob[v + 1] * G.get_weight_prime_node(v + 1) + this->G.distw(v + 1, 0) < this->budget)
         {
             // std::cout << this->G.distw(v, v + 1) << " " << coin << " " << G.get_weight_prime_node(v + 1) << " " << this->G.distw(v + 1, 0) << std::endl;
-            cost_cycle += this->G.distw(v, v + 1) + coin * this->G.get_weight_prime_node(v + 1);
-            effective_cycle.push_back(std::make_pair(v + 1, coin));
+            cost_cycle += this->G.distw(v, v + 1) + this->sigma_prime_prob[v + 1] * G.get_weight_prime_node(v + 1);
+            effective_cycle.push_back(std::make_pair(v + 1, 1));
         }
         else
         {
@@ -233,6 +190,10 @@ std::vector<std::pair<int, double>> simulator::check_cycle_sigma_prime(std::vect
     }
     return effective_cycle;
 }
+
+///////////////////////////////////////////////////////
+///////////////////// ALGORITHMS //////////////////////
+///////////////////////////////////////////////////////
 
 std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::prim_based_alg()
 {
