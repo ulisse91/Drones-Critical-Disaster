@@ -19,14 +19,15 @@ This file should remain empty otherwise
 
 # TO_DO
 Algorithms:
-- alg nel secondo scenario:
-- fun: aggiornare grafi (i.e., non eliminare tutti i nodi) eliminando solo quelli effettivamente visitati
 
 Features:
 - fun: print solution in file
 - fun: read solution from file
 
 To-Fix / Important:
+
 Examples:
+
 Tests:
 - test obj func with sigma prime
+- test check_cycle_sigma_prime_cycle

@@ -38,7 +38,7 @@ private:
     void update_sigma_prime();
 
 public:
-    std::map<int, int> sigma_prime_prob;
+    std::map<int, int> sigma_prime_probs;
 
     simulator(graph _G, int _n_drones, int _n_batteries, double _budget, double prob_sigma_prime, long seed);
     ~simulator();
@@ -46,7 +46,6 @@ public:
     int check_solution_feasible(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     double evaluate_solution(int which, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     bool check_feasibility();
-    std::vector<std::pair<int, double>> check_cycle_sigma_prime(std::vector<int> cycle);
 
     // algorithms
     std::vector<std::vector<std::vector<std::pair<int, double>>>> prim_based_alg();

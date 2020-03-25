@@ -1,11 +1,13 @@
 #include "prim_based.h"
 
-primb::primb(graph _G, int _n_drones, int _n_batteries, double _budget)
+primb::primb(graph _G, int _n_drones, int _n_batteries, double _budget, std::map<int, int> _sigma_prime_probs, long _seed)
 {
     this->G = _G;
     this->n_drones = _n_drones;
     this->n_batteries = _n_batteries;
     this->budget = _budget;
+    this->sigma_prime_probs = _sigma_prime_probs;
+    this->seed = _seed;
 
     assert(this->budget > 0);
     assert(this->n_batteries >= this->n_drones);
@@ -13,7 +15,7 @@ primb::primb(graph _G, int _n_drones, int _n_batteries, double _budget)
 
 primb::~primb() {}
 
-std::vector<std::vector<std::vector<std::pair<int, double>>>> primb::prim_based_alg()
+std::vector<std::vector<std::vector<std::pair<int, double>>>> primb::prim_based_alg(bool sigma_prime)
 {
     std::unordered_set<int> graph_vertices = this->G.get_vertices_set();
     graph_vertices.erase(graph_vertices.find(0));
@@ -28,7 +30,7 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> primb::prim_based_
     int counter = 0;
 
     // ------------------
-    while (not graph_vertices.empty() and counter < 10 /*this->G.get_n_nodes()*/)
+    while (not graph_vertices.empty() and counter < this->G.get_n_nodes())
     {
         std::map<int, int> tree;
         std::vector<int> centers;
@@ -84,6 +86,11 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> primb::prim_based_
                 // std::cerr << "tsp_i: " << utilities::cost_budget_sequence(G, tsp_i) << " : ";
                 // print::print_vector_int(tsp_i);
 
+                if (sigma_prime)
+                {
+                    tsp_i = utilities::check_cycle_sigma_prime_cycle(G_3, this->sigma_prime_probs, this->seed, this->budget - (G.distw(0, centers[i]) + sigma_prime_probs[centers[i]] * G.get_weight_prime_node(centers[i])), tsp_i);
+                }
+
                 curr_sol[i].insert(curr_sol[i].end(), tsp_i.begin(), tsp_i.end());
                 centers_g_2.push_back(tsp_i[tsp_i.size() - 1]);
                 graph_vertices = utilities::set_difference(graph_vertices, tsp_i);
@@ -116,7 +123,7 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> primb::prim_based_
 
             for (int i = 0; i < centers_g_2.size(); i++)
             {
-                double previous_used_budget = utilities::cost_budget_sequence(G, curr_sol[i]);
+                double previous_used_budget = utilities::cost_budget_sequence(G, curr_sol[i], this->sigma_prime_probs);
 
                 assert(previous_used_budget <= this->budget);
 
@@ -124,6 +131,11 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> primb::prim_based_
 
                 // std::cerr << "tsp_i: " << utilities::cost_budget_sequence(G, tsp_i) << " : ";
                 // print::print_vector_int(tsp_i);
+
+                if (sigma_prime)
+                {
+                    tsp_i = utilities::check_cycle_sigma_prime_cycle(G_2, this->sigma_prime_probs, this->seed, this->budget - previous_used_budget, tsp_i);
+                }
 
                 curr_sol[i].insert(curr_sol[i].end(), tsp_i.begin(), tsp_i.end());
                 centers_g_1.push_back(tsp_i[tsp_i.size() - 1]);
@@ -156,7 +168,7 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> primb::prim_based_
 
         for (int i = 0; i < centers_g_1.size(); i++)
         {
-            double previous_used_budget = utilities::cost_budget_sequence(G, curr_sol[i]);
+            double previous_used_budget = utilities::cost_budget_sequence(G, curr_sol[i], this->sigma_prime_probs);
 
             assert(previous_used_budget <= this->budget);
 
@@ -164,6 +176,11 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> primb::prim_based_
 
             // std::cerr << "tsp_i: " << utilities::cost_budget_sequence(G, tsp_i) << " : ";
             // print::print_vector_int(tsp_i);
+
+            if (sigma_prime)
+            {
+                tsp_i = utilities::check_cycle_sigma_prime_cycle(G_1, this->sigma_prime_probs, this->seed, this->budget - previous_used_budget, tsp_i);
+            }
 
             curr_sol[i].insert(curr_sol[i].end(), tsp_i.begin(), tsp_i.end());
             graph_vertices = utilities::set_difference(graph_vertices, tsp_i);

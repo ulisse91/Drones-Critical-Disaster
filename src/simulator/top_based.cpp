@@ -1,11 +1,13 @@
 #include "top_based.h"
 
-topb::topb(graph _G, int _n_drones, int _n_batteries, double _budget)
+topb::topb(graph _G, int _n_drones, int _n_batteries, double _budget, std::map<int, int> _sigma_prime_probs, long _seed)
 {
     this->G = _G;
     this->n_drones = _n_drones;
     this->n_batteries = _n_batteries;
     this->budget = _budget;
+    this->sigma_prime_probs = _sigma_prime_probs;
+    this->seed = _seed;
 
     assert(this->budget > 0);
     assert(this->n_batteries >= this->n_drones);
@@ -13,7 +15,7 @@ topb::topb(graph _G, int _n_drones, int _n_batteries, double _budget)
 
 topb::~topb() {}
 
-std::vector<std::vector<std::vector<std::pair<int, double>>>> topb::top_path_BB()
+std::vector<std::vector<std::vector<std::pair<int, double>>>> topb::top_path_BB(bool sigma_prime)
 {
     std::unordered_set<int> graph_vertices = this->G.get_vertices_set();
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol(this->n_drones, std::vector<std::vector<std::pair<int, double>>>());
@@ -32,6 +34,11 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> topb::top_path_BB(
         std::vector<int> cycle_tsp = utilities::set_to_tsp(this->G, this->budget, cycle_set);
 
         // print::print_vector_int(cycle_tsp);
+
+        if (sigma_prime)
+        {
+            cycle_tsp = utilities::check_cycle_sigma_prime_cycle(G, this->sigma_prime_probs, this->seed, budget, cycle_tsp);
+        }
 
         if (cycle_tsp.size() != 1)
         {
@@ -83,7 +90,7 @@ double topb::cost_cycle_OP(std::unordered_set<int> _temp)
 
     std::vector<int> tsp_temp = utilities::set_to_tsp(this->G, this->budget, _temp);
 
-    double cost = utilities::cost_budget_sequence(this->G, tsp_temp);
+    double cost = utilities::cost_budget_sequence(this->G, tsp_temp, this->sigma_prime_probs);
 
     // print::print_vector_int(tsp_temp);
 

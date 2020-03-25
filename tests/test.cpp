@@ -224,8 +224,8 @@ bool test::check_fsolutions_obj_func_value_2()
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol2 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(0, 1)}, {std::make_pair(0, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol3 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(0, 1)}}, {{std::make_pair(0, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
 
-    std::cerr<< sim.evaluate_solution(1, sol2) << std::endl;
-    std::cerr<< sim.evaluate_solution(1, sol3) << std::endl;
+    std::cerr << sim.evaluate_solution(1, sol2) << std::endl;
+    std::cerr << sim.evaluate_solution(1, sol3) << std::endl;
 
     if (sim.check_solution_feasible(sol) == 1 and sim.check_solution_feasible(sol2) == 1 and sim.check_solution_feasible(sol3) == 1)
         if (32.1617 >= sim.evaluate_solution(1, sol) and sim.evaluate_solution(1, sol) >= 32.1615)
@@ -382,7 +382,7 @@ bool test::check_cost_budget_cycle()
     simulator sim = simulator(G, 1, 1, 100, 0, 0);
 
     std::vector<int> target(G.get_vertices_set().begin(), G.get_vertices_set().end());
-    double _value_tsp = utilities::cost_budget_sequence(G, target);
+    double _value_tsp = utilities::cost_budget_sequence(G, target, sim.sigma_prime_probs);
 
     if (3.42387 > _value_tsp and _value_tsp > 3.42385)
     {
@@ -397,7 +397,7 @@ bool test::check_cost_cycle_OP()
     graph G = graph(2, 1);
     G.read_graph_from_file("../data/graph/test_OP.csv");
 
-    topb sim = topb(G, 1, 1, 100);
+    topb sim = topb(G, 1, 1, 100, std::map<int, int>(), 0);
     double _value_OP = sim.cost_cycle_OP(G.get_vertices_set());
 
     if (_value_OP == 13)
@@ -415,13 +415,20 @@ bool test::check_op_path_BB_insert_step()
     G.read_graph_from_file("../data/graph/test_OP.csv");
     double budget = 2;
     std::unordered_set<int> graph_vertices = G.get_vertices_set();
+
+    std::map<int, int> sigma_prime_probs;
+    for (auto const &node : graph_vertices)
+    {
+        sigma_prime_probs[node] = 0;
+    }
+
     graph_vertices.erase(0);
 
-    topb sim = topb(G, 1, 1, budget);
+    topb sim = topb(G, 1, 1, budget, sigma_prime_probs, 0);
     std::unordered_set<int> cycle_set = sim.op_path_BB_insert_step(graph_vertices, {0});
 
     std::vector<int> target(cycle_set.begin(), cycle_set.end());
-    double _budget_spent_tsp = utilities::cost_budget_sequence(G, target);
+    double _budget_spent_tsp = utilities::cost_budget_sequence(G, target, sigma_prime_probs);
 
     if (budget > _budget_spent_tsp and sim.cost_cycle_OP(cycle_set) == 10)
     {
@@ -538,25 +545,6 @@ bool test::check_prim_based_alg()
             std::cout << "check_prim_based_alg [OK]" << std::endl;
             return true;
         }
-    }
-    return false;
-}
-
-bool test::check_cycle_sigma_prime()
-{
-    graph G = graph(2, 1);
-    G.read_graph_from_file("../data/graph/test_primMST.csv");
-    double budget = 3.6;
-    std::map<int, int> sol = algo::primMST(G, {0}, 100);
-
-    std::vector<int> sol_tsp = utilities::set_to_tsp(G, budget, G.get_vertices_set());
-
-    simulator sim = simulator(G, 1, 1, budget, 1, 0);
-
-    if (sim.check_cycle_sigma_prime(sol_tsp).size() == 4)
-    {
-        std::cout << "check_cycle_sigma_prime [OK]" << std::endl;
-        return true;
     }
     return false;
 }

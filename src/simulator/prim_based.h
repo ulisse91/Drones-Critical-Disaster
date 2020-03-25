@@ -21,6 +21,8 @@ private:
     int n_drones;
     int n_batteries;
     double budget;
+    std::map<int, int> sigma_prime_probs;
+    long seed;
 
     int priority_max = 3,
         priority_med = 2,
@@ -29,10 +31,10 @@ private:
     void clean_sol(std::vector<std::vector<int>> &_temp);
 
 public:
-    primb(graph _G, int _n_drones, int _n_batteries, double _budget);
+    primb(graph _G, int _n_drones, int _n_batteries, double _budget, std::map<int, int> _sigma_prime_probs, long _seed);
     ~primb();
 
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> prim_based_alg();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> prim_based_alg(bool sigma_prime);
 };
 
 #endif // PRIM_BASED_H

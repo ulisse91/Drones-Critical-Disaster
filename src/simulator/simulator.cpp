@@ -23,7 +23,7 @@ void simulator::update_sigma_prime()
     std::mt19937 re(this->seed);
 
     for (auto const &i : graph_vertices)
-        this->sigma_prime_prob[i] = unif_1(re) < this->prob_sigma_prime ? 1 : 0;
+        this->sigma_prime_probs[i] = unif_1(re) < this->prob_sigma_prime ? 1 : 0;
 }
 
 ///////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ double simulator::objective_function_weighted_latency(std::vector<std::vector<st
                 int current_node_index = cycle[nodo].first;
                 double distance_prev_to_curr_node = this->G.dist(previous_node_index, current_node_index);
 
-                cost_nodes_in_cycle += distance_prev_to_curr_node + G.get_weight_node(current_node_index) + this->sigma_prime_prob[current_node_index] * G.get_weight_prime_node(current_node_index);
+                cost_nodes_in_cycle += distance_prev_to_curr_node + G.get_weight_node(current_node_index) + this->sigma_prime_probs[current_node_index] * G.get_weight_prime_node(current_node_index);
 
                 val_sol += G.get_priority_node(current_node_index) * (cost_nodes_in_cycle + previous_time_cycle);
             }
@@ -70,7 +70,7 @@ double simulator::objective_function_cycle(std::vector<std::vector<std::vector<s
                 int current_node_index = cycle[nodo].first;
                 double distance_prev_to_curr_node = this->G.distw(previous_node_index, current_node_index);
 
-                cost_nodes_in_cycle += distance_prev_to_curr_node + this->sigma_prime_prob[current_node_index] * G.get_weight_prime_node(current_node_index);
+                cost_nodes_in_cycle += distance_prev_to_curr_node + this->sigma_prime_probs[current_node_index] * G.get_weight_prime_node(current_node_index);
             }
             for (auto const &nodo : cycle)
             {
@@ -90,7 +90,7 @@ double simulator::objective_function_completion_time(std::vector<std::vector<std
         double _temp = 0;
         for (auto const &cycle : drone)
         {
-            _temp += utilities::cost_budget_sequence(G, cycle, this->sigma_prime_prob);
+            _temp += utilities::cost_budget_sequence(G, cycle, this->sigma_prime_probs);
         }
         if (_temp > value_fun)
             value_fun = _temp;
@@ -143,7 +143,7 @@ int simulator::check_solution_feasible(std::vector<std::vector<std::vector<std::
                     return -3;
                 }
                 double distance_prev_to_curr_node = this->G.distw(previous_node_index, current_node_index);
-                used_budget += distance_prev_to_curr_node + this->sigma_prime_prob[current_node_index] * G.get_weight_prime_node(current_node_index);
+                used_budget += distance_prev_to_curr_node + this->sigma_prime_probs[current_node_index] * G.get_weight_prime_node(current_node_index);
                 nodes.erase(current_node_index);
             }
             if (used_budget > this->budget)
@@ -162,33 +162,9 @@ int simulator::check_solution_feasible(std::vector<std::vector<std::vector<std::
 bool simulator::check_feasibility()
 {
     for (auto &v : this->G.get_vertices())
-        if (2 * G.distw(0, v) > this->budget)
+        if (2 * G.distw(0, v) + this->sigma_prime_probs[v] * G.get_weight_prime_node(v) > this->budget)
             return false;
     return true;
-}
-
-std::vector<std::pair<int, double>> simulator::check_cycle_sigma_prime(std::vector<int> cycle)
-{
-    std::vector<std::pair<int, double>> effective_cycle = {std::make_pair(0, 1)};
-
-    std::uniform_real_distribution<double> unif_1(0, 1);
-    std::mt19937 re(this->seed);
-
-    double cost_cycle = 0;
-    for (size_t v = 0; v < cycle.size() - 1; ++v)
-    {
-        if (cost_cycle + this->G.distw(v, v + 1) + this->sigma_prime_prob[v + 1] * G.get_weight_prime_node(v + 1) + this->G.distw(v + 1, 0) < this->budget)
-        {
-            // std::cout << this->G.distw(v, v + 1) << " " << coin << " " << G.get_weight_prime_node(v + 1) << " " << this->G.distw(v + 1, 0) << std::endl;
-            cost_cycle += this->G.distw(v, v + 1) + this->sigma_prime_prob[v + 1] * G.get_weight_prime_node(v + 1);
-            effective_cycle.push_back(std::make_pair(v + 1, 1));
-        }
-        else
-        {
-            return effective_cycle;
-        }
-    }
-    return effective_cycle;
 }
 
 ///////////////////////////////////////////////////////
@@ -197,31 +173,32 @@ std::vector<std::pair<int, double>> simulator::check_cycle_sigma_prime(std::vect
 
 std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::prim_based_alg()
 {
-    primb p = primb(G, this->n_drones, this->n_drones /* batteries */, this->budget);
-    return p.prim_based_alg();
+    primb p = primb(G, this->n_drones, this->n_drones /* batteries */, this->budget, this->sigma_prime_probs, this->seed);
+    return p.prim_based_alg((this->prob_sigma_prime > 0));
 }
 
 std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::top_based_alg()
 {
-    topb p = topb(G, this->n_drones, this->n_drones /* batteries */, this->budget);
-    return p.top_path_BB();
+    topb p = topb(G, this->n_drones, this->n_drones /* batteries */, this->budget, this->sigma_prime_probs, this->seed);
+    return p.top_path_BB((this->prob_sigma_prime > 0));
 }
 
 std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::greedy_based_alg(bool max)
 {
-    greedy p = greedy(G, this->n_drones, this->n_drones /* batteries */, this->budget);
-    return p.greedy_algorithm(max);
+    greedy p = greedy(G, this->n_drones, this->n_drones /* batteries */, this->budget, this->sigma_prime_probs, this->seed);
+    return p.greedy_algorithm(max, (this->prob_sigma_prime > 0));
 }
 
 std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::top_plus_prim()
 {
+    bool sigma_prime = (this->prob_sigma_prime > 0);
     std::unordered_set<int> graph_vertices = this->G.get_vertices_set();
     graph_vertices.erase(graph_vertices.find(0));
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol;
     for (size_t i = 0; i < this->n_drones; i++)
         sol.push_back(std::vector<std::vector<std::pair<int, double>>>());
 
-    topb p = topb(G, this->n_drones, this->n_drones /* batteries */, this->budget);
+    topb p = topb(G, this->n_drones, this->n_drones /* batteries */, this->budget, this->sigma_prime_probs, this->seed);
     int current_drone = 0;
 
     for (size_t dr = 0; dr < this->n_drones; dr++)
@@ -233,6 +210,11 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::top_plu
         std::vector<int> cycle_tsp = utilities::set_to_tsp(this->G, this->budget, cycle_set);
 
         // print::print_vector_int(cycle_tsp);
+
+        if (sigma_prime)
+        {
+            cycle_tsp = utilities::check_cycle_sigma_prime_cycle(G, this->sigma_prime_probs, this->seed, budget, cycle_tsp);
+        }
 
         if (cycle_tsp.size() != 1)
         {
@@ -259,8 +241,8 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::top_plu
         G_temp.add_node(v, this->G.get_coord_x(v), this->G.get_coord_y(v), this->G.get_weight_node(v), this->G.get_priority_node(v), this->G.get_weight_prime_node(v));
     }
 
-    primb pr = primb(G_temp, this->n_drones, this->n_drones /* batteries */, this->budget);
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_prim_temp = pr.prim_based_alg();
+    primb pr = primb(G_temp, this->n_drones, this->n_drones /* batteries */, this->budget, this->sigma_prime_probs, this->seed);
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_prim_temp = pr.prim_based_alg((this->prob_sigma_prime > 0));
 
     // print::print_solution(sol_prim_temp);
 

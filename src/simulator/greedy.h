@@ -21,6 +21,8 @@ private:
     int n_drones;
     int n_batteries;
     double budget;
+    std::map<int, int> sigma_prime_probs;
+    long seed;
 
     int priority_max = 3,
         priority_med = 2,
@@ -29,10 +31,10 @@ private:
     std::vector<int> greedy_find_path(std::unordered_set<int> graph_vertices, bool max);
 
 public:
-    greedy(graph _G, int _n_drones, int _n_batteries, double _budget);
+    greedy(graph _G, int _n_drones, int _n_batteries, double _budget, std::map<int, int> _sigma_prime_probs, long _seed);
     ~greedy();
 
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> greedy_algorithm(bool max);
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> greedy_algorithm(bool max, bool sigma_prime);
 };
 
 #endif // GREEDY_H

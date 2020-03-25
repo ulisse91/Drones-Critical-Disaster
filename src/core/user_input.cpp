@@ -9,7 +9,7 @@ input userinput::read_user_input(int argc, char **argv)
     input n_input = input();
 
     po::options_description desc{"Options"};
-    desc.add_options()("help,h", "Help screen")("nodes,n", po::value<int>(), "Number of nodes (default = 10)")("drones,d", po::value<int>(), "Number of drones (default = 1)")("budget,b", po::value<double>(), "Budget (default = 1)")("seed,s", po::value<int>(), "seed for random graph generator")("batteries,p", po::value<int>(), "Number of batteries (default = number of drones)")("file,f", po::value<std::string>(), "Graph file");
+    desc.add_options()("help,h", "Help screen")("nodes,n", po::value<int>(), "Number of nodes (default = 10)")("drones,d", po::value<int>(), "Number of drones (default = 1)")("budget,b", po::value<double>(), "Budget (default = 1)")("progsigma,p", po::value<double>(), "Probability sigma prime (default = 0)")("seed,s", po::value<int>(), "seed for random graph generator")("batteries,m", po::value<int>(), "Number of batteries (default = number of drones)")("file,f", po::value<std::string>(), "Graph file");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -76,6 +76,15 @@ input userinput::read_user_input(int argc, char **argv)
     else
     {
         std::cout << "Seed: 0 (default value)" << std::endl;
+    }
+    if (vm.count("progsigma"))
+    {
+        n_input.prob_sigma_prime = vm["progsigma"].as<double>();
+        std::cout << "progsigma: " << vm["progsigma"].as<double>() << std::endl;
+    }
+    else
+    {
+        std::cout << "Probability sigma prime: 0 (default value)" << std::endl;
     }
     std::cout << std::endl;
 
