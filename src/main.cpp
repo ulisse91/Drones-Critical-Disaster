@@ -17,32 +17,32 @@ int main(int argc, char **argv)
 
     assert(sim.check_feasibility());
 
-    auto start_t = std::chrono::high_resolution_clock::now();
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_top = sim.top_based_alg();
-    auto stop_t = std::chrono::high_resolution_clock::now();
+    auto start_t2 = std::chrono::high_resolution_clock::now();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_top_meta = sim.meta_algorithm(1);
+    auto stop_t2 = std::chrono::high_resolution_clock::now();
     std::cout << "TOP BASED ALGORITHM" << std::endl;
-    print::print_e_solution(G, sol_top, sim.sigma_prime_probs);
-    std::cout << "fun_cycle: " << sim.evaluate_solution(0, sol_top) << " func_weighted_latency: " << sim.evaluate_solution(1, sol_top) << " func_completion_time: " << sim.evaluate_solution(2, sol_top) << " | time(ms): " << std::chrono::duration_cast<std::chrono::milliseconds>(stop_t - start_t).count() << std::endl
+    print::print_e_solution(G, sol_top_meta, sim.sigma_prime_probs);
+    std::cout << "fun_cycle: " << sim.evaluate_solution(0, sol_top_meta) << " func_weighted_latency: " << sim.evaluate_solution(1, sol_top_meta) << " func_completion_time: " << sim.evaluate_solution(2, sol_top_meta) << " | time(ms): " << std::chrono::duration_cast<std::chrono::milliseconds>(stop_t2 - start_t2).count() << std::endl
               << std::endl;
-    assert(sim.check_solution_feasible(sol_top) == 1);
+    assert(sim.check_solution_feasible(sol_top_meta) == 1);
 
-    auto start_gmax = std::chrono::high_resolution_clock::now();
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_greedy_max = sim.greedy_based_alg(true);
-    auto stop_gmax = std::chrono::high_resolution_clock::now();
+    auto start_gmax2 = std::chrono::high_resolution_clock::now();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_greedy_max_meta = sim.meta_algorithm(2);
+    auto stop_gmax2 = std::chrono::high_resolution_clock::now();
     std::cout << "GREEDY-MAX ALGORITHM" << std::endl;
-    print::print_e_solution(G, sol_greedy_max, sim.sigma_prime_probs);
-    std::cout << "fun_cycle: " << sim.evaluate_solution(0, sol_greedy_max) << " func_weighted_latency: " << sim.evaluate_solution(1, sol_greedy_max) << " func_completion_time: " << sim.evaluate_solution(2, sol_greedy_max) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_gmax - start_gmax).count() << std::endl
+    print::print_e_solution(G, sol_greedy_max_meta, sim.sigma_prime_probs);
+    std::cout << "fun_cycle: " << sim.evaluate_solution(0, sol_greedy_max_meta) << " func_weighted_latency: " << sim.evaluate_solution(1, sol_greedy_max_meta) << " func_completion_time: " << sim.evaluate_solution(2, sol_greedy_max_meta) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_gmax2 - start_gmax2).count() << std::endl
               << std::endl;
-    assert(sim.check_solution_feasible(sol_greedy_max) == 1);
+    assert(sim.check_solution_feasible(sol_greedy_max_meta) == 1);
 
-    auto start_gmin = std::chrono::high_resolution_clock::now();
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_greedy_min = sim.greedy_based_alg(false);
-    auto stop_gmin = std::chrono::high_resolution_clock::now();
+    auto start_gmin2 = std::chrono::high_resolution_clock::now();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_greedy_min_meta = sim.meta_algorithm(3);
+    auto stop_gmin2 = std::chrono::high_resolution_clock::now();
     std::cout << "GREEDY-MIN ALGORITHM" << std::endl;
-    print::print_e_solution(G, sol_greedy_min, sim.sigma_prime_probs);
-    std::cout << "fun_cycle: " << sim.evaluate_solution(0, sol_greedy_min) << " func_weighted_latency: " << sim.evaluate_solution(1, sol_greedy_min) << " func_completion_time: " << sim.evaluate_solution(2, sol_greedy_min) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_gmin - start_gmin).count() << std::endl
+    print::print_e_solution(G, sol_greedy_min_meta, sim.sigma_prime_probs);
+    std::cout << "fun_cycle: " << sim.evaluate_solution(0, sol_greedy_min_meta) << " func_weighted_latency: " << sim.evaluate_solution(1, sol_greedy_min_meta) << " func_completion_time: " << sim.evaluate_solution(2, sol_greedy_min_meta) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_gmin2 - start_gmin2).count() << std::endl
               << std::endl;
-    assert(sim.check_solution_feasible(sol_greedy_min) == 1);
+    assert(sim.check_solution_feasible(sol_greedy_min_meta) == 1);
 
     auto start_p = std::chrono::high_resolution_clock::now();
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_prim = sim.prim_based_alg();
