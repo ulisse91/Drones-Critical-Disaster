@@ -200,9 +200,9 @@ bool test::check_fsolutions_obj_func_value_1()
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol3 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(0, 1)}}, {{std::make_pair(0, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
 
     if (sim.check_solution_feasible(sol) == 1 and sim.check_solution_feasible(sol2) == 1 and sim.check_solution_feasible(sol3) == 1)
-        if (45.9 >= sim.evaluate_solution(0, sol) and sim.evaluate_solution(0, sol) >= 45.88)
-            if (47.1115 >= sim.evaluate_solution(0, sol2) and sim.evaluate_solution(0, sol2) >= 47.1113)
-                if (27.3405 >= sim.evaluate_solution(0, sol3) and sim.evaluate_solution(0, sol3) >= 27.3403)
+        if (15.6104 >= sim.evaluate_solution(0, sol) and sim.evaluate_solution(0, sol) >= 15.6102)
+            if (16.7338 >= sim.evaluate_solution(0, sol2) and sim.evaluate_solution(0, sol2) >= 16.7336)
+                if (8.82532 >= sim.evaluate_solution(0, sol3) and sim.evaluate_solution(0, sol3) >= 8.82530)
                 {
                     std::cout << "check_fsolutions_obj_func_value_1 (cycle) [OK]" << std::endl;
                     return true;
@@ -224,13 +224,10 @@ bool test::check_fsolutions_obj_func_value_2()
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol2 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(0, 1)}, {std::make_pair(0, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol3 = {{{std::make_pair(0, 1), std::make_pair(1, 1), std::make_pair(2, 1), std::make_pair(3, 1), std::make_pair(0, 1)}}, {{std::make_pair(0, 1), std::make_pair(4, 1), std::make_pair(0, 1)}}};
 
-    std::cerr << sim.evaluate_solution(1, sol2) << std::endl;
-    std::cerr << sim.evaluate_solution(1, sol3) << std::endl;
-
     if (sim.check_solution_feasible(sol) == 1 and sim.check_solution_feasible(sol2) == 1 and sim.check_solution_feasible(sol3) == 1)
-        if (32.1617 >= sim.evaluate_solution(1, sol) and sim.evaluate_solution(1, sol) >= 32.1615)
-            if (36.5572 >= sim.evaluate_solution(1, sol2) and sim.evaluate_solution(1, sol2) >= 36.5570)
-                if (16.7862 >= sim.evaluate_solution(1, sol3) and sim.evaluate_solution(1, sol3) >= 16.7860)
+        if (6.43233 >= sim.evaluate_solution(1, sol) and sim.evaluate_solution(1, sol) >= 6.43231)
+            if (7.31142 >= sim.evaluate_solution(1, sol2) and sim.evaluate_solution(1, sol2) >= 7.31140)
+                if (3.35723 >= sim.evaluate_solution(1, sol3) and sim.evaluate_solution(1, sol3) >= 3.35721)
                 {
                     std::cout << "check_fsolutions_obj_func_value_1 (weighted latency) [OK]" << std::endl;
                     return true;
@@ -397,7 +394,7 @@ bool test::check_cost_cycle_OP()
     graph G = graph(2, 1);
     G.read_graph_from_file("../data/graph/test_OP.csv");
 
-    topb sim = topb(G, 1, 1, 100, std::map<int, int>(), 0);
+    simulator sim = simulator(G, 1, 1, 100, 0, 0);
     double _value_OP = sim.cost_cycle_OP(G.get_vertices_set());
 
     if (_value_OP == 13)
@@ -416,19 +413,13 @@ bool test::check_op_path_BB_insert_step()
     double budget = 2;
     std::unordered_set<int> graph_vertices = G.get_vertices_set();
 
-    std::map<int, int> sigma_prime_probs;
-    for (auto const &node : graph_vertices)
-    {
-        sigma_prime_probs[node] = 0;
-    }
-
     graph_vertices.erase(0);
 
-    topb sim = topb(G, 1, 1, budget, sigma_prime_probs, 0);
+    simulator sim = simulator(G, 1, 1, budget, 0, 0);
     std::unordered_set<int> cycle_set = sim.op_path_BB_insert_step(graph_vertices, {0});
 
     std::vector<int> target(cycle_set.begin(), cycle_set.end());
-    double _budget_spent_tsp = utilities::cost_budget_sequence(G, target, sigma_prime_probs);
+    double _budget_spent_tsp = utilities::cost_budget_sequence(G, target);
 
     if (budget > _budget_spent_tsp and sim.cost_cycle_OP(cycle_set) == 10)
     {
@@ -446,7 +437,7 @@ bool test::check_top_path_BB()
     double budget = 3.2;
     int n_drones = 1;
     simulator sim = simulator(G, n_drones, n_drones, budget, 0, 0);
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.top_based_alg();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.meta_algorithm(1);
 
     if (sol.size() == n_drones and sol[0].size() == 2 and
         sol[0][0][0].first == 0 and sol[0][0][1].first == 3 and sol[0][0][2].first == 2 and sol[0][0][3].first == 4 and sol[0][0][4].first == 0 and
@@ -455,16 +446,16 @@ bool test::check_top_path_BB()
         budget = 2;
         n_drones = 1;
         sim = simulator(G, n_drones, n_drones, budget, 0, 0);
-        sol = sim.top_based_alg();
+        sol = sim.meta_algorithm(1);
 
-        if (sol.size() == n_drones and sol[0].size() == 2 and
+        if (sol.size() == n_drones and sol[0].size() == 6 and
             sol[0][0][0].first == 0 and sol[0][0][1].first == 4 and sol[0][0][2].first == 0 and
             sol[0][1][0].first == 0 and sol[0][1][1].first == 1 and sol[0][1][2].first == 0)
         {
             budget = 3.2;
             n_drones = 2;
             sim = simulator(G, n_drones, n_drones, budget, 0, 0);
-            sol = sim.top_based_alg();
+            sol = sim.meta_algorithm(1);
 
             if (sol.size() == n_drones and sol[0].size() == 1 and sol[1].size() == 1 and
                 sol[0][0][0].first == 0 and sol[0][0][1].first == 3 and sol[0][0][2].first == 2 and sol[0][0][3].first == 4 and sol[0][0][4].first == 0 and
@@ -508,8 +499,7 @@ bool test::check_greedy_algorithm()
     double budget = 3.2;
     int n_drones = 1;
     simulator sim = simulator(G, n_drones, n_drones, budget, 0, 0);
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.greedy_based_alg(true);
-
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.meta_algorithm(2);
     if (sol.size() == n_drones and sol[0].size() == 2 and
         sol[0][0][0].first == 0 and sol[0][0][1].first == 4 and sol[0][0][2].first == 3 and sol[0][0][3].first == 1 and sol[0][0][4].first == 0 and
         sol[0][1][0].first == 0 and sol[0][1][1].first == 2 and sol[0][1][2].first == 0)
@@ -531,15 +521,13 @@ bool test::check_prim_based_alg()
 
     simulator sim = simulator(G, n_drones, n_drones, budget, 0, 0);
 
-    sol = sim.prim_based_alg();
-
+    sol = sim.meta_algorithm(0);
     if (sol.size() == n_drones and sol[0].size() == 3)
     {
         budget = 3.2;
         n_drones = 2;
         sim = simulator(G, n_drones, n_drones, budget, 0, 0);
-        sol = sim.prim_based_alg();
-
+        sol = sim.meta_algorithm(0);
         if (sol.size() == n_drones and sol[0].size() == 2)
         {
             std::cout << "check_prim_based_alg [OK]" << std::endl;

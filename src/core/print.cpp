@@ -55,12 +55,14 @@ void print::print_set(std::unordered_set<int> _set)
     std::cout << std::endl;
 }
 
-void print::print_vector_int(std::vector<int> _vec)
+template <typename T>
+void print::print_vector(const T &t)
 {
-    for (auto &v : _vec)
-        std::cout << v << " ";
+    std::copy(t.cbegin(), t.cend(), std::ostream_iterator<typename T::value_type>(std::cout, " "));
     std::cout << std::endl;
 }
+template void print::print_vector<std::vector<int>>(const std::vector<int> &);
+template void print::print_vector<std::vector<double>>(const std::vector<double> &);
 
 void print::print_map_int_int(std::map<int, int> _map)
 {

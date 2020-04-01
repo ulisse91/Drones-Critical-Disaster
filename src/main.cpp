@@ -9,7 +9,14 @@ int main(int argc, char **argv)
     input n_input = userinput::read_user_input(argc, argv);
 
     graph G = graph(2, 2);
-    G.create_random_graph(n_input.n_nodes, 3, 3, n_input.seed);
+    if (n_input.graph_file != "")
+    {
+        G.read_graph_from_file(n_input.graph_file);
+    }
+    else
+    {
+        G.create_random_graph(n_input.n_nodes, 3, 3, n_input.seed);
+    }
 
     print::print_graph(G);
 
@@ -22,8 +29,10 @@ int main(int argc, char **argv)
     auto stop_t2 = std::chrono::high_resolution_clock::now();
     std::cout << "TOP BASED ALGORITHM" << std::endl;
     print::print_e_solution(G, sol_top_meta, sim.sigma_prime_probs);
-    std::cout << "fun_cycle: " << sim.evaluate_solution(0, sol_top_meta) << " func_weighted_latency: " << sim.evaluate_solution(1, sol_top_meta) << " func_completion_time: " << sim.evaluate_solution(2, sol_top_meta) << " | time(ms): " << std::chrono::duration_cast<std::chrono::milliseconds>(stop_t2 - start_t2).count() << std::endl
-              << std::endl;
+    std::cout << "fun_cycle: " << sim.evaluate_solution(0, sol_top_meta) << " func_weighted_latency: " << sim.evaluate_solution(1, sol_top_meta) << " func_completion_time: " << sim.evaluate_solution(2, sol_top_meta) << " | time(ms): " << std::chrono::duration_cast<std::chrono::milliseconds>(stop_t2 - start_t2).count() << std::endl;
+    print::print_vector(sim.completion_time_priorities(sol_top_meta));
+
+    std::cout << std::endl;
     assert(sim.check_solution_feasible(sol_top_meta) == 1);
 
     auto start_gmax2 = std::chrono::high_resolution_clock::now();
@@ -45,7 +54,7 @@ int main(int argc, char **argv)
     assert(sim.check_solution_feasible(sol_greedy_min_meta) == 1);
 
     auto start_p = std::chrono::high_resolution_clock::now();
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_prim = sim.prim_based_alg();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_prim = sim.meta_algorithm(0);
     auto stop_p = std::chrono::high_resolution_clock::now();
     std::cout << "PRIM BASED ALGORITHM" << std::endl;
     print::print_e_solution(G, sol_prim, sim.sigma_prime_probs);
@@ -54,15 +63,15 @@ int main(int argc, char **argv)
     std::cout << std::endl;
     assert(sim.check_solution_feasible(sol_prim) == 1);
 
-    auto start_tp = std::chrono::high_resolution_clock::now();
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> top_plus_prim = sim.top_plus_prim();
-    auto stop_tp = std::chrono::high_resolution_clock::now();
+    auto start_tp2 = std::chrono::high_resolution_clock::now();
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> top_plus_prim_meta = sim.meta_algorithm(4);
+    auto stop_tp2 = std::chrono::high_resolution_clock::now();
     std::cout << "TOP+PRIM BASED ALGORITHM" << std::endl;
-    print::print_e_solution(G, top_plus_prim, sim.sigma_prime_probs);
-    std::cout << "fun_cycle: " << sim.evaluate_solution(0, top_plus_prim) << " func_weighted_latency: " << sim.evaluate_solution(1, top_plus_prim) << " func_completion_time: " << sim.evaluate_solution(2, top_plus_prim) << " | time(ms): " << std::chrono::duration_cast<std::chrono::milliseconds>(stop_tp - start_tp).count() << std::endl
+    print::print_e_solution(G, top_plus_prim_meta, sim.sigma_prime_probs);
+    std::cout << "fun_cycle: " << sim.evaluate_solution(0, top_plus_prim_meta) << " func_weighted_latency: " << sim.evaluate_solution(1, top_plus_prim_meta) << " func_completion_time: " << sim.evaluate_solution(2, top_plus_prim_meta) << " | time(ms): " << std::chrono::duration_cast<std::chrono::milliseconds>(stop_tp2 - start_tp2).count() << std::endl
               << std::endl;
     std::cout << std::endl;
-    assert(sim.check_solution_feasible(top_plus_prim) == 1);
+    assert(sim.check_solution_feasible(top_plus_prim_meta) == 1);
 
     return 0;
 }
