@@ -1,69 +1,59 @@
-make curr
+#!/bin/bash
 
-echo "-b 15 -d 2 -n 15 -p 0"
+function check_command {
+    if [ $2 -eq 0 ]; then
+        echo -e "$1 [OK]"
+    else
+        echo -e "$1 [FAILED]"
+        clean
+        exit
+    fi
+}
 
-./src/build/main -b 15 -d 2 -n 15 -p 0 -s 100000 >> data/results-b15-d2-n15-p0.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0 -s 100001 >> data/results-b15-d2-n15-p0.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0 -s 100002 >> data/results-b15-d2-n15-p0.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0 -s 100003 >> data/results-b15-d2-n15-p0.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0 -s 100004 >> data/results-b15-d2-n15-p0.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0 -s 100005 >> data/results-b15-d2-n15-p0.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0 -s 100006 >> data/results-b15-d2-n15-p0.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0 -s 100007 >> data/results-b15-d2-n15-p0.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0 -s 100008 >> data/results-b15-d2-n15-p0.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0 -s 100009 >> data/results-b15-d2-n15-p0.txt
+function clean {
+    echo "Forcing remotion of every data files"
+    rm -rf data/output
+    mkdir data/output
+}
 
-./src/build/main -b 15 -d 2 -n 15 -p 0.2 -s 100000 >> data/results-b15-d2-n15-p02.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.2 -s 100001 >> data/results-b15-d2-n15-p02.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.2 -s 100002 >> data/results-b15-d2-n15-p02.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.2 -s 100003 >> data/results-b15-d2-n15-p02.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.2 -s 100004 >> data/results-b15-d2-n15-p02.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.2 -s 100005 >> data/results-b15-d2-n15-p02.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.2 -s 100006 >> data/results-b15-d2-n15-p02.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.2 -s 100007 >> data/results-b15-d2-n15-p02.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.2 -s 100008 >> data/results-b15-d2-n15-p02.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.2 -s 100009 >> data/results-b15-d2-n15-p02.txt
+if [[ $# -ne 3 ]]; then
+    echo "Usage: $0 <bool:make> <budget> <prob_value>"
+    exit
+fi
 
-./src/build/main -b 15 -d 2 -n 15 -p 0.4 -s 100000 >> data/results-b15-d2-n15-p04.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.4 -s 100001 >> data/results-b15-d2-n15-p04.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.4 -s 100002 >> data/results-b15-d2-n15-p04.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.4 -s 100003 >> data/results-b15-d2-n15-p04.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.4 -s 100004 >> data/results-b15-d2-n15-p04.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.4 -s 100005 >> data/results-b15-d2-n15-p04.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.4 -s 100006 >> data/results-b15-d2-n15-p04.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.4 -s 100007 >> data/results-b15-d2-n15-p04.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.4 -s 100008 >> data/results-b15-d2-n15-p04.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.4 -s 100009 >> data/results-b15-d2-n15-p04.txt
+if [[ $1 -eq 1 ]]; then
+    echo -e "Starting compilation ...\n"
+    make curr
+    check_command "\nCompilation" $?
+fi
 
-./src/build/main -b 15 -d 2 -n 15 -p 0.6 -s 100000 >> data/results-b15-d2-n15-p06.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.6 -s 100001 >> data/results-b15-d2-n15-p06.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.6 -s 100002 >> data/results-b15-d2-n15-p06.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.6 -s 100003 >> data/results-b15-d2-n15-p06.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.6 -s 100004 >> data/results-b15-d2-n15-p06.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.6 -s 100005 >> data/results-b15-d2-n15-p06.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.6 -s 100006 >> data/results-b15-d2-n15-p06.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.6 -s 100007 >> data/results-b15-d2-n15-p06.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.6 -s 100008 >> data/results-b15-d2-n15-p06.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.6 -s 100009 >> data/results-b15-d2-n15-p06.txt
+budget=$2
+p=$3
+main="./src/build/main"
+pathoutput="data/output/"
+pathbkp="data/bkp/"
+baseseed=100000
 
-./src/build/main -b 15 -d 2 -n 15 -p 0.8 -s 100000 >> data/results-b15-d2-n15-p08.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.8 -s 100001 >> data/results-b15-d2-n15-p08.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.8 -s 100002 >> data/results-b15-d2-n15-p08.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.8 -s 100003 >> data/results-b15-d2-n15-p08.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.8 -s 100004 >> data/results-b15-d2-n15-p08.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.8 -s 100005 >> data/results-b15-d2-n15-p08.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.8 -s 100006 >> data/results-b15-d2-n15-p08.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.8 -s 100007 >> data/results-b15-d2-n15-p08.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.8 -s 100008 >> data/results-b15-d2-n15-p08.txt
-./src/build/main -b 15 -d 2 -n 15 -p 0.8 -s 100009 >> data/results-b15-d2-n15-p08.txt
+echo "Starting simulations ..."
+for nodes in {30..100..10}; do
+    for drone in {2..6..2}; do
+        echo "Simulation: -b $budget -d $drone -n $nodes -p $p"
+        for seed in {0..9}; do 
+            $main -b $budget -d $drone -n $nodes -p $p -s $(($baseseed + $seed)) >> ${pathoutput}"results"-b${budget}-d${drone}-n${nodes}-p${p}.txt
+            # echo "$main -b $budget -d $drone -n $nodes -p $p -s $(($baseseed + $seed)) > ${pathoutput}-b${budget}-d${drone}-n${nodes}-p${p}.txt"
+        done
+    done
+done 
+echo -e "Simulation terminated\n"
 
-./src/build/main -b 15 -d 2 -n 15 -p 1 -s 100000 >> data/results-b15-d2-n15-p1.txt
-./src/build/main -b 15 -d 2 -n 15 -p 1 -s 100001 >> data/results-b15-d2-n15-p1.txt
-./src/build/main -b 15 -d 2 -n 15 -p 1 -s 100002 >> data/results-b15-d2-n15-p1.txt
-./src/build/main -b 15 -d 2 -n 15 -p 1 -s 100003 >> data/results-b15-d2-n15-p1.txt
-./src/build/main -b 15 -d 2 -n 15 -p 1 -s 100004 >> data/results-b15-d2-n15-p1.txt
-./src/build/main -b 15 -d 2 -n 15 -p 1 -s 100005 >> data/results-b15-d2-n15-p1.txt
-./src/build/main -b 15 -d 2 -n 15 -p 1 -s 100006 >> data/results-b15-d2-n15-p1.txt
-./src/build/main -b 15 -d 2 -n 15 -p 1 -s 100007 >> data/results-b15-d2-n15-p1.txt
-./src/build/main -b 15 -d 2 -n 15 -p 1 -s 100008 >> data/results-b15-d2-n15-p1.txt
-./src/build/main -b 15 -d 2 -n 15 -p 1 -s 100009 >> data/results-b15-d2-n15-p1.txt
+echo -n "Starting analysis script ..."
+python3 scripts/analyze_data.py ${p} # >> ${pathoutput}analysis-b${budget}-p${p}.output
+check_command "" $?
+
+echo -n "Starting compression files ..."
+tar -czf ${pathbkp}simulations-b${budget}-p${p}.tar.gz ${pathoutput}
+check_command "" $?
+
+clean
+
+echo "DONE"

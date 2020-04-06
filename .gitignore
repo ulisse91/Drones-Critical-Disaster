@@ -36,6 +36,9 @@ build/
 tests/build/
 src/build/
 examples/build/
+data/output/
+data/bkp/
+data/plots/
 
 # Visual Studio Code
 .vscode/*

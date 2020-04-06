@@ -53,8 +53,10 @@ public:
 
     std::vector<int> greedy_find_path(std::unordered_set<int> graph_vertices, bool max);
     double cost_cycle_OP(std::unordered_set<int> _temp);
+    double cost_cycle_OP(std::vector<int> _temp);
     std::unordered_set<int> op_path_BB_insert_step(std::unordered_set<int> graph_vertices, std::unordered_set<int> sol_temp);
     std::vector<std::vector<int>> prim_based(std::unordered_set<int> graph_vertices);
+std::vector<std::vector<int>> top_heur(std::unordered_set<int> graph_vertices);
 };
 
 #endif // SIMULATOR_H

@@ -10,12 +10,10 @@ make examples
 ```
 Then run the examples singularly from the examples/build directory
 
-If you want to do tests during developing phase you can use
+The main file is src/main.cpp
 ```bash
 make curr
 ```
-The main file is src/main.cpp
-This file should remain empty otherwise
 
 # TO_DO
 Algorithms:
@@ -23,6 +21,7 @@ Algorithms:
 Features:
 - fun: print solution in file
 - fun: read solution from file
+- portare seed fino a metric-k-center
 
 To-Fix / Important:
 
