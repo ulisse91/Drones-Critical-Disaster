@@ -79,7 +79,7 @@ std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double 
 
     ////////////////////////////////////////////
 
-    for (size_t j = 0; j < G.get_n_nodes(); j++)
+    for (int j = 0; j < G.get_n_nodes(); j++)
     {
         int u = minKey_index(key, mstSet, _max, G.get_n_nodes());
         if (u == -1)
@@ -181,7 +181,7 @@ std::vector<int> algo::metric_k_center(graph G, int k)
         counter++;
     }
 
-    while (sol.size() < k and graph_vertices.size() > 0)
+    while (sol.size() < (unsigned)k and graph_vertices.size() > 0)
     {
         std::map<int, double> temp;
         for (auto const &i : graph_vertices)

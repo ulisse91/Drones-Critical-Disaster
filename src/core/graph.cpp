@@ -33,7 +33,7 @@ void graph::create_random_graph(int number_of_nodes, double max_weight, int max_
     //Mersenne Twister: Good quality random number generator
     std::mt19937 re(seed);
 
-    for (size_t i = 0; i < number_of_nodes; i++)
+    for (size_t i = 0; i < (unsigned)number_of_nodes; i++)
     {
         double _x = unif_1(re);
         double _y = unif_2(re);
@@ -43,7 +43,7 @@ void graph::create_random_graph(int number_of_nodes, double max_weight, int max_
 
         this->add_node(_x, _y, _w, _p, _wp);
     }
-    assert(this->vertices.size() == this->n_nodes);
+    assert((int)this->vertices.size() == this->n_nodes);
 }
 
 int graph::add_node(int id, double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime)

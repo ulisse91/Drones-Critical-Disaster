@@ -18,6 +18,7 @@ function clean {
 
 if [[ $# -ne 3 ]]; then
     echo "Usage: $0 <bool:make> <budget> <prob_value>"
+    echo "<bool:make>:: 1 == make curr, 0 will skip the compilation"
     exit
 fi
 
@@ -35,10 +36,10 @@ pathbkp="data/bkp/"
 baseseed=100000
 
 echo "Starting simulations ..."
-for nodes in {30..100..10}; do
+for nodes in {10..100..10}; do
     for drone in {2..6..2}; do
         echo "Simulation: -b $budget -d $drone -n $nodes -p $p"
-        for seed in {0..9}; do 
+        for seed in {0..20}; do 
             $main -b $budget -d $drone -n $nodes -p $p -s $(($baseseed + $seed)) >> ${pathoutput}"results"-b${budget}-d${drone}-n${nodes}-p${p}.txt
             # echo "$main -b $budget -d $drone -n $nodes -p $p -s $(($baseseed + $seed)) > ${pathoutput}-b${budget}-d${drone}-n${nodes}-p${p}.txt"
         done

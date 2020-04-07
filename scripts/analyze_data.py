@@ -2,7 +2,7 @@ import numpy
 import sys
 from collections import defaultdict
 
-algs = ["top", "prim", "gmax", "gmin", "topprim"]
+algs = ["top", "prim", "gmax", "topprim"]
 pvalue = float(sys.argv[1])
 
 start_file = """
@@ -14,7 +14,7 @@ start_file = """
 \pgfplotsset{width=7cm, compat=1.15}\n
 """
 
-end_file = """
+end_file_1 = """
 \\begin{document}
 \\begin{tikzpicture}
 \\begin{axis}[
@@ -24,7 +24,10 @@ end_file = """
         legend pos=outer north east,
         legend style={font=\tiny},
     },
-    title={\(q=2, B=15, p=0\)},
+"""
+
+
+end_file_2 ="""
     every axis plot/.append style={thick},
     xmajorgrids, ymajorgrids,
     width=5.5cm, height=5.5cm,
@@ -71,7 +74,7 @@ for drones in range(2, 8, 2):
         d_fun_3 = defaultdict(lambda: defaultdict(list))
         with open("data/output/"+alg+".csv") as fIn:
             for line in fIn:
-                n, b, q, p, s, fun_1, fun_2, fun_3, ct_max, ct_med, ct_min = line.strip().split(",")
+                n, b, q, p, s, fun_1, fun_2, fun_3, ct_max, ct_med, ct_min, time = line.strip().split(",")
                 d_fun_1[int(q)][int(n)].append(float(fun_1.strip()))
                 d_fun_2[int(q)][int(n)].append(float(fun_2.strip()))
                 d_fun_3[int(q)][int(n)].append(float(fun_3.strip()))
@@ -97,5 +100,9 @@ for drones in range(2, 8, 2):
             std = numpy.std(arr, axis=0)
             f2.write(str(n_nodes)+" {:.2f} {:.2f}".format(avg, std)+"\n")
         f2.write("\\end{filecontents}\n\n")
-    f.write(end_file)
-    f2.write(end_file)
+    f.write(end_file_1)
+    f2.write(end_file_1)
+    f.write("title={\\(q="+str(drones)+", B=15, p="+str(pvalue)+"\\)},")
+    f2.write("title={\\(q="+str(drones)+", B=15, p="+str(pvalue)+"\\)},")
+    f.write(end_file_2)
+    f2.write(end_file_2)

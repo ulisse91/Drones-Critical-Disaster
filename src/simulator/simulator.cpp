@@ -41,7 +41,7 @@ double simulator::objective_function_weighted_latency(std::vector<std::vector<st
         for (auto const &cycle : drone)
         {
             double cost_nodes_in_cycle = 0;
-            for (int nodo = 1; nodo < cycle.size(); nodo++)
+            for (int nodo = 1; nodo < (int)cycle.size(); nodo++)
             {
                 int previous_node_index = cycle[nodo - 1].first;
                 int current_node_index = cycle[nodo].first;
@@ -66,8 +66,7 @@ double simulator::objective_function_cycle(std::vector<std::vector<std::vector<s
         double previous_time_cycle = 0;
         for (auto const &cycle : drone)
         {
-            double cost_nodes_in_cycle = 0;
-            for (int nodo = 1; nodo < cycle.size(); nodo++)
+            for (int nodo = 1; nodo < (int)cycle.size(); nodo++)
             {
                 int previous_node_index = cycle[nodo - 1].first;
                 int current_node_index = cycle[nodo].first;
@@ -117,7 +116,7 @@ std::vector<double> simulator::completion_time_priorities(std::vector<std::vecto
         for (auto const &cycle : drone)
         {
             double cost_nodes_in_cycle = 0;
-            for (int nodo = 1; nodo < cycle.size(); nodo++)
+            for (int nodo = 1; nodo < (int)cycle.size(); nodo++)
             {
                 int previous_node_index = cycle[nodo - 1].first;
                 int current_node_index = cycle[nodo].first;
@@ -170,7 +169,7 @@ int simulator::check_solution_feasible(std::vector<std::vector<std::vector<std::
 
     for (auto const &drone : sol)
     {
-        for (int cycle = 0; cycle < drone.size(); cycle++)
+        for (int cycle = 0; cycle < (int)drone.size(); cycle++)
         {
             if (drone[cycle][0].first != 0 or drone[cycle][drone[cycle].size() - 1].first != 0)
             {
@@ -179,7 +178,7 @@ int simulator::check_solution_feasible(std::vector<std::vector<std::vector<std::
             }
             double used_budget = 0;
 
-            for (int nodo = 1; nodo < drone[cycle].size(); nodo++)
+            for (int nodo = 1; nodo < (int)drone[cycle].size(); nodo++)
             {
                 int previous_node_index = drone[cycle][nodo - 1].first;
                 int current_node_index = drone[cycle][nodo].first;
@@ -236,7 +235,7 @@ std::vector<std::vector<int>> simulator::top_heur(std::unordered_set<int> graph_
     if (this->n_drones > 1)
         centers.erase(std::remove(centers.begin(), centers.end(), 0), centers.end());
 
-    for (int i = 0; i < centers.size(); i++)
+    for (int i = 0; i < (int)centers.size(); i++)
     {
         std::vector<int> tsp_i = algo::find_TSP(temp_graph, this->budget, centers[i], tree);
         curr_sol[i].insert(curr_sol[i].end(), tsp_i.begin(), tsp_i.end());
@@ -244,9 +243,9 @@ std::vector<std::vector<int>> simulator::top_heur(std::unordered_set<int> graph_
         graph_vertices = utilities::set_difference(graph_vertices, curr_sol[i]);
     }
 
-    for (int i = 0; i < centers.size(); i++)
+    for (int i = 0; i < (int)centers.size(); i++)
     {
-        for (int j = 1; j < curr_sol[i].size() - 1; j++)
+        for (int j = 1; j < (int)curr_sol[i].size() - 1; j++)
         {
             double prev_cost = cost_cycle_OP(curr_sol[i]);
             int new_node = curr_sol[i][j];
@@ -414,7 +413,7 @@ std::vector<std::vector<int>> simulator::prim_based(std::unordered_set<int> grap
         // std::cerr << "centers: ";
         // print::print_vector(centers);
 
-        assert(centers.size() <= this->n_drones);
+        assert((int)centers.size() <= this->n_drones);
 
         if (this->n_drones > 1)
             centers.push_back(0);
@@ -426,7 +425,7 @@ std::vector<std::vector<int>> simulator::prim_based(std::unordered_set<int> grap
         // print::print_map_int_int(tree);
         // std::cerr << std::endl;
 
-        for (int i = 0; i < centers.size(); i++)
+        for (int i = 0; i < (int)centers.size(); i++)
         {
             std::vector<int> tsp_i = algo::find_TSP(G_3, this->budget, centers[i], tree);
 
@@ -462,7 +461,7 @@ std::vector<std::vector<int>> simulator::prim_based(std::unordered_set<int> grap
         // print::print_map_int_int(tree);
         // std::cerr << std::endl;
 
-        for (int i = 0; i < centers_g_2.size(); i++)
+        for (int i = 0; i < (int)centers_g_2.size(); i++)
         {
             double previous_used_budget = utilities::cost_budget_sequence(G, curr_sol[i]);
 
@@ -499,7 +498,7 @@ std::vector<std::vector<int>> simulator::prim_based(std::unordered_set<int> grap
     // print::print_map_int_int(tree);
     // std::cerr << std::endl;
 
-    for (int i = 0; i < centers_g_1.size(); i++)
+    for (int i = 0; i < (int)centers_g_1.size(); i++)
     {
         double previous_used_budget = utilities::cost_budget_sequence(G, curr_sol[i]);
 
@@ -605,7 +604,7 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::meta_al
     int current_drone = 0;
     int counter = 0;
 
-    auto start_t2 = std::chrono::high_resolution_clock::now();
+    // auto start_t2 = std::chrono::high_resolution_clock::now();
 
     while (not graph_vertices.empty() and counter <= G.get_n_nodes())
     {
@@ -613,16 +612,16 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::meta_al
 
         if (this->prob_sigma_prime > 0)
         {
-            for (int i = 0; i < cycle_tsp.size(); i++)
+            for (int i = 0; i < (int)cycle_tsp.size(); i++)
             {
                 cycle_tsp[i] = check_cycle_sigma_prime_cycle(cycle_tsp[i]);
             }
         }
 
-        for (int i = 0; i < cycle_tsp.size(); i++)
+        for (int i = 0; i < (int)cycle_tsp.size(); i++)
         {
             std::vector<std::pair<int, double>> _temp;
-            for (int j = 0; j < cycle_tsp[i].size(); j++)
+            for (int j = 0; j < (int)cycle_tsp[i].size(); j++)
             {
                 _temp.push_back(std::make_pair(cycle_tsp[i][j], 1));
             }
@@ -637,11 +636,11 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::meta_al
             which_alg = 0;
         }
 
-        if (counter % this->n_drones == 0)
-        {
-            auto stop_t2 = std::chrono::high_resolution_clock::now();
-            // std::cerr << std::chrono::duration_cast<std::chrono::milliseconds>(stop_t2 - start_t2).count() << "\n";
-        }
+        // if (counter % this->n_drones == 0)
+        // {
+        //     auto stop_t2 = std::chrono::high_resolution_clock::now();
+        //     // std::cerr << std::chrono::duration_cast<std::chrono::milliseconds>(stop_t2 - start_t2).count() << "\n";
+        // }
 
         counter++;
     }
