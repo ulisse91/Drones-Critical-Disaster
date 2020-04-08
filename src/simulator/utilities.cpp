@@ -61,3 +61,56 @@ double utilities::cost_budget_sequence(graph G, std::vector<std::pair<int, doubl
     }
     return sum_of_elems;
 }
+
+void utilities::clean_sol(std::vector<std::vector<int>> &_temp)
+{
+    for (auto &cycle : _temp)
+    {
+        auto end = cycle.end();
+        for (auto it = cycle.begin(); it != end; ++it)
+        {
+            end = std::remove(it + 1, end, *it);
+        }
+        cycle.erase(end, cycle.end());
+    }
+}
+
+void utilities::clean_sol_full(std::vector<std::vector<std::vector<std::pair<int, double>>>> &sol)
+{
+    for (auto &drone : sol)
+    {
+        for (auto it = drone.begin(); it != drone.end();)
+        {
+            if (it->size() == 2)
+            {
+                it = drone.erase(it);
+            }
+            else
+            {
+                ++it;
+            }
+        }
+    }
+}
+
+std::vector<double> utilities::stat_sol(graph G, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol, std::map<int, int> sigma_prime_prob, double budget)
+{
+    int tot_n_cycles = 0;
+    double avg_time_cycle = 0;
+    double min_time_cycle = budget;
+
+    for (size_t i = 0; i < sol.size(); i++)
+    {
+        tot_n_cycles += sol[i].size();
+        for (int j = 0; j < (int)sol[i].size() - 1; j++)
+        {
+            double t_cycle = utilities::cost_budget_sequence(G, sol[i][j], sigma_prime_prob);
+            avg_time_cycle += t_cycle;
+            if (t_cycle < min_time_cycle)
+            {
+                min_time_cycle = t_cycle;
+            }
+        }
+    }
+    return std::vector<double>{(double)tot_n_cycles, avg_time_cycle / (tot_n_cycles - sol.size()), min_time_cycle};
+}

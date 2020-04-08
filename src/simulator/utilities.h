@@ -24,6 +24,9 @@ public:
     static double cost_budget_sequence(graph G, std::vector<std::pair<int, double>> _temp, std::map<int, int> sigma_prime_prob);
     static std::vector<int> check_cycle_sigma_prime_cycle(graph G, std::map<int, int> sigma_prime_prob, long seed, double budget, std::vector<int> cycle);
     static std::vector<int> check_cycle_sigma_prime_cycle(graph G, std::map<int, int> sigma_prime_prob, long seed, double budget, int start, std::vector<int> cycle);
+    static void clean_sol(std::vector<std::vector<int>> &_temp);
+    static void clean_sol_full(std::vector<std::vector<std::vector<std::pair<int, double>>>> &_sol);
+    static std::vector<double> stat_sol(graph G, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol, std::map<int, int> sigma_prime_prob, double budget);
 };
 
 #endif // UTILITIES_H

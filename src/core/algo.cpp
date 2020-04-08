@@ -156,7 +156,7 @@ std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double 
     return parent;
 }
 
-std::vector<int> algo::metric_k_center(graph G, int k)
+std::vector<int> algo::metric_k_center(graph G, int k, long seed)
 {
     if (k == 0)
         return {};
@@ -167,9 +167,11 @@ std::vector<int> algo::metric_k_center(graph G, int k)
     std::unordered_set<int> graph_vertices = G.get_vertices_set();
     graph_vertices.erase(graph_vertices.find(0));
 
-    /* initialize random seed: */
-    srand(time(NULL));
-    int _n = rand() % (G.get_n_nodes() - 1) + 1, counter = 0;
+    std::uniform_int_distribution<int> unif(1, G.get_n_nodes());
+    std::mt19937 re(seed);
+
+    // int _n = rand() % (G.get_n_nodes() - 1) + 1,
+    int _n = unif(re), counter = 0;
     for (auto const &i : graph_vertices)
     {
         if (_n == counter)

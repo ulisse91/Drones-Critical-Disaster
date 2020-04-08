@@ -25,7 +25,7 @@ public:
     ~algo();
 
     static std::map<int, int> primMST(graph G, std::vector<int> forced_nodes, double budget);
-    static std::vector<int> metric_k_center(graph G, int k);
+    static std::vector<int> metric_k_center(graph G, int k, long seed);
     static std::vector<int> find_TSP(graph G, double budget, int start, std::map<int, int> tree);
 };
 

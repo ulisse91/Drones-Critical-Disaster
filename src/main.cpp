@@ -2,6 +2,8 @@
 #include <fstream>
 #include <chrono>
 
+#include <boost/algorithm/string.hpp>
+
 #include "core/user_input.h"
 #include "simulator/simulator.h"
 
@@ -11,27 +13,19 @@ int main(int argc, char **argv)
     std::ofstream outfile;
 
     graph G = graph(2, 2);
-    if (n_input.graph_file != "")
-    {
-        G.read_graph_from_file(n_input.graph_file);
-    }
-    else
-    {
-        G.create_random_graph(n_input.n_nodes, 3, 3, n_input.seed);
-    }
-
+    G.create_random_graph(n_input.n_nodes, 3, 3, n_input.seed);
     print::print_graph(G);
 
     simulator sim = simulator(G, n_input.n_drones, n_input.n_drones /* batteries */, n_input.budget, n_input.prob_sigma_prime, n_input.seed);
 
     assert(sim.check_feasibility());
 
-    std::vector<std::string> algs = {"PRIM BASED", "TOP BASED", "GMAX", "GMIN", "T+P"};
-    std::vector<std::string> files = {"prim.csv", "top.csv", "gmax.csv", "gmin.csv", "topprim.csv"};
+    std::vector<std::string> algs = {"PRIM", "TOP", "GMAX", "GMIN", "TOP-PRIM"};
 
     for (int i = 0; i < 5; i++)
     {
-        if(i==3) continue; // skip GMIN
+        if (i == 3)
+            continue; // skip GMIN
         auto start_t = std::chrono::high_resolution_clock::now();
         std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.meta_algorithm(i);
         auto stop_t = std::chrono::high_resolution_clock::now();
@@ -42,8 +36,27 @@ int main(int argc, char **argv)
         print::print_vector(ct_graphs_p);
         std::cout << std::endl;
         assert(sim.check_solution_feasible(sol) == 1);
-        outfile.open("data/output/" + files[i], std::ios_base::app);
-        outfile << n_input.n_nodes << "," << n_input.budget << "," << n_input.n_drones << "," << n_input.prob_sigma_prime << "," << n_input.seed << "," << sim.evaluate_solution(0, sol) << "," << sim.evaluate_solution(1, sol) << "," << sim.evaluate_solution(2, sol) << "," << ct_graphs_p[0] << "," << ct_graphs_p[1] << "," << ct_graphs_p[2] << "," << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() << "\n";
+        outfile.open("data/output/" + boost::algorithm::to_lower_copy(algs[i]) + ".csv", std::ios_base::app);
+
+        std::vector<double> test = utilities::stat_sol(G, sol, sim.sigma_prime_probs, n_input.budget);
+        std::cout << "number of cycles: " << test[0] << " avg time in cycles: " << test[1] << " min budget spent in cycles: " << test[1] << std::endl;
+
+        outfile << n_input.n_nodes                                                                        /* number of nodes */
+                << "," << n_input.budget                                                                  /* budget */
+                << "," << n_input.n_drones                                                                /* number of drones */
+                << "," << n_input.prob_sigma_prime                                                        /* probability per sigma prime */
+                << "," << n_input.seed                                                                    /* seed */
+                << "," << sim.evaluate_solution(0, sol)                                                   /* wL^I */
+                << "," << sim.evaluate_solution(1, sol)                                                   /* wL^II */
+                << "," << sim.evaluate_solution(2, sol)                                                   /* completion time */
+                << "," << ct_graphs_p[0]                                                                  /* completion time graph max */
+                << "," << ct_graphs_p[1]                                                                  /* completion time graph med */
+                << "," << ct_graphs_p[2]                                                                  /* completion time graph min */
+                << "," << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() /* microsends computation algorithm */
+                << "," << test[0]                                                                         /* number of cycles in solution */
+                << "," << test[1]                                                                         /* average time cycles (except last cycle) */
+                << "," << test[2]                                                                         /* min time cycles (except last cycle) */
+                << "\n";
         outfile.close();
     }
 

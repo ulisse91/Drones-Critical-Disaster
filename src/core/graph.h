@@ -14,9 +14,9 @@ struct node
     int id;
     double x, y;
     double node_weight = 0;
-     int priority = 0;
+    int priority = 0;
     double node_sigma_prime = 0;
-   
+
     node(int _id, double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime) : id(_id), x(_x), y(_y), node_weight(_node_weight), priority(_priority), node_sigma_prime(_node_sigma_prime) {}
     node() = default;
 };

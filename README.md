@@ -21,14 +21,10 @@ Algorithms:
 Features:
 - fun: print solution in file
 - fun: read solution from file
-- seed in metric-k-center
 - input from file
 
 To-Fix / Important:
 - generate graph with zipf distribution
-- clean cycle no cycles with 0-0
-- simulator save csv: number of total cycles, avg (and max) budget spent per cycle (do not include last cycle)
-- check function finishing time G_max G_med G_min
 
 Examples:
 

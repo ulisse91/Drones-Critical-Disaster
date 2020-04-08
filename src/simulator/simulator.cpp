@@ -109,38 +109,34 @@ double simulator::objective_function_completion_time(std::vector<std::vector<std
 std::vector<double> simulator::completion_time_priorities(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
 {
     std::vector<double> value_fun = {0, 0, 0};
-
     for (auto const &drone : sol)
     {
         double previous_time_cycle = 0;
         for (auto const &cycle : drone)
         {
-            double cost_nodes_in_cycle = 0;
             for (int nodo = 1; nodo < (int)cycle.size(); nodo++)
             {
                 int previous_node_index = cycle[nodo - 1].first;
                 int current_node_index = cycle[nodo].first;
                 double distance_prev_to_curr_node = this->G.dist(previous_node_index, current_node_index);
 
-                cost_nodes_in_cycle += distance_prev_to_curr_node + G.get_weight_node(current_node_index) + this->sigma_prime_probs[current_node_index] * G.get_weight_prime_node(current_node_index);
+                previous_time_cycle += distance_prev_to_curr_node + this->G.get_weight_node(current_node_index) + this->sigma_prime_probs[current_node_index] * G.get_weight_prime_node(current_node_index);
 
-                if (this->G.get_priority_node(current_node_index) == this->priority_max and value_fun[0] < cost_nodes_in_cycle + previous_time_cycle)
+                if (this->G.get_priority_node(current_node_index) == this->priority_max and value_fun[0] < previous_time_cycle)
                 {
-                    value_fun[0] = cost_nodes_in_cycle + previous_time_cycle;
+                    value_fun[0] = previous_time_cycle;
                 }
-                else if (this->G.get_priority_node(current_node_index) == this->priority_med and value_fun[1] < cost_nodes_in_cycle + previous_time_cycle)
+                else if (this->G.get_priority_node(current_node_index) == this->priority_med and value_fun[1] < previous_time_cycle)
                 {
-                    value_fun[1] = cost_nodes_in_cycle + previous_time_cycle;
+                    value_fun[1] = previous_time_cycle;
                 }
-                else if (this->G.get_priority_node(current_node_index) == this->priority_min and value_fun[2] < cost_nodes_in_cycle + previous_time_cycle)
+                else if (this->G.get_priority_node(current_node_index) == this->priority_min and value_fun[2] < previous_time_cycle)
                 {
-                    value_fun[2] = cost_nodes_in_cycle + previous_time_cycle;
+                    value_fun[2] = previous_time_cycle;
                 }
             }
-            previous_time_cycle = cost_nodes_in_cycle;
         }
     }
-
     return value_fun;
 }
 
@@ -228,7 +224,7 @@ std::vector<std::vector<int>> simulator::top_heur(std::unordered_set<int> graph_
         temp_graph.add_node(i, this->G.get_coord_x(i), this->G.get_coord_y(i), this->G.get_weight_node(i), this->G.get_priority_node(i), this->G.get_weight_prime_node(i));
     }
 
-    std::vector<int> centers = algo::metric_k_center(temp_graph, this->n_drones);
+    std::vector<int> centers = algo::metric_k_center(temp_graph, this->n_drones, this->seed);
     if (this->n_drones > 1)
         centers.push_back(0);
     tree = algo::primMST(temp_graph, centers, this->budget);
@@ -264,7 +260,7 @@ std::vector<std::vector<int>> simulator::top_heur(std::unordered_set<int> graph_
             graph_vertices = utilities::set_difference(graph_vertices, {new_node});
         }
     }
-    //clean_sol(curr_sol);
+    //utilities::clean_sol(curr_sol);
     return curr_sol;
 }
 
@@ -409,7 +405,7 @@ std::vector<std::vector<int>> simulator::prim_based(std::unordered_set<int> grap
 
     if (G_3.get_n_nodes() > 1)
     {
-        centers = algo::metric_k_center(G_3, this->n_drones);
+        centers = algo::metric_k_center(G_3, this->n_drones, this->seed);
         // std::cerr << "centers: ";
         // print::print_vector(centers);
 
@@ -443,7 +439,7 @@ std::vector<std::vector<int>> simulator::prim_based(std::unordered_set<int> grap
     }
     else
     {
-        centers_g_2 = algo::metric_k_center(G_2, this->n_drones);
+        centers_g_2 = algo::metric_k_center(G_2, this->n_drones, this->seed);
     }
 
     // print::print_graph(G_2);
@@ -483,7 +479,7 @@ std::vector<std::vector<int>> simulator::prim_based(std::unordered_set<int> grap
     }
     else
     {
-        centers_g_1 = algo::metric_k_center(G_1, this->n_drones);
+        centers_g_1 = algo::metric_k_center(G_1, this->n_drones, this->seed);
     }
 
     // print::print_graph(G_1);
@@ -512,22 +508,9 @@ std::vector<std::vector<int>> simulator::prim_based(std::unordered_set<int> grap
         curr_sol[i].insert(curr_sol[i].end(), tsp_i.begin(), tsp_i.end());
     }
 
-    clean_sol(curr_sol);
+    utilities::clean_sol(curr_sol);
 
     return curr_sol;
-}
-
-void simulator::clean_sol(std::vector<std::vector<int>> &_temp)
-{
-    for (auto &cycle : _temp)
-    {
-        auto end = cycle.end();
-        for (auto it = cycle.begin(); it != end; ++it)
-        {
-            end = std::remove(it + 1, end, *it);
-        }
-        cycle.erase(end, cycle.end());
-    }
 }
 
 /////////////////////////////////////////////////////
@@ -609,6 +592,7 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::meta_al
     while (not graph_vertices.empty() and counter <= G.get_n_nodes())
     {
         std::vector<std::vector<int>> cycle_tsp = calculate_cycles_round(which_alg, graph_vertices);
+        utilities::clean_sol(cycle_tsp);
 
         if (this->prob_sigma_prime > 0)
         {
@@ -644,6 +628,6 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::meta_al
 
         counter++;
     }
-
+    utilities::clean_sol_full(sol);
     return sol;
 }

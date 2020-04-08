@@ -268,7 +268,7 @@ bool test::check_metric_k_center()
     graph G = graph(2, 1);
     G.read_graph_from_file("../data/graph/test_primMST.csv");
     int k = 2;
-    std::vector<int> sol = algo::metric_k_center(G, k);
+    std::vector<int> sol = algo::metric_k_center(G, k, 0);
 
     if (sol.size() == k)
     {
@@ -437,7 +437,7 @@ bool test::check_top_path_BB()
     double budget = 3.2;
     int n_drones = 1;
     simulator sim = simulator(G, n_drones, n_drones, budget, 0, 0);
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.meta_algorithm(1);
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.meta_algorithm(5);
 
     if (sol.size() == n_drones and sol[0].size() == 2 and
         sol[0][0][0].first == 0 and sol[0][0][1].first == 3 and sol[0][0][2].first == 2 and sol[0][0][3].first == 4 and sol[0][0][4].first == 0 and
@@ -446,16 +446,16 @@ bool test::check_top_path_BB()
         budget = 2;
         n_drones = 1;
         sim = simulator(G, n_drones, n_drones, budget, 0, 0);
-        sol = sim.meta_algorithm(1);
+        sol = sim.meta_algorithm(5);
 
-        if (sol.size() == n_drones and sol[0].size() == 6 and
+        if (sol.size() == n_drones and sol[0].size() == 2 and
             sol[0][0][0].first == 0 and sol[0][0][1].first == 4 and sol[0][0][2].first == 0 and
             sol[0][1][0].first == 0 and sol[0][1][1].first == 1 and sol[0][1][2].first == 0)
         {
             budget = 3.2;
             n_drones = 2;
             sim = simulator(G, n_drones, n_drones, budget, 0, 0);
-            sol = sim.meta_algorithm(1);
+            sol = sim.meta_algorithm(5);
 
             if (sol.size() == n_drones and sol[0].size() == 1 and sol[1].size() == 1 and
                 sol[0][0][0].first == 0 and sol[0][0][1].first == 3 and sol[0][0][2].first == 2 and sol[0][0][3].first == 4 and sol[0][0][4].first == 0 and

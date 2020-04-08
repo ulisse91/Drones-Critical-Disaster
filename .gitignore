@@ -39,6 +39,7 @@ examples/build/
 data/output/
 data/bkp/
 data/plots/
+scripts/__pycache__/
 
 # Visual Studio Code
 .vscode/*
