@@ -1,5 +1,8 @@
 #include "user_input.h"
 
+std::string userinput::UNIFORM = "uniform";
+std::string userinput::POISSON = "poisson";
+
 input userinput::read_user_input(int argc, char **argv)
 {
     time_t my_time = time(NULL);
@@ -9,7 +12,7 @@ input userinput::read_user_input(int argc, char **argv)
     input n_input = input();
 
     po::options_description desc{"Options"};
-    desc.add_options()("help,h", "Help screen")("nodes,n", po::value<int>(), "Number of nodes (default = 10)")("drones,d", po::value<int>(), "Number of drones (default = 1)")("budget,b", po::value<double>(), "Budget (default = 1)")("progsigma,p", po::value<double>(), "Probability sigma prime (default = 0)")("seed,s", po::value<int>(), "seed for random graph generator")("batteries,m", po::value<int>(), "Number of batteries (default = number of drones)")("file,f", po::value<std::string>(), "Graph file");
+    desc.add_options()("help,h", "Help screen")("nodes,n", po::value<int>(), "Number of nodes (default = 10)")("drones,d", po::value<int>(), "Number of drones (default = 1)")("budget,b", po::value<double>(), "Budget (default = 1)")("progsigma,p", po::value<double>(), "Probability sigma prime (default = 0)")("seed,s", po::value<int>(), "seed for random graph generator")("batteries,m", po::value<int>(), "Number of batteries (default = number of drones)")("file,f", po::value<std::string>(), "Graph file")("distrib,z", po::value<std::string>(), "Distribution");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -37,7 +40,18 @@ input userinput::read_user_input(int argc, char **argv)
             std::cout << "Number of nodes was not set. ";
             std::cout << "Set Default value: " << n_input.n_nodes << std::endl;
         }
+        if (vm.count("distrib"))
+        {
+            n_input.distrib = vm["distrib"].as<std::string>();
+            std::cout << "Distribution: " << vm["distrib"].as<std::string>() << std::endl;
+        }
+        else
+        {
+            std::cout << "Random distribution was not set. ";
+            std::cout << "Set Default value: " << n_input.distrib << std::endl;
+        }
     }
+
     if (vm.count("drones"))
     {
         n_input.n_drones = vm["drones"].as<int>();

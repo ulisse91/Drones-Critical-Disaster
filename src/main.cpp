@@ -13,9 +13,15 @@ int main(int argc, char **argv)
     std::ofstream outfile;
 
     graph G = graph(2, 2);
-    G.create_random_graph(n_input.n_nodes, 3, 3, n_input.seed);
+    if (n_input.distrib == userinput::UNIFORM)
+    {
+        G.create_random_graph(n_input.n_nodes, 3, 3, n_input.seed);
+    }
+    if (n_input.distrib == userinput::POISSON)
+    {
+        G.create_random_graph_poisson(n_input.n_nodes, 3, 3, n_input.seed);
+    }
     print::print_graph(G);
-
     simulator sim = simulator(G, n_input.n_drones, n_input.n_drones /* batteries */, n_input.budget, n_input.prob_sigma_prime, n_input.seed);
 
     assert(sim.check_feasibility());
@@ -34,13 +40,10 @@ int main(int argc, char **argv)
         std::cout << "fun_cycle: " << sim.evaluate_solution(0, sol) << " func_weighted_latency: " << sim.evaluate_solution(1, sol) << " func_completion_time: " << sim.evaluate_solution(2, sol) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() << std::endl;
         std::vector<double> ct_graphs_p = sim.completion_time_priorities(sol);
         print::print_vector(ct_graphs_p);
-        std::cout << std::endl;
-        assert(sim.check_solution_feasible(sol) == 1);
-        outfile.open("data/output/" + boost::algorithm::to_lower_copy(algs[i]) + ".csv", std::ios_base::app);
-
         std::vector<double> test = utilities::stat_sol(G, sol, sim.sigma_prime_probs, n_input.budget);
         std::cout << "number of cycles: " << test[0] << " avg time in cycles: " << test[1] << " min budget spent in cycles: " << test[1] << std::endl;
-
+        assert(sim.check_solution_feasible(sol) == 1);
+        outfile.open("data/output/" + boost::algorithm::to_lower_copy(algs[i]) + ".csv", std::ios_base::app);
         outfile << n_input.n_nodes                                                                        /* number of nodes */
                 << "," << n_input.budget                                                                  /* budget */
                 << "," << n_input.n_drones                                                                /* number of drones */

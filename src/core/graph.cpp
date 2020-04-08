@@ -46,6 +46,47 @@ void graph::create_random_graph(int number_of_nodes, double max_weight, int max_
     assert((int)this->vertices.size() == this->n_nodes);
 }
 
+void graph::create_random_graph_poisson(int number_of_nodes, double max_weight, int max_priority, long seed)
+{
+    erase_graph();
+
+    if (seed == -1)
+        seed = std::random_device{}();
+
+    // std::poisson_distribution<int> unif_1(250);
+    // std::uniform_real_distribution<double> unif_2(this->area_y);
+    std::uniform_int_distribution<int> unif_3(1, max_weight + 1);
+    std::uniform_real_distribution<double> unif_4(1, max_priority + 1);
+
+    //Mersenne Twister: Good quality random number generator
+    std::mt19937 re(seed);
+
+    double _t = this->get_area_x()*1000.0/8.0;
+
+    std::vector<double> xx = {_t,  _t*3, _t*5, _t*7};
+
+    int nn = 0, i = 0, j = 0;
+    while (nn < number_of_nodes)
+    {
+        std::poisson_distribution<int> unif_1(xx[i]);
+        std::poisson_distribution<int> unif_2(xx[j]);
+        double _x = unif_1(re) / 1000.0;
+        double _y = unif_2(re) / 1000.0;
+        double _w = unif_3(re);
+        int _p = unif_4(re);
+        double _wp = unif_3(re);
+
+        if (this->add_node(_x, _y, _w, _p, _wp) == 1)
+            nn++;
+
+        if (nn % 2 == 0)
+            i = ++i % 4;
+        else
+            j = ++j % 4;
+    }
+    assert((int)this->vertices.size() == this->n_nodes);
+}
+
 int graph::add_node(int id, double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime)
 {
     if (not check_double_node(_x, _y))

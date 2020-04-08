@@ -24,7 +24,7 @@ Features:
 - input from file
 
 To-Fix / Important:
-- generate graph with zipf distribution
+- include new node generation in scripts
 
 Examples:
 
