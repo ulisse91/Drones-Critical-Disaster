@@ -539,6 +539,9 @@ std::vector<std::vector<int>> simulator::calculate_cycles_round(int which_alg, s
         cycle = calculate_cycles_round(1, graph_vertices);
         break;
     case 5:
+        cycle = calculate_cycles_round(1, graph_vertices);
+        break;
+    case 6: // TOP 2+eps apx
         cycle.push_back(utilities::set_to_tsp(this->G, this->budget, op_path_BB_insert_step(graph_vertices, {0})));
         break;
     default:
@@ -618,6 +621,10 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::meta_al
         if (which_alg == 4)
         {
             which_alg = 0;
+        }
+        if (which_alg == 5)
+        {
+            which_alg = 2;
         }
 
         // if (counter % this->n_drones == 0)

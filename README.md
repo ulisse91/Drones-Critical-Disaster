@@ -24,9 +24,6 @@ Features:
 - input from file
 
 To-Fix / Important:
-- include new node generation in scripts
-
-Examples:
 
 Tests:
 - test obj func with sigma prime

@@ -26,9 +26,9 @@ int main(int argc, char **argv)
 
     assert(sim.check_feasibility());
 
-    std::vector<std::string> algs = {"PRIM", "TOP", "GMAX", "GMIN", "TOP-PRIM"};
+    std::vector<std::string> algs = {"PRIM", "TOP", "GMAX", "GMIN", "TOP-PRIM", "TOP-GREEDY"};
 
-    for (int i = 0; i < 5; i++)
+    for (int i = 0; i < 6; i++)
     {
         if (i == 3)
             continue; // skip GMIN
@@ -41,9 +41,9 @@ int main(int argc, char **argv)
         std::vector<double> ct_graphs_p = sim.completion_time_priorities(sol);
         print::print_vector(ct_graphs_p);
         std::vector<double> test = utilities::stat_sol(G, sol, sim.sigma_prime_probs, n_input.budget);
-        std::cout << "number of cycles: " << test[0] << " avg time in cycles: " << test[1] << " min budget spent in cycles: " << test[1] << std::endl;
+        std::cout << "number of cycles: " << test[0] << " avg time in cycles: " << test[1] << " min budget spent in cycles: " << test[2] << std::endl;
         assert(sim.check_solution_feasible(sol) == 1);
-        outfile.open("data/output/" + boost::algorithm::to_lower_copy(algs[i]) + ".csv", std::ios_base::app);
+        outfile.open("data/output/" + boost::algorithm::to_lower_copy(algs[i]) + "_" + n_input.distrib + ".csv", std::ios_base::app);
         outfile << n_input.n_nodes                                                                        /* number of nodes */
                 << "," << n_input.budget                                                                  /* budget */
                 << "," << n_input.n_drones                                                                /* number of drones */
