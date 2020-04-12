@@ -1,3 +1,6 @@
+color = ["cyan", "blue", "black", "red", "green", "purple", "magenta", "yellow", "gray",
+         "darkgray", "lightgray", "brown", "lime", "olive", "orange", "pink", "teal", "violet"]
+
 plot_file_1 = """
 \\documentclass{standalone}
 \\usepackage{tikz}
@@ -57,9 +60,9 @@ part_file_table_3 = """
 table_time_in_cycle_part_1 = """
 \\begin{table}[ht]
 \\centering
-\\begin{tabular}{lll|ll|ll|ll|ll}
-                        & \\multicolumn{2}{c|}{PRIM} & \\multicolumn{2}{c|}{TOP} & \\multicolumn{2}{c|}{GMAX} & \\multicolumn{2}{c|}{T+P} & \\multicolumn{2}{c}{T+G} \\\\
-\\multicolumn{1}{l|}{n}  & avg         & min         & avg         & min        & avg         & min         & avg & min & avg & min \\\\
+\\begin{tabular}{lll|ll|ll|ll|ll|ll}
+                        & \\multicolumn{2}{c|}{PRIM} & \\multicolumn{2}{c|}{TOP} & \\multicolumn{2}{c|}{GMAX} & \\multicolumn{2}{c|}{T+P} & \\multicolumn{2}{c}{T+G} & \\multicolumn{2}{c}{G-ROUND} \\\\
+\\multicolumn{1}{l|}{n}  & avg         & min         & avg         & min        & avg         & min         & avg & min & avg & min & avg & min \\\\
 """
 
 document_part_1 = """

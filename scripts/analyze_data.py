@@ -6,10 +6,8 @@ from collections import defaultdict
 from texstrings import *
 
 algs = []
-color = ["cyan", "blue", "black", "red", "green", "purple"]
 distrib = sys.argv[1]
 plots = []
-whichcolor = 0
 
 d_table_n_cycles = defaultdict(lambda: defaultdict(list))
 d_table_time_cycles_avg = defaultdict(
@@ -28,9 +26,9 @@ plot_time = defaultdict(lambda: defaultdict(
     lambda: defaultdict(lambda: defaultdict(list))))
 
 for filename in os.listdir("data/output"):
-    if ".csv" in filename:
+    if distrib+".csv" in filename:
         _temp_alg_name = filename.replace(".csv", "").replace(
-            "_uniform", "").replace("_poisson", "")
+            "_"+distrib, "")
         algs.append(_temp_alg_name)
 
 for alg in algs:
@@ -79,9 +77,10 @@ for pv in range(0, 125, 25):
         f.write(plot_file_4)
         f2.write(plot_file_4)
 
+        whichcolor = 0
         for alg in algs:
             f.write("\\addplot+["+color[whichcolor])
-            whichcolor = (whichcolor + 1) % len(color)
+            whichcolor = (whichcolor + 1) % len(algs)
             f.write(plot_file_5)
             if pvalue == 0:
                 for n_nodes in d_fun_1[str(pv)][alg][drones].keys():
@@ -100,7 +99,6 @@ for pv in range(0, 125, 25):
                             " {:.2f} {:.2f}".format(avg, std)+"\n")
                 f.write("};\\addlegendentry{"+alg+"};\n\n")
             f2.write("\\addplot+["+color[whichcolor])
-            whichcolor = (whichcolor + 1) % len(color)
             f2.write(plot_file_5)
             for n_nodes in d_fun_3[str(pv)][alg][drones].keys():
                 arr = numpy.array(d_fun_3[str(pv)][alg][drones][n_nodes])
@@ -128,9 +126,10 @@ for pv in range(0, 125, 25):
         f.write("ylabel={\\(\\mu s\\)},")
         f.write(plot_file_4)
 
+        whichcolor = 0
         for alg in algs:
             f.write("\\addplot+["+color[whichcolor])
-            whichcolor = (whichcolor + 1) % len(color)
+            whichcolor = (whichcolor + 1) % len(algs)
             f.write(plot_file_5)
             for n_nodes in plot_time[str(pv)][alg][drones].keys():
                 arr = numpy.array(plot_time[str(pv)][alg][drones][n_nodes])
