@@ -68,6 +68,7 @@ document_part_1 = """
 \\usepackage[utf8]{inputenc}
 \\usepackage[mode=buildnew]{standalone}
 \\usepackage{tikz}
+\\usepackage{pgfplots}
 \\usepackage[caption=false]{subfig}
 
 \\begin{document}

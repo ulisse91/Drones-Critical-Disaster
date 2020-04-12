@@ -42,8 +42,8 @@ for dis in uniform poisson; do
         for nodes in {10..100..10}; do # 100
             for drone in {2..6..2}; do # 6
                 for seed in {0..19}; do # 19
-                    $main -b $budget -d $drone -n $nodes -p $p -s $(($baseseed + $seed)) --distrib $dis >> ${pathoutput}"results"-b${budget}-d${drone}-n${nodes}-p${pv}_${dis}.txt
-                    # echo "$main -b $budget -d $drone -n $nodes -p $p -s $(($baseseed + $seed)) --distrib $dis >> ${pathoutput}"results"-b${budget}-d${drone}-n${nodes}-p${pv}_${dis}.txt"
+                    # $main -b $budget -d $drone -n $nodes -p $p -s $(($baseseed + $seed)) --distrib $dis >> ${pathoutput}"results"-b${budget}-d${drone}-n${nodes}-p${pv}_${dis}.txt
+                    echo "$main -b $budget -d $drone -n $nodes -p $p -s $(($baseseed + $seed)) --distrib $dis >> ${pathoutput}"results"-b${budget}-d${drone}-n${nodes}-p${pv}_${dis}.txt"
                     i=$(($i +1))
                 done
                 echo -ne " $(( $i/60 ))% \r"

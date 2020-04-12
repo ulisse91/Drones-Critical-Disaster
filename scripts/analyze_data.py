@@ -1,13 +1,15 @@
 import numpy
 import sys
+import os
 from collections import defaultdict
 
 from texstrings import *
 
+algs = []
+color = ["cyan", "blue", "black", "red", "green", "purple"]
 distrib = sys.argv[1]
-
-algs = ["top", "prim", "gmax", "top-prim", "top-greedy"]
-color = {"top": "cyan", "prim" : "blue", "gmax" : "black", "top-prim" : "red", "top-greedy" : "green" }
+plots = []
+whichcolor = 0
 
 d_table_n_cycles = defaultdict(lambda: defaultdict(list))
 d_table_time_cycles_avg = defaultdict(
@@ -25,7 +27,11 @@ d_fun_3 = defaultdict(lambda: defaultdict(
 plot_time = defaultdict(lambda: defaultdict(
     lambda: defaultdict(lambda: defaultdict(list))))
 
-plots = []
+for filename in os.listdir("data/output"):
+    if ".csv" in filename:
+        _temp_alg_name = filename.replace(".csv", "").replace(
+            "_uniform", "").replace("_poisson", "")
+        algs.append(_temp_alg_name)
 
 for alg in algs:
     with open("data/output/"+alg + "_" + str(distrib) + ".csv") as fIn:
@@ -60,9 +66,9 @@ for pv in range(0, 125, 25):
         f.write(plot_file_1)
         f2.write(plot_file_1)
         f.write("title={\\(q="+str(drones)+", B=15, p=" +
-                str(pvalue)+"\\) (" + distrib +")},")
+                str(pvalue)+"\\) (" + distrib + ")},")
         f2.write("title={\\(q="+str(drones)+", B=15, p=" +
-                 str(pvalue)+"\\) (" + distrib +")},")
+                 str(pvalue)+"\\) (" + distrib + ")},")
         f.write(plot_file_3)
         f2.write(plot_file_3)
         if pvalue == 0:
@@ -74,7 +80,8 @@ for pv in range(0, 125, 25):
         f2.write(plot_file_4)
 
         for alg in algs:
-            f.write("\\addplot+["+color[alg])
+            f.write("\\addplot+["+color[whichcolor])
+            whichcolor = (whichcolor + 1) % len(color)
             f.write(plot_file_5)
             if pvalue == 0:
                 for n_nodes in d_fun_1[str(pv)][alg][drones].keys():
@@ -92,7 +99,8 @@ for pv in range(0, 125, 25):
                     f.write(str(n_nodes) +
                             " {:.2f} {:.2f}".format(avg, std)+"\n")
                 f.write("};\\addlegendentry{"+alg+"};\n\n")
-            f2.write("\\addplot+["+color[alg])
+            f2.write("\\addplot+["+color[whichcolor])
+            whichcolor = (whichcolor + 1) % len(color)
             f2.write(plot_file_5)
             for n_nodes in d_fun_3[str(pv)][alg][drones].keys():
                 arr = numpy.array(d_fun_3[str(pv)][alg][drones][n_nodes])
@@ -115,13 +123,14 @@ for pv in range(0, 125, 25):
                  str(int(pvalue*100)) + "_" + str(distrib) + ".tex", "w+")
         f.write(plot_file_1)
         f.write("title={Execution time (average per round) \\(q=" +
-                str(drones)+", B=15, p="+str(pvalue)+"\\) (" + distrib +")},")
+                str(drones)+", B=15, p="+str(pvalue)+"\\) (" + distrib + ")},")
         f.write(plot_file_3)
         f.write("ylabel={\\(\\mu s\\)},")
         f.write(plot_file_4)
 
         for alg in algs:
-            f.write("\\addplot+["+color[alg])
+            f.write("\\addplot+["+color[whichcolor])
+            whichcolor = (whichcolor + 1) % len(color)
             f.write(plot_file_5)
             for n_nodes in plot_time[str(pv)][alg][drones].keys():
                 arr = numpy.array(plot_time[str(pv)][alg][drones][n_nodes])
@@ -135,14 +144,14 @@ for pv in range(0, 125, 25):
         f.close()
         plots.append(f.name)
 
-simfile = open("data/plots/simulations_data_" + distrib +".tex", "w+")
+simfile = open("data/plots/simulations_data_" + distrib + ".tex", "w+")
 simfile.write(document_part_1)
 i = 1
 plots.sort()
 simfile.write(start_figure)
 for plot in plots:
     simfile.write(
-        "\\subfloat[]{\n\\includestandalone[scale=1.2]{" + plot.replace("data/", "") + "}\n}\n")
+        "\\subfloat[]{\n\\includestandalone[scale=1.2]{" + (plot.replace("data/", "")).replace(".tex", "") + "}\n}\n")
     if i % 2 == 0:
         simfile.write(end_figure)
         simfile.write(start_figure)
@@ -165,7 +174,8 @@ for n in d_table_n_cycles:
             simfile.write("& {:.2f} & {:.2f} ".format(avg, formula))
     simfile.write("\\\\ \n")
 simfile.write(part_file_table_2)
-simfile.write("\\caption{Total number of cycles (" + distrib +") \\(q=2\\), PRIM}")
+simfile.write(
+    "\\caption{Total number of cycles (" + distrib + ") \\(q=2\\), PRIM}")
 simfile.write(part_file_table_3)
 # f.close()
 
@@ -183,7 +193,8 @@ for q in d_table_time_cycles_avg.keys():
             simfile.write("& {:.2f} & {:.2f}".format(avg, _min))
         simfile.write("\\\\ \n")
     simfile.write(part_file_table_2)
-    simfile.write("\\caption{Budget per round, (" + distrib +"), PRIM}")
+    simfile.write(
+        "\\caption{Budget per round \\(q=" + str(q) + "\\), (" + distrib + "), PRIM}")
     simfile.write(part_file_table_3)
     # f.close()
     # plots.append(f.name)

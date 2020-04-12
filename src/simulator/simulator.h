@@ -7,6 +7,8 @@
 #include <utility>
 #include <map>
 #include <unordered_set>
+#include <unordered_map>
+#include <chrono>
 
 #include "../core/graph.h"
 #include "../core/algo.h"
@@ -57,6 +59,7 @@ public:
     std::unordered_set<int> op_path_BB_insert_step(std::unordered_set<int> graph_vertices, std::unordered_set<int> sol_temp);
     std::vector<std::vector<int>> prim_based(std::unordered_set<int> graph_vertices);
     std::vector<std::vector<int>> top_heur(std::unordered_set<int> graph_vertices);
+    std::vector<std::vector<int>> greedy_round(std::unordered_set<int> graph_vertices);
 };
 
 #endif // SIMULATOR_H

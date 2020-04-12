@@ -12,7 +12,7 @@ int main(int argc, char **argv)
     input n_input = userinput::read_user_input(argc, argv);
     std::ofstream outfile;
 
-    graph G = graph(2, 2);
+    graph G = graph(1, 1);
     if (n_input.distrib == userinput::UNIFORM)
     {
         G.create_random_graph(n_input.n_nodes, 3, 3, n_input.seed);
@@ -26,9 +26,9 @@ int main(int argc, char **argv)
 
     assert(sim.check_feasibility());
 
-    std::vector<std::string> algs = {"PRIM", "TOP", "GMAX", "GMIN", "TOP-PRIM", "TOP-GREEDY"};
+    std::vector<std::string> algs = {"PRIM", "TOP", "GMAX", "GMIN", "TOP-PRIM", "TOP-GREEDY", "GMAX-ROUND"};
 
-    for (int i = 0; i < 6; i++)
+    for (int i = 0; i < 7; i++)
     {
         if (i == 3)
             continue; // skip GMIN

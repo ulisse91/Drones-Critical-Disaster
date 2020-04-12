@@ -1,7 +1,5 @@
 #include "simulator.h"
 
-#include <chrono>
-
 simulator::simulator(graph _G, int _n_drones, int _n_batteries, double _budget, double _prob_sigma_prime, long _seed)
 {
     this->G = _G;
@@ -371,6 +369,47 @@ std::vector<int> simulator::greedy_find_path(std::unordered_set<int> graph_verti
 }
 
 /////////////////////////////////////////////////////
+//////////////////// GREEDY ROUND ///////////////////
+/////////////////////////////////////////////////////
+
+std::vector<std::vector<int>> simulator::greedy_round(std::unordered_set<int> graph_vertices)
+{
+    std::vector<std::vector<int>> curr_sol(this->n_drones, {0});
+    std::vector<double> residual_budget(this->n_drones, this->budget);
+
+    bool round_finished = false;
+
+    while (!round_finished)
+    {
+        round_finished = true;
+        for (int drone = 0; drone < this->n_drones; drone++)
+        {
+            int next_step = -1;
+            int last_step = curr_sol[drone][curr_sol[drone].size() - 1];
+            double min_dist = 0;
+            for (auto const &node : graph_vertices)
+            {
+
+                if ((this->G.get_priority_node(node) / this->G.distw(last_step, node) > min_dist) and this->G.distw(last_step, node) + this->G.distw(0, node) < residual_budget[drone])
+                {
+                    min_dist = this->G.get_priority_node(node) / this->G.distw(last_step, node);
+                    next_step = node;
+                }
+            }
+            if (next_step != -1)
+            {
+                round_finished = false;
+                curr_sol[drone].push_back(next_step);
+                if (graph_vertices.find(next_step) != graph_vertices.end())
+                    graph_vertices.erase(graph_vertices.find(next_step));
+                residual_budget[drone] -= this->G.distw(last_step, next_step);
+            }
+        }
+    }
+    return curr_sol;
+}
+
+/////////////////////////////////////////////////////
 ///////////////////// PRIM ///////////////////////////
 /////////////////////////////////////////////////////
 
@@ -523,25 +562,28 @@ std::vector<std::vector<int>> simulator::calculate_cycles_round(int which_alg, s
 
     switch (which_alg)
     {
-    case 0:
+    case 0: // PRIM
         cycle = prim_based(graph_vertices);
         break;
-    case 1:
+    case 1: // TOP HEURISTICS
         cycle = top_heur(graph_vertices);
         break;
-    case 2:
+    case 2: // GMAX SINGLE CYCLE
         cycle.push_back(greedy_find_path(graph_vertices, true));
         break;
-    case 3:
+    case 3: // GMIN SINGLE CYCLE
         cycle.push_back(greedy_find_path(graph_vertices, false));
         break;
-    case 4:
+    case 4: // TOP + PRIM
         cycle = calculate_cycles_round(1, graph_vertices);
         break;
-    case 5:
+    case 5: // TOP + GMAX SINGLE CYCLE
         cycle = calculate_cycles_round(1, graph_vertices);
         break;
-    case 6: // TOP 2+eps apx
+    case 6: // GMAX ROUND
+        cycle = greedy_round(graph_vertices);
+        break;
+    case 7: // TOP 2+eps apx
         cycle.push_back(utilities::set_to_tsp(this->G, this->budget, op_path_BB_insert_step(graph_vertices, {0})));
         break;
     default:

@@ -1,26 +1,20 @@
 include ../Makefile.config
 
-## Main application file
 MAIN = mainTest
+SRC_PATH = "../src/"
+OBJ += test.o
+$(DEPS) += test.h
 
-SOURCES_TEST = $(shell find -name '*.cpp')
-CORE = $(shell find ../src/core -name '*.cpp')
-SIM = $(shell find ../src/simulator -name '*.cpp')
+%.o: %.cpp $(DEPS)
+	$(CXX) $(CXXFLAGS) -c -o $@ $< $(LDFLAGS)
 
-run: test clean
+$(MAIN): $(OBJ)
+	$(CXX) $(CXXFLAGS) -o $(BUILD_PATH)/$@ $^ $(LDFLAGS)
 
-.PHONY: dirs
-dirs:
-	@echo "Creating directories"
-	@mkdir -p $(BUILD_PATH)
-
-$(MAIN): clean dirs
-	$(COMPILE_FLAGS) -o $(BUILD_PATH)/$(MAIN) $(CORE) $(SIM) $(SOURCES_TEST) -L$(PATHLIB) $(OPTIONS)
-
-test: $(MAIN)
+run: dirs $(MAIN)
 	./build/$(MAIN)
-	$(MAKE) clean
 
-clean:
-	@echo "Deleting $(BUILD_PATH) directory"
-	rm -rf build
+.PHONY: dirs test
+dirs:
+	@echo "Creating $(BUILD_PATH) directory"
+	@- mkdir -p $(BUILD_PATH)

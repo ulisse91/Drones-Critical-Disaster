@@ -1,15 +1,14 @@
-examples: Examples
+include Makefile.config
 
-curr: 
+main: 
 	$(MAKE) -C src
-
-Examples:
-	$(MAKE) -C examples
 
 testAll:
 	$(MAKE) run -C tests
 
 clean:
-	$(MAKE) clean -C src
-	$(MAKE) clean -C examples
-	$(MAKE) clean -C tests
+	@echo "Removing all object files"
+	@ -find . -name "*.o" -exec rm {} \;
+	@echo "Removing $(BUILD_PATH) dirs"
+	@ -rm -rf src/$(BUILD_PATH)
+	@ -rm -rf tests/$(BUILD_PATH)

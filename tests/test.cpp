@@ -270,7 +270,7 @@ bool test::check_metric_k_center()
     int k = 2;
     std::vector<int> sol = algo::metric_k_center(G, k, 0);
 
-    if (sol.size() == k)
+    if ((int)sol.size() == k)
     {
         for (size_t i = 0; i < sol.size(); i++)
         {
@@ -342,7 +342,7 @@ bool test::check_find_TSP()
 
     std::vector<int> sol_tsp = algo::find_TSP(G, budget, 0, sol);
 
-    if (sol_tsp.size() == G.get_n_nodes() and sol_tsp[0] == 0 and sol_tsp[1] == 4 and sol_tsp[2] == 1 and sol_tsp[3] == 3 and sol_tsp[4] == 2)
+    if ((int)sol_tsp.size() == G.get_n_nodes() and sol_tsp[0] == 0 and sol_tsp[1] == 4 and sol_tsp[2] == 1 and sol_tsp[3] == 3 and sol_tsp[4] == 2)
     {
         std::cout << "check_find_TSP [OK]" << std::endl;
         return true;
@@ -363,7 +363,7 @@ bool test::check_set_to_tsp()
 
     std::vector<int> sol_tsp = utilities::set_to_tsp(G, budget, G.get_vertices_set());
 
-    if (sol_tsp.size() == G.get_n_nodes() and sol_tsp[0] == 0 and sol_tsp[1] == 4 and sol_tsp[2] == 1 and sol_tsp[3] == 3 and sol_tsp[4] == 2)
+    if ((int)sol_tsp.size() == G.get_n_nodes() and sol_tsp[0] == 0 and sol_tsp[1] == 4 and sol_tsp[2] == 1 and sol_tsp[3] == 3 and sol_tsp[4] == 2)
     {
         std::cout << "check_set_to_tsp [OK]" << std::endl;
         return true;
@@ -437,27 +437,27 @@ bool test::check_top_path_BB()
     double budget = 3.2;
     int n_drones = 1;
     simulator sim = simulator(G, n_drones, n_drones, budget, 0, 0);
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.meta_algorithm(5);
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.meta_algorithm(7);
 
-    if (sol.size() == n_drones and sol[0].size() == 2 and
+    if ((int)sol.size() == n_drones and sol[0].size() == 2 and
         sol[0][0][0].first == 0 and sol[0][0][1].first == 3 and sol[0][0][2].first == 2 and sol[0][0][3].first == 4 and sol[0][0][4].first == 0 and
         sol[0][1][0].first == 0 and sol[0][1][1].first == 1 and sol[0][1][2].first == 0)
     {
         budget = 2;
         n_drones = 1;
         sim = simulator(G, n_drones, n_drones, budget, 0, 0);
-        sol = sim.meta_algorithm(5);
+        sol = sim.meta_algorithm(7);
 
-        if (sol.size() == n_drones and sol[0].size() == 2 and
+        if ((int)sol.size() == n_drones and sol[0].size() == 2 and
             sol[0][0][0].first == 0 and sol[0][0][1].first == 4 and sol[0][0][2].first == 0 and
             sol[0][1][0].first == 0 and sol[0][1][1].first == 1 and sol[0][1][2].first == 0)
         {
             budget = 3.2;
             n_drones = 2;
             sim = simulator(G, n_drones, n_drones, budget, 0, 0);
-            sol = sim.meta_algorithm(5);
+            sol = sim.meta_algorithm(7);
 
-            if (sol.size() == n_drones and sol[0].size() == 1 and sol[1].size() == 1 and
+            if ((int)sol.size() == n_drones and sol[0].size() == 1 and sol[1].size() == 1 and
                 sol[0][0][0].first == 0 and sol[0][0][1].first == 3 and sol[0][0][2].first == 2 and sol[0][0][3].first == 4 and sol[0][0][4].first == 0 and
                 sol[1][0][0].first == 0 and sol[1][0][1].first == 1 and sol[1][0][2].first == 0)
             {
@@ -500,7 +500,7 @@ bool test::check_greedy_algorithm()
     int n_drones = 1;
     simulator sim = simulator(G, n_drones, n_drones, budget, 0, 0);
     std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.meta_algorithm(2);
-    if (sol.size() == n_drones and sol[0].size() == 2 and
+    if ((int)sol.size() == n_drones and sol[0].size() == 2 and
         sol[0][0][0].first == 0 and sol[0][0][1].first == 4 and sol[0][0][2].first == 3 and sol[0][0][3].first == 1 and sol[0][0][4].first == 0 and
         sol[0][1][0].first == 0 and sol[0][1][1].first == 2 and sol[0][1][2].first == 0)
     {
@@ -522,13 +522,13 @@ bool test::check_prim_based_alg()
     simulator sim = simulator(G, n_drones, n_drones, budget, 0, 0);
 
     sol = sim.meta_algorithm(0);
-    if (sol.size() == n_drones and sol[0].size() == 3)
+    if ((int)sol.size() == n_drones and sol[0].size() == 3)
     {
         budget = 3.2;
         n_drones = 2;
         sim = simulator(G, n_drones, n_drones, budget, 0, 0);
         sol = sim.meta_algorithm(0);
-        if (sol.size() == n_drones and sol[0].size() == 2)
+        if ((int)sol.size() == n_drones and sol[0].size() == 2)
         {
             std::cout << "check_prim_based_alg [OK]" << std::endl;
             return true;
