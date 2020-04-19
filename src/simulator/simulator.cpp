@@ -46,8 +46,8 @@ double simulator::objective_function_weighted_latency(std::vector<std::vector<st
                 double distance_prev_to_curr_node = this->G.dist(previous_node_index, current_node_index);
 
                 cost_nodes_in_cycle += distance_prev_to_curr_node + G.get_weight_node(current_node_index) + this->sigma_prime_probs[current_node_index] * G.get_weight_prime_node(current_node_index);
-
                 val_sol += G.get_priority_node(current_node_index) * (cost_nodes_in_cycle + previous_time_cycle);
+                // std::cerr << current_node_index << " " << val_sol <<  " " << cost_nodes_in_cycle << " | " << distance_prev_to_curr_node << " " << G.get_weight_node(current_node_index) << " " << this->sigma_prime_probs[current_node_index] * G.get_weight_prime_node(current_node_index) << "\n";
             }
             previous_time_cycle = cost_nodes_in_cycle;
         }

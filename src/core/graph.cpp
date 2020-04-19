@@ -61,9 +61,9 @@ void graph::create_random_graph_poisson(int number_of_nodes, double max_weight, 
     //Mersenne Twister: Good quality random number generator
     std::mt19937 re(seed);
 
-    double _t = this->get_area_x()*1000.0/8.0;
+    double _t = this->get_area_x() * 1000.0 / 8.0;
 
-    std::vector<double> xx = {_t,  _t*3, _t*5, _t*7};
+    std::vector<double> xx = {_t, _t * 3, _t * 5, _t * 7};
 
     int nn = 0, i = 0, j = 0;
     while (nn < number_of_nodes)
@@ -79,10 +79,16 @@ void graph::create_random_graph_poisson(int number_of_nodes, double max_weight, 
         if (this->add_node(_x, _y, _w, _p, _wp) == 1)
             nn++;
 
-        if (nn % 2 == 0)
-            i = ++i % 4;
-        else
+        i = ++i % 4;
+        if (i == 0)
+        {
             j = ++j % 4;
+        }
+
+        // if (i % 4 == 0)
+        //     j = ++j % 4;
+        // else
+        //     i = ++i % 4;
     }
     assert((int)this->vertices.size() == this->n_nodes);
 }

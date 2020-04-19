@@ -16,6 +16,7 @@ int main(int argc, char **argv)
     if (n_input.distrib == userinput::UNIFORM)
     {
         G.create_random_graph(n_input.n_nodes, 3, 3, n_input.seed);
+        // G.create_random_graph(n_input.n_nodes, 0, 0, n_input.seed);
     }
     if (n_input.distrib == userinput::POISSON)
     {
@@ -28,9 +29,9 @@ int main(int argc, char **argv)
 
     std::vector<std::string> algs = {"PRIM", "TOP", "GMAX", "GMIN", "TOP-PRIM", "TOP-GREEDY", "GMAX-ROUND"};
 
-    for (int i = 0; i < 7; i++)
+    for (int i = 0; i < 8; i++)
     {
-        if (i == 3)
+        if (i == 2 or i == 3 or i == 5 or i == 7)
             continue; // skip GMIN
         auto start_t = std::chrono::high_resolution_clock::now();
         std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.meta_algorithm(i);
