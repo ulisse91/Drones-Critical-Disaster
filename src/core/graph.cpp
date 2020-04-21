@@ -27,7 +27,8 @@ void graph::create_random_graph(int number_of_nodes, double max_weight, int max_
 
     std::uniform_real_distribution<double> unif_1(0, this->area_x);
     std::uniform_real_distribution<double> unif_2(0, this->area_y);
-    std::uniform_int_distribution<int> unif_3(1, max_weight + 1);
+    std::uniform_real_distribution<double> unif_3(0, max_weight + 1);
+    std::uniform_real_distribution<double> unif_5(0, max_weight);
     std::uniform_real_distribution<double> unif_4(1, max_priority + 1);
 
     //Mersenne Twister: Good quality random number generator
@@ -37,9 +38,9 @@ void graph::create_random_graph(int number_of_nodes, double max_weight, int max_
     {
         double _x = unif_1(re);
         double _y = unif_2(re);
-        double _w = unif_3(re);
+        double _w = round(unif_3(re) * 100.0) / 100.0;
         int _p = unif_4(re);
-        double _wp = unif_3(re);
+        double _wp = round(unif_5(re) * 100.0) / 100.0;
 
         this->add_node(_x, _y, _w, _p, _wp);
     }
@@ -55,7 +56,8 @@ void graph::create_random_graph_poisson(int number_of_nodes, double max_weight, 
 
     // std::poisson_distribution<int> unif_1(250);
     // std::uniform_real_distribution<double> unif_2(this->area_y);
-    std::uniform_int_distribution<int> unif_3(1, max_weight + 1);
+    std::uniform_real_distribution<double> unif_3(0, max_weight + 1);
+    std::uniform_real_distribution<double> unif_5(0, max_weight);
     std::uniform_real_distribution<double> unif_4(1, max_priority + 1);
 
     //Mersenne Twister: Good quality random number generator
@@ -72,9 +74,9 @@ void graph::create_random_graph_poisson(int number_of_nodes, double max_weight, 
         std::poisson_distribution<int> unif_2(xx[j]);
         double _x = unif_1(re) / 1000.0;
         double _y = unif_2(re) / 1000.0;
-        double _w = unif_3(re);
+        double _w = round(unif_3(re) * 100.0) / 100.0;
         int _p = unif_4(re);
-        double _wp = unif_3(re);
+        double _wp = round(unif_5(re) * 100.0) / 100.0;
 
         if (this->add_node(_x, _y, _w, _p, _wp) == 1)
             nn++;

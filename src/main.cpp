@@ -15,12 +15,12 @@ int main(int argc, char **argv)
     graph G = graph(1, 1);
     if (n_input.distrib == userinput::UNIFORM)
     {
-        G.create_random_graph(n_input.n_nodes, 3, 3, n_input.seed);
+        G.create_random_graph(n_input.n_nodes, 2, 2, n_input.seed);
         // G.create_random_graph(n_input.n_nodes, 0, 0, n_input.seed);
     }
     if (n_input.distrib == userinput::POISSON)
     {
-        G.create_random_graph_poisson(n_input.n_nodes, 3, 3, n_input.seed);
+        G.create_random_graph_poisson(n_input.n_nodes, 2, 2, n_input.seed);
     }
     print::print_graph(G);
     simulator sim = simulator(G, n_input.n_drones, n_input.n_drones /* batteries */, n_input.budget, n_input.prob_sigma_prime, n_input.seed);

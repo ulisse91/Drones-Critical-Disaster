@@ -55,11 +55,11 @@ done
 echo -e "Simulation terminated\n"
 
 echo -n "Starting analysis script uniform ..."
-python3 scripts/analyze_data.py "uniform"
+python3 scripts/analyze_data.py "uniform" $budget
 check_command "" $?
 
 echo -n "Starting analysis script poisson ..."
-python3 scripts/analyze_data.py "poisson"
+python3 scripts/analyze_data.py "poisson" $budget
 check_command "" $?
 
 echo -n "Starting compression files ..."
