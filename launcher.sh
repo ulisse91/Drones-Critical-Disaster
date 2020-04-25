@@ -37,16 +37,16 @@ baseseed=100000
 echo "Starting simulations ... "
 i=0
 for dis in uniform poisson; do
-    for pv in {0..100..25}; do
+    for pv in {0..100..25}; do # {0..100..25}
         p=$(echo "scale=2; $pv/100" | bc -q)
-        for nodes in {10..100..10}; do # 100
-            for drone in {2..6..2}; do # 6
-                for seed in {0..19}; do # 19
+        for nodes in {50..200..25}; do # {50..200..25}
+            for drone in {5..20..5}; do # {5..20..5}
+                for seed in {0..19}; do # {0..19}
                     $main -b $budget -d $drone -n $nodes -p $p -s $(($baseseed + $seed)) --distrib $dis >> ${pathoutput}"results"-b${budget}-d${drone}-n${nodes}-p${pv}_${dis}.txt
                     # echo "$main -b $budget -d $drone -n $nodes -p $p -s $(($baseseed + $seed)) --distrib $dis >> ${pathoutput}"results"-b${budget}-d${drone}-n${nodes}-p${pv}_${dis}.txt"
-                    i=$(($i +1))
                 done
-                echo -ne " $(( $i/60 ))% \r"
+                i=$(($i +1))
+                echo -ne " $(echo "scale=0; $i*0.7" | bc -q)% \r"
             done
         done
     done

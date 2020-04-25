@@ -8,6 +8,7 @@ from texstrings import *
 budget = sys.argv[2]
 
 algs = []
+colors = defaultdict(dict)
 distrib = sys.argv[1]
 plots = []
 
@@ -30,11 +31,19 @@ plot_time = defaultdict(lambda: defaultdict(
 time_graphs = defaultdict(lambda: defaultdict(
     lambda: defaultdict(lambda: defaultdict(list))))
 
+whichcolor = 0
 for filename in os.listdir("data/output"):
     if distrib+".csv" in filename:
         _temp_alg_name = filename.replace(".csv", "").replace(
             "_"+distrib, "")
         algs.append(_temp_alg_name)
+        colors[_temp_alg_name] = color[whichcolor]
+        whichcolor += 1
+
+# hardcoding the colors
+
+colors = {"prim": "black", "top": "blue",
+          "top-gmax-round": "cyan", "gmax-round": "red"}
 
 ################################
 ### COLLECT DATA FROM FILES ####
@@ -45,16 +54,17 @@ for alg in algs:
         for line in fIn:
             n, b, q, p, s, fun_1, fun_2, fun_3, ct_pmax, ct_pmed, ct_pmin, time, n_cycles, avg_time_cycles, min_time_cycle = line.strip().split(",")
 
-            d_fun_1[str(int(float(p)*100))][alg][int(q)
-                                                 ][int(n)].append(float(fun_1.strip()))
-            d_fun_2[str(int(float(p)*100))][alg][int(q)
-                                                 ][int(n)].append(float(fun_2.strip()))
-            d_fun_3[str(int(float(p)*100))][alg][int(q)
-                                                 ][int(n)].append(float(fun_3.strip()))
-            plot_time[str(int(float(p)*100))][alg][int(q)][int(n)
+            d_fun_1[str(int(float(p)*100))][int(q)][alg][int(n)
+                                                         ].append(float(fun_1.strip()))
+            d_fun_2[str(int(float(p)*100))][int(q)][alg][int(n)
+                                                         ].append(float(fun_2.strip()))
+            d_fun_3[str(int(float(p)*100))][int(q)][alg][int(n)
+                                                         ].append(float(fun_3.strip()))
+
+            plot_time[str(int(float(p)*100))][int(q)][alg][int(n)
                                                            ].append(float(time.strip())/(float(n_cycles)/float(q)))
 
-            if int(q) == 4:
+            if int(q) == 10:
                 time_graphs[str(int(float(p)*100))
                             ]["ct_pmax"][alg][str(n)].append(float(ct_pmax))
                 time_graphs[str(int(float(p)*100))
@@ -68,16 +78,16 @@ for alg in algs:
                 d_table_time_cycles_min[int(q)][int(n)][alg].append(
                     float(min_time_cycle.strip()))
 
-            if int(q) == 2:
+            if int(q) == 5:
                 d_table_n_cycles[alg][int(n)][str(p)].append(float(n_cycles))
 
 ################################
 ### OBJECTIVE FUNCTION PLOTS ###
 ################################
 
-for pv in range(0, 125, 25):
-    pvalue = pv/100.0
-    for drones in range(2, 8, 2):
+for pv in d_fun_1.keys():
+    pvalue = float(pv)/100.0
+    for drones in d_fun_1[str(pv)].keys():
         f = open("data/plots/q"+str(drones)+"-p" +
                  str(int(pvalue*100)) + "_" + str(distrib) + ".tex", "w+")
         f2 = open("data/plots/ct_q"+str(drones)+"-p" +
@@ -98,31 +108,30 @@ for pv in range(0, 125, 25):
         f.write(plot_file_4)
         f2.write(plot_file_4)
 
-        whichcolor = 0
         for alg in algs:
-            f.write("\\addplot+["+color[whichcolor])
-            whichcolor = (whichcolor + 1) % len(algs)
+            f.write("\\addplot+["+colors[alg])
+
             f.write(plot_file_5)
             if pvalue == 0:
-                for n_nodes in d_fun_1[str(pv)][alg][drones].keys():
-                    arr = numpy.array(d_fun_1[str(pv)][alg][drones][n_nodes])
+                for n_nodes in d_fun_1[str(pv)][drones][alg].keys():
+                    arr = numpy.array(d_fun_1[str(pv)][drones][alg][n_nodes])
                     avg = numpy.mean(arr, axis=0)
                     std = numpy.std(arr, axis=0)
                     f.write(str(n_nodes) +
                             " {:.2f} {:.2f}".format(avg, std)+"\n")
                 f.write("};\\addlegendentry{"+alg+"};\n\n")
             else:
-                for n_nodes in d_fun_2[str(pv)][alg][drones].keys():
-                    arr = numpy.array(d_fun_2[str(pv)][alg][drones][n_nodes])
+                for n_nodes in d_fun_2[str(pv)][drones][alg].keys():
+                    arr = numpy.array(d_fun_2[str(pv)][drones][alg][n_nodes])
                     avg = numpy.mean(arr, axis=0)
                     std = numpy.std(arr, axis=0)
                     f.write(str(n_nodes) +
                             " {:.2f} {:.2f}".format(avg, std)+"\n")
                 f.write("};\\addlegendentry{"+alg+"};\n\n")
-            f2.write("\\addplot+["+color[whichcolor])
+            f2.write("\\addplot+["+colors[alg])
             f2.write(plot_file_5)
-            for n_nodes in d_fun_3[str(pv)][alg][drones].keys():
-                arr = numpy.array(d_fun_3[str(pv)][alg][drones][n_nodes])
+            for n_nodes in d_fun_3[str(pv)][drones][alg].keys():
+                arr = numpy.array(d_fun_3[str(pv)][drones][alg][n_nodes])
                 avg = numpy.mean(arr, axis=0)
                 std = numpy.std(arr, axis=0)
                 f2.write(str(n_nodes)+" {:.2f} {:.2f}".format(avg, std)+"\n")
@@ -139,9 +148,9 @@ for pv in range(0, 125, 25):
 ### COMPUTATION TIME ########
 #############################
 
-for pv in range(0, 125, 25):
-    pvalue = pv/100.0
-    for drones in range(2, 8, 2):
+for pv in plot_time.keys():
+    pvalue = float(pv)/100.0
+    for drones in plot_time[str(pv)].keys():
         f = open("data/plots/time_q"+str(drones)+"-p" +
                  str(int(pvalue*100)) + "_" + str(distrib) + ".tex", "w+")
         f.write(plot_file_1)
@@ -151,13 +160,11 @@ for pv in range(0, 125, 25):
         f.write("ylabel={\\(\\mu s\\)},")
         f.write(plot_file_4)
 
-        whichcolor = 0
         for alg in algs:
-            f.write("\\addplot+["+color[whichcolor])
-            whichcolor = (whichcolor + 1) % len(algs)
+            f.write("\\addplot+["+colors[alg])
             f.write(plot_file_5)
-            for n_nodes in plot_time[str(pv)][alg][drones].keys():
-                arr = numpy.array(plot_time[str(pv)][alg][drones][n_nodes])
+            for n_nodes in plot_time[str(pv)][drones][alg].keys():
+                arr = numpy.array(plot_time[str(pv)][drones][alg][n_nodes])
                 avg = numpy.mean(arr, axis=0)
                 std = numpy.std(arr, axis=0)
                 f.write(str(n_nodes) +
@@ -173,8 +180,8 @@ for pv in range(0, 125, 25):
 #############################
 
 drones = 4
-for pv in [0, 50, 100]:
-    pvalue = pv/100.0
+for pv in time_graphs.keys():
+    pvalue = float(pv)/100.0
     f = open("data/plots/graph_priority_ctime_q"+str(drones)+"-p" +
              str(int(pvalue*100)) + "_" + str(distrib) + ".tex", "w+")
     f.write(plot_file_1)
@@ -184,11 +191,9 @@ for pv in [0, 50, 100]:
     f.write("ylabel={ budget },")
     f.write(plot_file_4)
 
-    whichcolor = 0
     for which_priority in ["ct_pmax", "ct_pmed", "ct_pmin"]:
         for alg in algs:
-            f.write("\\addplot+["+color[whichcolor])
-            whichcolor = (whichcolor + 1) % len(algs)
+            f.write("\\addplot+["+colors[alg])
             f.write(plot_file_5)
             # time_graphs[str(int(float(p)*100))]["ct_pmax"][alg][str(n)].append(float(ct_pmax))
             for n_nodes in time_graphs[str(pv)][which_priority][alg].keys():
@@ -246,13 +251,18 @@ for alg in algs:
         simfile.write("\\\\ \n")
     simfile.write(part_file_table_2)
     simfile.write(
-        "\\caption{Total number of cycles (" + distrib + ") \\(q=2\\)"+alg+"}")
+        "\\caption{Total number of cycles (" + distrib + ") \\(q=5\\) "+alg+"}")
     simfile.write(part_file_table_3)
 
 for q in d_table_time_cycles_avg.keys():
     # f = open("data/plots/table_time_cycles_q" +
     #  str(q) + "_" + str(distrib) + ".tex", "w+")
     simfile.write(table_time_in_cycle_part_1)
+    for n in d_table_time_cycles_avg[q].keys():
+        for alg in d_table_time_cycles_avg[q][n].keys():
+            simfile.write("& \\multicolumn{2}{c|}{"+alg+"} ")
+        break
+    simfile.write(table_time_in_cycle_part_1half)
     for n in d_table_time_cycles_avg[q].keys():
         simfile.write("\\multicolumn{1}{l|}{"+str(n)+"}")
         for alg in d_table_time_cycles_avg[q][n].keys():

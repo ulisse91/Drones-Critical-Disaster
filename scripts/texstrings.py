@@ -25,7 +25,7 @@ plot_file_4 = """
     every axis plot/.append style={thick},
     xmajorgrids, ymajorgrids,
     width=5.5cm, height=5.5cm,
-    xtick={10,20,30,40,50,60,70,80,90,100},
+    xtick={50,75,100,125,150,175,200},
     y label style={at={(-0.15,0.5)}},
     x label style={at={(0.5,-0.075)}},
     yticklabel style = {font=\\tiny,xshift=0.5ex},
@@ -61,7 +61,9 @@ table_time_in_cycle_part_1 = """
 \\begin{table}[ht]
 \\centering
 \\begin{tabular}{lll|ll|ll|ll|ll}
-                        & \\multicolumn{2}{c|}{TOP} & \\multicolumn{2}{c|}{T+P} & \\multicolumn{2}{c|}{PRIM} & \\multicolumn{2}{c|}{G-ROUND} \\\\
+"""
+
+table_time_in_cycle_part_1half = """\\\\
 \\multicolumn{1}{l|}{n}  & avg         & min         & avg         & min        & avg         & min         & avg & min \\\\
 """
 

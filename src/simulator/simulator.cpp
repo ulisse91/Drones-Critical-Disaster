@@ -96,12 +96,87 @@ double simulator::objective_function_completion_time(std::vector<std::vector<std
         double _temp = 0;
         for (auto const &cycle : drone)
         {
-            _temp += utilities::cost_budget_sequence(G, cycle, this->sigma_prime_probs);
+            _temp += utilities::cost_budget_sequence(this->G, cycle, this->sigma_prime_probs);
         }
         if (_temp > value_fun)
             value_fun = _temp;
     }
     return value_fun;
+}
+
+double simulator::obj_ct_batteries(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol, int batteries)
+{
+    bool finito = false;
+    int total_batteries = this->n_drones + batteries;
+    std::vector<int> cycle_index(this->n_drones, 0);
+    std::vector<double> ct_drone(this->n_drones, 0);
+    int recharge_time = 2;
+    int round = 0;
+
+    while (not finito)
+    {
+        if (round == 0)
+        {
+            total_batteries = this->n_drones + batteries;
+        }
+        // std::cout << total_batteries << " " << round << "\n";
+        // for (int drone = 0; drone < (int)sol.size(); drone++)
+        // {
+        //     std::cout << ct_drone[drone] << " ";
+        // }
+        // std::cout << std::endl;
+        // for (int drone = 0; drone < (int)sol.size(); drone++)
+        // {
+        //     std::cout << cycle_index[drone] << " ";
+        // }
+        // std::cout << std::endl;
+        for (int drone = 0; drone < (int)sol.size(); drone++)
+        {
+            if (cycle_index[drone] > -1)
+            {
+                if (total_batteries > 0)
+                {
+                    if ((int)sol[drone].size() > cycle_index[drone])
+                    {
+                        ct_drone[drone] += utilities::cost_budget_sequence(this->G, sol[drone][cycle_index[drone]], this->sigma_prime_probs);
+                        cycle_index[drone]++;
+                        total_batteries--;
+                        if ((int)sol[drone].size() <= cycle_index[drone])
+                        {
+                            cycle_index[drone] = -1;
+                        }
+                    }
+                    // else
+                    // {
+                    //     cycle_index[drone] = -1;
+                    // }
+                }
+                else
+                {
+                    ct_drone[drone] += this->budget;
+                }
+            }
+        }
+        round = (round + 1) % (recharge_time + 1);
+        finito = true;
+        for (int drone = 0; drone < (int)sol.size(); drone++)
+            if (cycle_index[drone] > -1)
+                finito = false;
+        // std::cout << "****\n";
+    }
+    double max_value = 0;
+    for (int drone = 0; drone < (int)sol.size(); drone++)
+    {
+        if (ct_drone[drone] > max_value)
+        {
+            max_value = ct_drone[drone];
+        }
+        
+        // std::cout << ct_drone[drone] << " ";
+    }
+    // std::cout << std::endl;
+
+    return max_value;
 }
 
 std::vector<double> simulator::completion_time_priorities(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
@@ -586,6 +661,9 @@ std::vector<std::vector<int>> simulator::calculate_cycles_round(int which_alg, s
     case 7: // TOP 2+eps apx
         cycle.push_back(utilities::set_to_tsp(this->G, this->budget, op_path_BB_insert_step(graph_vertices, {0})));
         break;
+    case 8: // TOP + GMAX ROUND
+        cycle = calculate_cycles_round(1, graph_vertices);
+        break;
     default:
         std::cerr << "this should'nt happen" << std::endl;
         break;
@@ -634,7 +712,7 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::meta_al
 
     // auto start_t2 = std::chrono::high_resolution_clock::now();
 
-    while (not graph_vertices.empty() and counter <= G.get_n_nodes())
+    while (not graph_vertices.empty() and counter <= 2 * G.get_n_nodes())
     {
         std::vector<std::vector<int>> cycle_tsp = calculate_cycles_round(which_alg, graph_vertices);
         utilities::clean_sol(cycle_tsp);
@@ -667,6 +745,10 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator::meta_al
         if (which_alg == 5)
         {
             which_alg = 2;
+        }
+        if (which_alg == 8)
+        {
+            which_alg = 6;
         }
 
         // if (counter % this->n_drones == 0)

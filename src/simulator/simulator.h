@@ -60,6 +60,8 @@ public:
     std::vector<std::vector<int>> prim_based(std::unordered_set<int> graph_vertices);
     std::vector<std::vector<int>> top_heur(std::unordered_set<int> graph_vertices);
     std::vector<std::vector<int>> greedy_round(std::unordered_set<int> graph_vertices);
+
+    double obj_ct_batteries(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol, int batteries);
 };
 
 #endif // SIMULATOR_H
