@@ -7,16 +7,12 @@
 #include "core/user_input.h"
 #include "simulator/simulator.h"
 
-int main(int argc, char **argv)
+void batteries_greedy(input n_input)
 {
-    input n_input = userinput::read_user_input(argc, argv);
-    std::ofstream outfile;
-
     graph G = graph(1, 1);
     if (n_input.distrib == userinput::UNIFORM)
     {
         G.create_random_graph(n_input.n_nodes, 2, 3, n_input.seed);
-        // G.create_random_graph(n_input.n_nodes, 0, 0, n_input.seed);
     }
     if (n_input.distrib == userinput::POISSON)
     {
@@ -58,14 +54,31 @@ int main(int argc, char **argv)
               << "," << test[2]                                                                         /* min time cycles (except last cycle) */
               << "\n";
 
-    for (int i = 0; i < 2*n_input.n_drones +1; i++)
+    for (int i = 0; i < 2 * n_input.n_drones + 1; i++)
     {
         std::cout << i << " " << sim.obj_ct_batteries(sol, i) << std::endl;
     }
-    
-    return 0;
+}
 
-    
+void full_simulation(input n_input)
+{
+    std::ofstream outfile;
+    graph G = graph(1, 1);
+    if (n_input.distrib == userinput::UNIFORM)
+    {
+        G.create_random_graph(n_input.n_nodes, 2, 3, n_input.seed);
+    }
+    if (n_input.distrib == userinput::POISSON)
+    {
+        G.create_random_graph_poisson(n_input.n_nodes, 2, 3, n_input.seed);
+    }
+    print::print_graph(G);
+    simulator sim = simulator(G, n_input.n_drones, n_input.n_drones /* batteries */, n_input.budget, n_input.prob_sigma_prime, n_input.seed);
+
+    assert(sim.check_feasibility());
+
+    std::vector<std::string> algs = {"PRIM", "TOP", "GMAX", "GMIN", "TOP-PRIM", "TOP-GREEDY", "GMAX-ROUND", "TOP 2-apx", "TOP-GMAX-ROUND"};
+
     for (int i = 0; i < 9; i++)
     {
         if (i == 2 or i == 3 or i == 4 or i == 5 or i == 7)
@@ -105,6 +118,113 @@ int main(int argc, char **argv)
     std::cout << "================================================\n";
     std::cout << "================================================\n";
     std::cout << "================================================\n\n";
+}
+
+void top_comparison(input n_input)
+{
+    std::ofstream outfile;
+
+    graph G = graph(1, 1);
+    if (n_input.distrib == userinput::UNIFORM)
+    {
+        G.create_random_graph(n_input.n_nodes, 2, 3, n_input.seed);
+    }
+    if (n_input.distrib == userinput::POISSON)
+    {
+        G.create_random_graph_poisson(n_input.n_nodes, 2, 3, n_input.seed);
+    }
+    print::print_graph(G);
+
+    simulator sim = simulator(G, n_input.n_drones, n_input.n_drones /* batteries */, n_input.budget, n_input.prob_sigma_prime, n_input.seed);
+
+    assert(sim.check_feasibility());
+
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_apx = sim.meta_algorithm(7);
+    std::cout << "---------------------\n";
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_heur = sim.meta_algorithm(1);
+
+    print::print_e_solution(G, sol_apx, sim.sigma_prime_probs);
+    print::print_e_solution(G, sol_heur, sim.sigma_prime_probs);
+
+    assert(sim.check_solution_feasible(sol_apx) == 1);
+    assert(sim.check_solution_feasible(sol_heur) == 1);
+
+    outfile.open("data/output/confronto_TOP_" + n_input.distrib + ".csv", std::ios_base::app);
+    outfile << n_input.n_nodes                           /* number of nodes */
+            << "," << n_input.budget                     /* budget */
+            << "," << n_input.n_drones                   /* number of drones */
+            << "," << n_input.prob_sigma_prime           /* probability per sigma prime */
+            << "," << n_input.seed                       /* seed */
+            << "," << sim.evaluate_solution(0, sol_apx)  /* wL^I */
+            << "," << sim.evaluate_solution(1, sol_apx)  /* wL^II */
+            << "," << sim.evaluate_solution(2, sol_apx)  /* completion time */
+            << "," << sim.evaluate_solution(0, sol_heur) /* wL^I */
+            << "," << sim.evaluate_solution(1, sol_heur) /* wL^II */
+            << "," << sim.evaluate_solution(2, sol_heur) /* completion time */
+            << "\n";
+    outfile.close();
+}
+
+int main(int argc, char **argv)
+{
+    input n_input = userinput::read_user_input(argc, argv);
+
+    batteries_greedy(n_input);
+    // full_simulation(n_input);
+    // top_comparison(input n_input)
+
+    return 0;
+
+    /////////////////////////////////////////////////
+    /////////////////////////////////////////////////
+    /////////////////////////////////////////////////
+
+    std::ofstream outfile;
+    graph G = graph(1, 1);
+    if (n_input.distrib == userinput::UNIFORM)
+    {
+        G.create_random_graph(n_input.n_nodes, 2, 3, n_input.seed);
+    }
+    if (n_input.distrib == userinput::POISSON)
+    {
+        G.create_random_graph_poisson(n_input.n_nodes, 2, 3, n_input.seed);
+    }
+    print::print_graph(G);
+    simulator sim = simulator(G, n_input.n_drones, n_input.n_drones /* batteries */, n_input.budget, n_input.prob_sigma_prime, n_input.seed);
+
+    assert(sim.check_feasibility());
+
+    for (auto const &v : G.get_vertices())
+        std::cout << G.get_coord_x(v) << " " << G.get_coord_y(v) << std::endl;
+    std::cout << std::endl;
+    
+
+    std::vector<std::string> algs = {"PRIM", "TOP", "GMAX", "GMIN", "TOP-PRIM", "TOP-GREEDY", "GMAX-ROUND", "TOP 2-apx", "TOP-GMAX-ROUND"};
+
+    for (int i = 0; i < 9; i++)
+    {
+        if (i == 2 or i == 3 or i == 4 or i == 5 or i == 7 or i == 8)
+            continue; // skip some of the algs
+        std::vector<std::vector<std::vector<std::pair<int, double>>>> sol = sim.meta_algorithm(i);
+
+        std::cout << std::endl
+                  << algs[i] << " ALGORITHM" << std::endl;
+
+    print::print_solution(sol);
+
+        for (size_t dr = 0; dr < sol.size(); dr++)
+        {
+            std::cout << std::endl << "Drone " << dr << std::endl;
+            for (size_t round = 0; round < sol[dr].size(); round++)
+            {
+                for (size_t node = 0; node < sol[dr][round].size(); node++)
+                {
+                    std::cout << G.get_coord_x(sol[dr][round][node].first) << " " << G.get_coord_y(sol[dr][round][node].first) << std::endl;
+                }
+                break;
+            }
+        }
+    }
 
     return 0;
 }

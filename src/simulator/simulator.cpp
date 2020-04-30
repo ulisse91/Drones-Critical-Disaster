@@ -366,13 +366,9 @@ std::unordered_set<int> simulator::op_path_BB_insert_step(std::unordered_set<int
 
 double simulator::cost_cycle_OP(std::unordered_set<int> _temp)
 {
-    // print::print_set(_temp);
-
     std::vector<int> tsp_temp = utilities::set_to_tsp(this->G, this->budget, _temp);
 
     double cost = utilities::cost_budget_sequence(this->G, tsp_temp, this->sigma_prime_probs);
-
-    // print::print_vector_int(tsp_temp);
 
     if (cost > this->budget or tsp_temp.size() != _temp.size())
         return -1;

@@ -22,10 +22,15 @@ if [[ $# -ne 2 ]]; then
     exit
 fi
 
-if [[ $1 -eq 1 ]]; then
+if [[ "$1" -eq 1 ]]; then
     echo -e "Starting compilation ...\n"
     make main
     check_command "\nCompilation" $?
+fi
+
+if [[ "$2" -le 0 ]]; then
+    echo -e "Budget leq zero\n"
+    exit
 fi
 
 budget=$2

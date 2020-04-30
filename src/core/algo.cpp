@@ -49,7 +49,7 @@ std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double 
     std::map<int, std::pair<double, std::unordered_set<int>>> sub_trees;
     std::vector<int> id_vertices = G.get_vertices();
 
-    double _max = G.get_n_nodes() * (G.get_area_x() + G.get_area_y());
+    double _max = budget*2;
 
     for (auto const &i : id_vertices)
     {

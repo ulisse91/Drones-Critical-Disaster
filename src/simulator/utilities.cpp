@@ -17,7 +17,6 @@ std::vector<int> utilities::set_to_tsp(graph G, double budget, std::unordered_se
     graph G_prime = graph(G.get_area_x(), G.get_area_y());
     for (const int &i : _temp)
         G_prime.add_node(i, G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), G.get_priority_node(i), G.get_weight_prime_node(i));
-    // print::print_graph(G_prime);
     return algo::find_TSP(G_prime, budget, 0, algo::primMST(G_prime, {0}, budget));
 }
 
