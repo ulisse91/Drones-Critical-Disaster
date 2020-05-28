@@ -10,6 +10,8 @@
 /*
     batteries_greedy:
     simulate the problem using algorithm Greedy round with a number of batteries equal to q+b, with 0<= b <= 2q
+    The function produces an output of the form:
+    <number of batteries> <value of function ct> 
 */
 void batteries_greedy(input n_input)
 {
