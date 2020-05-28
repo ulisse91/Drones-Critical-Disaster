@@ -29,7 +29,7 @@ input userinput::read_user_input(int argc, char **argv)
     }
     else
     {
-        std::cout << "file was not set." << std::endl;
+        std::cout << "File was not set." << std::endl;
         if (vm.count("nodes"))
         {
             n_input.n_nodes = vm["nodes"].as<int>();

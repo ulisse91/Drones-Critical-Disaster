@@ -23,7 +23,11 @@ void simulator::update_sigma_prime()
     std::mt19937 re(this->seed);
 
     for (auto const &i : graph_vertices)
+    {
+        if (i == 0)
+            continue;
         this->sigma_prime_probs[i] = unif_1(re) < this->prob_sigma_prime ? 1 : 0;
+    }
 }
 
 ///////////////////////////////////////////////////////
@@ -171,7 +175,7 @@ double simulator::obj_ct_batteries(std::vector<std::vector<std::vector<std::pair
         {
             max_value = ct_drone[drone];
         }
-        
+
         // std::cout << ct_drone[drone] << " ";
     }
     // std::cout << std::endl;

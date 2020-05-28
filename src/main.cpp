@@ -7,6 +7,10 @@
 #include "core/user_input.h"
 #include "simulator/simulator.h"
 
+/*
+    batteries_greedy:
+    simulate the problem using algorithm Greedy round with a number of batteries equal to q+b, with 0<= b <= 2q
+*/
 void batteries_greedy(input n_input)
 {
     graph G = graph(1, 1);
@@ -60,6 +64,10 @@ void batteries_greedy(input n_input)
     }
 }
 
+/*
+    full_simulation simulates only:
+    PRIM - TOP (heuristic) - Greedy round - TOP+Greedy round
+*/
 void full_simulation(input n_input)
 {
     std::ofstream outfile;
@@ -165,20 +173,51 @@ void top_comparison(input n_input)
     outfile.close();
 }
 
-int main(int argc, char **argv)
+/*
+    Ogni file ha contenuto nel nome le seguenti informazioni (in ordine):
+    - n = numero di nodi
+    - B = budget
+    - p = probabilita' sigma'
+    - s = seed per la generazione dei dati
+    - distribuzione utilizzata per la creazione dei punti nel piano [uniform/poisson]
+
+    Esempio: 
+    file graph_n20_B50_p0.750000_s100000_uniform.csv
+    si hanno 20 nodi
+    budget 50
+    probabilita' sigma' 0.75
+    seed usato per la generazione 100000
+    distribuzione uniforme per la generazione dei punti nel piano
+*/
+void print_graph_to_file(input n_input)
 {
-    input n_input = userinput::read_user_input(argc, argv);
+    graph G = graph(1, 1);
+    if (n_input.distrib == userinput::UNIFORM)
+    {
+        G.create_random_graph(n_input.n_nodes, 2, 3, n_input.seed);
+    }
+    if (n_input.distrib == userinput::POISSON)
+    {
+        G.create_random_graph_poisson(n_input.n_nodes, 2, 3, n_input.seed);
+    }
+    print::print_graph(G);
+    simulator sim = simulator(G, n_input.n_drones, n_input.n_drones /* batteries */, n_input.budget, n_input.prob_sigma_prime, n_input.seed);
 
-    batteries_greedy(n_input);
-    // full_simulation(n_input);
-    // top_comparison(input n_input)
+    assert(sim.check_feasibility());
 
-    return 0;
+    std::string nome_file = "data/graph/graph_n" + std::to_string(n_input.n_nodes) + "_B" + std::to_string((int)n_input.budget) + "_p" + std::to_string(n_input.prob_sigma_prime) + "_s" + std::to_string(n_input.seed) + "_" + n_input.distrib + ".csv";
 
-    /////////////////////////////////////////////////
-    /////////////////////////////////////////////////
-    /////////////////////////////////////////////////
+    print::print_graph_to_file(G, sim.sigma_prime_probs, nome_file);
 
+    return;
+}
+/*
+    print_cycles prints the ordinate coordinates of each cycle of the solution sequence
+    for algorithm:
+    PRIM - Greedy Round
+*/
+void print_cycles(input n_input)
+{
     std::ofstream outfile;
     graph G = graph(1, 1);
     if (n_input.distrib == userinput::UNIFORM)
@@ -197,7 +236,6 @@ int main(int argc, char **argv)
     for (auto const &v : G.get_vertices())
         std::cout << G.get_coord_x(v) << " " << G.get_coord_y(v) << std::endl;
     std::cout << std::endl;
-    
 
     std::vector<std::string> algs = {"PRIM", "TOP", "GMAX", "GMIN", "TOP-PRIM", "TOP-GREEDY", "GMAX-ROUND", "TOP 2-apx", "TOP-GMAX-ROUND"};
 
@@ -210,11 +248,12 @@ int main(int argc, char **argv)
         std::cout << std::endl
                   << algs[i] << " ALGORITHM" << std::endl;
 
-    print::print_solution(sol);
+        print::print_solution(sol);
 
         for (size_t dr = 0; dr < sol.size(); dr++)
         {
-            std::cout << std::endl << "Drone " << dr << std::endl;
+            std::cout << std::endl
+                      << "Drone " << dr << std::endl;
             for (size_t round = 0; round < sol[dr].size(); round++)
             {
                 for (size_t node = 0; node < sol[dr][round].size(); node++)
@@ -225,6 +264,18 @@ int main(int argc, char **argv)
             }
         }
     }
+    return;
+}
+
+int main(int argc, char **argv)
+{
+    input n_input = userinput::read_user_input(argc, argv);
+
+    // print_graph_to_file(n_input);
+    // batteries_greedy(n_input);
+    full_simulation(n_input);
+    // top_comparison(input n_input);
+    // print_cycles(n_input);
 
     return 0;
 }

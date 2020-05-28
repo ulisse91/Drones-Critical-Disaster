@@ -78,12 +78,48 @@ void print::print_graph(graph G)
     std::cout << "*****************" << std::endl;
 }
 
-void print::print_graph_to_file(graph G, std::string path)
+/*
+    All'interno di ogni file ogni riga indica un nodo differente.
+    Ogni nodo, i.e., ogni riga ha 7 campi (separati da virgola):
+    - id = id del nodo
+    - x, y = coordinate nello spazio del nodo
+    - priority = priorita' del nodo [le priorita' utilizzate sono 1,2,3]
+    - sigma = peso del nodo
+    - sigmaprime = peso del nodo da considerare se e solo se il campo p e' uguale a 1
+    - p = valore booleano che indica se nell'istanza si deve considerare il valore sigma'
+    NB: i valori di sigmaprime e p devono essere considerati solo nel secondo scenario
+
+    Il primo nodo rappresenta il depot e avra' sempre tutti i campi a 0.
+    Il depot/base e' un nodo con id=0, si trova in coordinate (0,0) e ha sempre valori nulli di priorita'/peso/p
+
+    Esempio:
+
+    0, 0, 0, 0, 0, 0, 0 
+    # il depot e si trova sempre in posizione (0,0)
+
+    1, 0.939447, 0.4357, 3, 1.82, 2.34, 1
+    # nodo con id=1
+    # si trova in posizione (0.939447, 0.4357)
+    # ha priorita' 3
+    # il tempo di sorvolo scenario I = sigma = 1.82
+    # il tempo di sorvolo scenario II = sigma + sigmaprime * p = 4.16
+
+    2, 0.256719, 0.553081, 2, 1.62, 2.85, 0
+    # nodo con id=2
+    # si trova in posizione (0.256719, 0.553081)
+    # ha priorita' 2
+    # il tempo di sorvolo scenario I = sigma = 1.62
+    # il tempo di sorvolo scenario II = sigma + sigmaprime * p = 1.62
+*/
+void print::print_graph_to_file(graph G, std::map<int, int> sigma_prime_probs, std::string path)
 {
     std::ofstream myfile;
     myfile.open(path);
+    myfile << "id, x, y, priority, sigma, sigmaprime, p" << std::endl;
+
+    print_map_int_int(sigma_prime_probs);
 
     for (auto const &v : G.get_vertices())
-        myfile << G.get_coord_x(v) << ", " << G.get_coord_y(v) << ", " << G.get_priority_node(v) << ", " << G.get_weight_node(v) << ", " << G.get_weight_prime_node(v) << std::endl;
+        myfile << v << ", " << G.get_coord_x(v) << ", " << G.get_coord_y(v) << ", " << G.get_priority_node(v) << ", " << G.get_weight_node(v) << ", " << G.get_weight_prime_node(v) << ", " << sigma_prime_probs[v] << std::endl;
     myfile.close();
 }
