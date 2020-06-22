@@ -60,9 +60,12 @@ void batteries_greedy(input n_input)
               << "," << test[2]                                                                         /* min time cycles (except last cycle) */
               << "\n";
 
-    for (int i = 0; i < 2 * n_input.n_drones + 1; i++)
+    double recharge_time = 2.4;
+    int limit = std::min(std::ceil(recharge_time) * n_input.n_drones, test[0] - n_input.n_drones);
+
+    for (int i = 0; i < limit + 1; i++)
     {
-        std::cout << i << " " << sim.obj_ct_batteries(sol, i) << std::endl;
+        std::cout << i << " " << sim.obj_ct_batteries(recharge_time, sol, i) << std::endl;
     }
 }
 
@@ -274,8 +277,8 @@ int main(int argc, char **argv)
     input n_input = userinput::read_user_input(argc, argv);
 
     // print_graph_to_file(n_input);
-    // batteries_greedy(n_input);
-    full_simulation(n_input);
+    batteries_greedy(n_input);
+    // full_simulation(n_input);
     // top_comparison(input n_input);
     // print_cycles(n_input);
 

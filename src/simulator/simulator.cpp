@@ -102,84 +102,85 @@ double simulator::objective_function_completion_time(std::vector<std::vector<std
         {
             _temp += utilities::cost_budget_sequence(this->G, cycle, this->sigma_prime_probs);
         }
+        std::vector<std::pair<int, double>> args(drone[drone.size() - 1].begin(), drone[drone.size() - 1].end() - 1);
+        _temp += utilities::cost_budget_sequence(this->G, args, this->sigma_prime_probs);
         if (_temp > value_fun)
             value_fun = _temp;
     }
     return value_fun;
 }
 
-double simulator::obj_ct_batteries(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol, int batteries)
+double simulator::obj_ct_batteries(double recharge_time, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol, int batteries)
 {
+    // std::cout << this->n_drones << " " << batteries << "\n";
+
+    std::vector<std::vector<double>> batteries_drones(this->n_drones, std::vector<double>{});
+    int drone = 0;
+    for (int i = 0; i < this->n_drones + batteries; i++)
+    {
+        batteries_drones[drone].push_back(0);
+        drone = (drone + 1) % this->n_drones;
+    }
+
     bool finito = false;
-    int total_batteries = this->n_drones + batteries;
     std::vector<int> cycle_index(this->n_drones, 0);
     std::vector<double> ct_drone(this->n_drones, 0);
-    int recharge_time = 2;
-    int round = 0;
-
     while (not finito)
     {
-        if (round == 0)
-        {
-            total_batteries = this->n_drones + batteries;
-        }
-        // std::cout << total_batteries << " " << round << "\n";
-        // for (int drone = 0; drone < (int)sol.size(); drone++)
-        // {
-        //     std::cout << ct_drone[drone] << " ";
-        // }
-        // std::cout << std::endl;
-        // for (int drone = 0; drone < (int)sol.size(); drone++)
-        // {
-        //     std::cout << cycle_index[drone] << " ";
-        // }
-        // std::cout << std::endl;
         for (int drone = 0; drone < (int)sol.size(); drone++)
         {
             if (cycle_index[drone] > -1)
             {
-                if (total_batteries > 0)
+                double min_from_batteries = std::distance(batteries_drones[drone].begin(), std::min_element(batteries_drones[drone].begin(), batteries_drones[drone].end()));
+                if ((int)sol[drone].size() > cycle_index[drone])
                 {
-                    if ((int)sol[drone].size() > cycle_index[drone])
+                    double cycle_cost = batteries_drones[drone][min_from_batteries] + utilities::cost_budget_sequence(this->G, sol[drone][cycle_index[drone]], this->sigma_prime_probs);
+                    ct_drone[drone] += cycle_cost;
+                    batteries_drones[drone][min_from_batteries] = recharge_time * this->budget;
+
+                    for (size_t i = 0; i < batteries_drones[drone].size(); i++)
                     {
-                        ct_drone[drone] += utilities::cost_budget_sequence(this->G, sol[drone][cycle_index[drone]], this->sigma_prime_probs);
-                        cycle_index[drone]++;
-                        total_batteries--;
-                        if ((int)sol[drone].size() <= cycle_index[drone])
-                        {
-                            cycle_index[drone] = -1;
-                        }
+                        if (i != min_from_batteries)
+                            batteries_drones[drone][i] = batteries_drones[drone][i] > cycle_cost ? batteries_drones[drone][i] - cycle_cost : 0;
                     }
-                    // else
-                    // {
-                    //     cycle_index[drone] = -1;
-                    // }
-                }
-                else
-                {
-                    ct_drone[drone] += this->budget;
+
+                    cycle_index[drone]++;
+
+                    // std::cout << drone << " : " <<   ct_drone[drone] << "\n";
+
+                    if ((int)sol[drone].size() <= cycle_index[drone])
+                    {
+                        cycle_index[drone] = -1;
+                    }
                 }
             }
         }
-        round = (round + 1) % (recharge_time + 1);
+
+        // for (int dd = 0; dd < this->n_drones; dd++)
+        // {
+        //     std::cout << dd << " : ";
+        //     for (size_t i = 0; i < batteries_drones[dd].size(); i++)
+        //         std::cout << batteries_drones[dd][i] << " ";
+        //     std::cout << std::endl;
+        // }std::cout << std::endl;
+
         finito = true;
         for (int drone = 0; drone < (int)sol.size(); drone++)
             if (cycle_index[drone] > -1)
                 finito = false;
-        // std::cout << "****\n";
     }
+
     double max_value = 0;
     for (int drone = 0; drone < (int)sol.size(); drone++)
     {
+        std::vector<std::pair<int, double>> args(sol[drone][sol[drone].size() - 1].begin(), sol[drone][sol[drone].size() - 1].end() - 1);
+        // std::cout << utilities::cost_budget_sequence(this->G, args, this->sigma_prime_probs) << " ";
+        ct_drone[drone] += utilities::cost_budget_sequence(this->G, args, this->sigma_prime_probs);
         if (ct_drone[drone] > max_value)
         {
             max_value = ct_drone[drone];
         }
-
-        // std::cout << ct_drone[drone] << " ";
     }
-    // std::cout << std::endl;
-
     return max_value;
 }
 

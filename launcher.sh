@@ -33,6 +33,8 @@ if [[ "$2" -le 0 ]]; then
     exit
 fi
 
+mkdir -p data/bkp data/plots
+
 budget=$2
 main="./src/build/main"
 pathoutput="data/output/"
@@ -45,13 +47,19 @@ for dis in uniform poisson; do
     for pv in {0..100..25}; do # {0..100..25}
         p=$(echo "scale=2; $pv/100" | bc -q)
         for nodes in {50..200..25}; do # {50..200..25}
-            for drone in {5..20..5}; do # {5..20..5}
+            for drone in {2,4,5,10,15,20}; do # {5..20..5}
                 for seed in {0..19}; do # {0..19}
                     $main -b $budget -d $drone -n $nodes -p $p -s $(($baseseed + $seed)) --distrib $dis >> ${pathoutput}"results"-b${budget}-d${drone}-n${nodes}-p${pv}_${dis}.txt
+                     if ! [ $? -eq 0 ]; then
+                        echo -e "\nFailed Execution [FAILED]"
+                        echo -e "$main -b $budget -d $drone -n $nodes -p $p -s $(($baseseed + $seed)) --distrib $dis >> ${pathoutput}"results"-b${budget}-d${drone}-n${nodes}-p${pv}_${dis}.txt\n"
+                        clean
+                        exit
+                    fi
                     # echo "$main -b $budget -d $drone -n $nodes -p $p -s $(($baseseed + $seed)) --distrib $dis >> ${pathoutput}"results"-b${budget}-d${drone}-n${nodes}-p${pv}_${dis}.txt"
                 done
                 i=$(($i +1))
-                echo -ne " $(echo "scale=0; $i*0.7" | bc -q)% \r"
+                echo -ne " $(echo "scale=0; $i*0.25" | bc -q)% \r"
             done
         done
     done

@@ -48,14 +48,14 @@ double utilities::cost_budget_sequence(graph G, std::vector<int> sequence)
     return sum_of_elems;
 }
 
-double utilities::cost_budget_sequence(graph G, std::vector<std::pair<int, double>> _temp, std::map<int, int> sigma_prime_probs)
+double utilities::cost_budget_sequence(graph G, std::vector<std::pair<int, double>> _cycle, std::map<int, int> sigma_prime_probs)
 {
     double sum_of_elems = 0;
-    if (_temp.size() > 1)
+    if (_cycle.size() > 1)
     {
-        for (size_t i = 0; i < _temp.size() - 1; i++)
+        for (size_t i = 0; i < _cycle.size() - 1; i++)
         {
-            sum_of_elems += sigma_prime_probs[_temp[i + 1].first] * G.get_weight_prime_node(_temp[i + 1].first) + G.distw(_temp[i].first, _temp[i + 1].first);
+            sum_of_elems += sigma_prime_probs[_cycle[i + 1].first] * G.get_weight_prime_node(_cycle[i + 1].first) + G.distw(_cycle[i].first, _cycle[i + 1].first);
         }
     }
     return sum_of_elems;
