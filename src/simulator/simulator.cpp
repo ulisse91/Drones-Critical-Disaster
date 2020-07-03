@@ -102,8 +102,11 @@ double simulator::objective_function_completion_time(std::vector<std::vector<std
         {
             _temp += utilities::cost_budget_sequence(this->G, cycle, this->sigma_prime_probs);
         }
-        std::vector<std::pair<int, double>> args(drone[drone.size() - 1].begin(), drone[drone.size() - 1].end() - 1);
-        _temp += utilities::cost_budget_sequence(this->G, args, this->sigma_prime_probs);
+        if (drone.size() > 1)
+        {
+            std::vector<std::pair<int, double>> args(drone[drone.size() - 1].begin(), drone[drone.size() - 1].end() - 1);
+            _temp += utilities::cost_budget_sequence(this->G, args, this->sigma_prime_probs);
+        }
         if (_temp > value_fun)
             value_fun = _temp;
     }

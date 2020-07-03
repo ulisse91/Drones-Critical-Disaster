@@ -21,7 +21,9 @@ Algorithms:
 Features:
 - fun: print solution in file
 - fun: read solution from file
-- input from file
+- input from "config file"
+- move build up one level
+- (safe) clean output/plots
 
 To-Fix / Important:
 

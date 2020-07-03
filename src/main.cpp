@@ -277,8 +277,8 @@ int main(int argc, char **argv)
     input n_input = userinput::read_user_input(argc, argv);
 
     // print_graph_to_file(n_input);
-    batteries_greedy(n_input);
-    // full_simulation(n_input);
+    // batteries_greedy(n_input);
+    full_simulation(n_input);
     // top_comparison(input n_input);
     // print_cycles(n_input);
 

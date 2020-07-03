@@ -30,7 +30,7 @@ void graph::create_random_graph(int number_of_nodes, double max_weight, int max_
     // std::uniform_real_distribution<double> unif_3(1, max_weight + 1);
     // std::uniform_real_distribution<double> unif_5(1, max_weight + 1);
     std::uniform_real_distribution<double> unif_3(0,3);
-    std::uniform_real_distribution<double> unif_5(0,3);
+    std::uniform_real_distribution<double> unif_5(7,10);
     std::uniform_real_distribution<double> unif_4(1, max_priority + 1);
 
     //Mersenne Twister: Good quality random number generator
@@ -61,7 +61,7 @@ void graph::create_random_graph_poisson(int number_of_nodes, double max_weight, 
     // std::uniform_real_distribution<double> unif_3(1, max_weight + 1);
     // std::uniform_real_distribution<double> unif_5(1, max_weight + 1);
     std::uniform_real_distribution<double> unif_3(0,3);
-    std::uniform_real_distribution<double> unif_5(0,3);
+    std::uniform_real_distribution<double> unif_5(7,10);
     std::uniform_real_distribution<double> unif_4(1, max_priority + 1);
 
     //Mersenne Twister: Good quality random number generator
