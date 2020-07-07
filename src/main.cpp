@@ -205,12 +205,12 @@ void print_graph_to_file(input n_input)
     {
         G.create_random_graph_poisson(n_input.n_nodes, 2, 3, n_input.seed);
     }
-    print::print_graph(G);
+    // print::print_graph(G);
     simulator sim = simulator(G, n_input.n_drones, n_input.n_drones /* batteries */, n_input.budget, n_input.prob_sigma_prime, n_input.seed);
 
     assert(sim.check_feasibility());
 
-    std::string nome_file = "data/graph/graph_n" + std::to_string(n_input.n_nodes) + "_B" + std::to_string((int)n_input.budget) + "_p" + std::to_string(n_input.prob_sigma_prime) + "_s" + std::to_string(n_input.seed) + "_" + n_input.distrib + ".csv";
+    std::string nome_file = "data/graph/generated/graph_n" + std::to_string(n_input.n_nodes) + "_B" + std::to_string((int)n_input.budget) + "_p" + std::to_string(n_input.prob_sigma_prime) + "_s" + std::to_string(n_input.seed) + "_" + n_input.distrib + ".csv";
 
     print::print_graph_to_file(G, sim.sigma_prime_probs, nome_file);
 
@@ -276,11 +276,26 @@ int main(int argc, char **argv)
 {
     input n_input = userinput::read_user_input(argc, argv);
 
-    // print_graph_to_file(n_input);
-    // batteries_greedy(n_input);
-    full_simulation(n_input);
-    // top_comparison(input n_input);
-    // print_cycles(n_input);
+    if (n_input.experiment == 1)
+    {
+        print_graph_to_file(n_input);
+    }
+    else if (n_input.experiment == 2)
+    {
+        batteries_greedy(n_input);
+    }
+    else if (n_input.experiment == 0)
+    {
+        full_simulation(n_input);
+    }
+    else if (n_input.experiment == 3)
+    {
+        top_comparison(n_input);
+    }
+    else if (n_input.experiment == 4)
+    {
+        print_cycles(n_input);
+    }
 
     return 0;
 }

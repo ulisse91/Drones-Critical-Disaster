@@ -49,8 +49,8 @@ for dis in uniform poisson; do
         for nodes in {50..200..25}; do # {50..200..25}
             for drone in {2,4,5,10,15,20}; do # {5..20..5}
                 for seed in {0..19}; do # {0..19}
-                    $main -b $budget -d $drone -n $nodes -p $p -s $(($baseseed + $seed)) --distrib $dis >> ${pathoutput}"results"-b${budget}-d${drone}-n${nodes}-p${pv}_${dis}.txt
-                     if ! [ $? -eq 0 ]; then
+                    $main -b $budget -q $drone -n $nodes -p $p -s $(($baseseed + $seed)) --distrib $dis >> ${pathoutput}"results"-b${budget}-d${drone}-n${nodes}-p${pv}_${dis}.txt
+                    if ! [ $? -eq 0 ]; then
                         echo -e "\nFailed Execution [FAILED]"
                         echo -e "$main -b $budget -d $drone -n $nodes -p $p -s $(($baseseed + $seed)) --distrib $dis >> ${pathoutput}"results"-b${budget}-d${drone}-n${nodes}-p${pv}_${dis}.txt\n"
                         clean

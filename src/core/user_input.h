@@ -3,6 +3,8 @@
 
 #include <iostream>
 #include <time.h>
+#include <stdlib.h>
+#include <map>
 
 #include <boost/program_options.hpp>
 
@@ -19,8 +21,9 @@ struct input
     double prob_sigma_prime = 0;
     std::string graph_file = "";
     std::string distrib = "uniform";
+    int experiment = 0;
 
-    input(int _n_nodes, int _n_drones, int _n_batteries, double _budget, double _prob_sigma_prime, std::string _graph_file, std::string _distrib) : n_nodes(_n_nodes), n_drones(_n_drones), n_batteries(_n_batteries), budget(_budget), prob_sigma_prime(_prob_sigma_prime), graph_file(_graph_file), distrib(_distrib){}
+    input(int _n_nodes, int _n_drones, int _n_batteries, double _budget, double _prob_sigma_prime, std::string _graph_file, std::string _distrib) : n_nodes(_n_nodes), n_drones(_n_drones), n_batteries(_n_batteries), budget(_budget), prob_sigma_prime(_prob_sigma_prime), graph_file(_graph_file), distrib(_distrib) {}
     input() = default;
 };
 
@@ -33,7 +36,7 @@ public:
     ~userinput();
 
     static input read_user_input(int argc, char **argv);
-    static std::string UNIFORM; 
+    static std::string UNIFORM;
     static std::string POISSON;
 };
 

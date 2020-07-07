@@ -117,7 +117,7 @@ void print::print_graph_to_file(graph G, std::map<int, int> sigma_prime_probs, s
     myfile.open(path);
     myfile << "id, x, y, priority, sigma, sigmaprime, p" << std::endl;
 
-    print_map_int_int(sigma_prime_probs);
+    // print_map_int_int(sigma_prime_probs);
 
     for (auto const &v : G.get_vertices())
         myfile << v << ", " << G.get_coord_x(v) << ", " << G.get_coord_y(v) << ", " << G.get_priority_node(v) << ", " << G.get_weight_node(v) << ", " << G.get_weight_prime_node(v) << ", " << sigma_prime_probs[v] << std::endl;

@@ -40,6 +40,7 @@ data/output/
 data/bkp/
 data/plots/
 scripts/__pycache__/
+data/graph/generated/
 
 # Visual Studio Code
 .vscode/*
