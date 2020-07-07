@@ -36,7 +36,7 @@ fi
 mkdir -p data/bkp data/plots
 
 budget=$2
-main="./src/build/main"
+main="./build/main"
 pathoutput="data/output/"
 pathbkp="data/bkp/"
 baseseed=100000

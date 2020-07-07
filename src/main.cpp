@@ -37,7 +37,7 @@ void batteries_greedy(input n_input)
     std::cout << std::endl
               << algs[6] << " ALGORITHM" << std::endl;
     print::print_e_solution(G, sol, sim.sigma_prime_probs);
-    std::cout << "fun_cycle: " << sim.evaluate_solution(0, sol) << " func_weighted_latency: " << sim.evaluate_solution(1, sol) << " func_completion_time: " << sim.evaluate_solution(2, sol) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() << std::endl;
+    std::cout << "wL^I: " << sim.evaluate_solution(0, sol) << " wL^II: " << sim.evaluate_solution(1, sol) << " ct: " << sim.evaluate_solution(2, sol) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() << std::endl;
     std::vector<double> ct_graphs_p = sim.completion_time_priorities(sol);
     print::print_vector(ct_graphs_p);
     std::vector<double> test = utilities::stat_sol(G, sol, sim.sigma_prime_probs, n_input.budget);
@@ -102,7 +102,7 @@ void full_simulation(input n_input)
         std::cout << std::endl
                   << algs[i] << " ALGORITHM" << std::endl;
         print::print_e_solution(G, sol, sim.sigma_prime_probs);
-        std::cout << "fun_cycle: " << sim.evaluate_solution(0, sol) << " func_weighted_latency: " << sim.evaluate_solution(1, sol) << " func_completion_time: " << sim.evaluate_solution(2, sol) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() << std::endl;
+        std::cout << "wL^I: " << sim.evaluate_solution(0, sol) << " wL^II: " << sim.evaluate_solution(1, sol) << " ct: " << sim.evaluate_solution(2, sol) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() << std::endl;
         std::vector<double> ct_graphs_p = sim.completion_time_priorities(sol);
         print::print_vector(ct_graphs_p);
         std::vector<double> test = utilities::stat_sol(G, sol, sim.sigma_prime_probs, n_input.budget);

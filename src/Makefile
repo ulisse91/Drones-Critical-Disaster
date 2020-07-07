@@ -1,6 +1,5 @@
 include ../Makefile.config
 
-SRC_PATH = ""
 MAIN = main
 
 .PHONY: dirs all

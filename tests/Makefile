@@ -12,9 +12,9 @@ $(MAIN): $(OBJ)
 	$(CXX) $(CXXFLAGS) -o $(BUILD_PATH)/$@ $^ $(LDFLAGS)
 
 run: dirs $(MAIN)
-	./build/$(MAIN)
+	./../build/$(MAIN)
 
-.PHONY: dirs test
+.PHONY: dirs test run
 dirs:
 	@echo "Creating $(BUILD_PATH) directory"
 	@- mkdir -p $(BUILD_PATH)

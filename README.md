@@ -23,7 +23,7 @@ Features:
 - fun: read solution from file
 - input from "config file"
 - move build up one level
-- (safe) clean output/plots
+- (safe) clean output/plots script/makefile
 
 To-Fix / Important:
 
