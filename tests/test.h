@@ -32,6 +32,7 @@ public:
     bool check_fsolutions_all_nodes_2();
     bool check_fsolutions_obj_func_value_1();
     bool check_fsolutions_obj_func_value_2();
+    bool check_fsolutions_obj_func_value_3();
 
     // algorithms
     bool check_primMST();

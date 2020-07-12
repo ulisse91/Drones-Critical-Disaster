@@ -5,6 +5,11 @@ from collections import defaultdict
 
 from texstrings import *
 
+if len(sys.argv) < 3:
+    print(sys.argv[0], "[string: uniform/poisson]", "[int: budget]")
+    quit()
+
+
 budget = sys.argv[2]
 
 algs = []

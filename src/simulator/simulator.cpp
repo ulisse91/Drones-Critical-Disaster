@@ -62,24 +62,25 @@ double simulator::objective_function_weighted_latency(std::vector<std::vector<st
 double simulator::objective_function_cycle(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
 {
     std::unordered_map<int, double> nodes_cost;
-
     for (auto const &drone : sol)
     {
         double previous_time_cycle = 0;
         for (auto const &cycle : drone)
         {
+            double this_cycle = 0;
             for (int nodo = 1; nodo < (int)cycle.size(); nodo++)
             {
                 int previous_node_index = cycle[nodo - 1].first;
                 int current_node_index = cycle[nodo].first;
                 double distance_prev_to_curr_node = this->G.dist(previous_node_index, current_node_index);
-                previous_time_cycle += distance_prev_to_curr_node + this->G.get_weight_node(current_node_index) + this->sigma_prime_probs[current_node_index] * G.get_weight_prime_node(current_node_index);
-                nodes_cost[current_node_index] = previous_time_cycle;
+                this_cycle += distance_prev_to_curr_node + this->G.get_weight_node(current_node_index) + this->sigma_prime_probs[current_node_index] * G.get_weight_prime_node(current_node_index);
+                nodes_cost[current_node_index] = this_cycle;
             }
             for (auto const &nodo : cycle)
             {
-                nodes_cost[nodo.first] += previous_time_cycle;
+                nodes_cost[nodo.first] += previous_time_cycle + this_cycle;
             }
+            previous_time_cycle += this_cycle;
         }
     }
 
@@ -88,8 +89,7 @@ double simulator::objective_function_cycle(std::vector<std::vector<std::vector<s
     {
         val_sol += this->G.get_priority_node(node.first) * node.second;
     }
-
-    return (1.0 / this->G.get_n_nodes()) * val_sol;
+    return (1.0 / (this->G.get_n_nodes() - 1)) * val_sol;
 }
 
 double simulator::objective_function_completion_time(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
@@ -105,7 +105,7 @@ double simulator::objective_function_completion_time(std::vector<std::vector<std
         if (drone.size() > 1)
         {
             std::vector<std::pair<int, double>> args(drone[drone.size() - 1].begin(), drone[drone.size() - 1].end() - 1);
-            _temp += utilities::cost_budget_sequence(this->G, args, this->sigma_prime_probs);
+            _temp += utilities::cost_budget_sequence(this->G, args, this->sigma_prime_probs) + this->G.get_weight_node(drone[drone.size() - 1][drone[drone.size() - 1].size() - 2].first) / 2;
         }
         if (_temp > value_fun)
             value_fun = _temp;
@@ -115,8 +115,6 @@ double simulator::objective_function_completion_time(std::vector<std::vector<std
 
 double simulator::obj_ct_batteries(double recharge_time, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol, int batteries)
 {
-    // std::cout << this->n_drones << " " << batteries << "\n";
-
     std::vector<std::vector<double>> batteries_drones(this->n_drones, std::vector<double>{});
     int drone = 0;
     for (int i = 0; i < this->n_drones + batteries; i++)

@@ -23,6 +23,7 @@ int main(int argc, char **argv)
     // assert(T.check_fsolutions_all_nodes_2()); // we do not consider partial nodes right now
     assert(T.check_fsolutions_obj_func_value_1());
     assert(T.check_fsolutions_obj_func_value_2());
+    assert(T.check_fsolutions_obj_func_value_3());
 
     // // algorithms
     assert(T.check_primMST());
