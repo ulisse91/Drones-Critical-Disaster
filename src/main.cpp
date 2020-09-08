@@ -276,23 +276,23 @@ int main(int argc, char **argv)
 {
     input n_input = userinput::read_user_input(argc, argv);
 
-    if (n_input.experiment == 1)
+    if (n_input.experiment == 1) // --simulation generate-graph
     {
         print_graph_to_file(n_input);
     }
-    else if (n_input.experiment == 2)
+    else if (n_input.experiment == 2) // --simulation test-batteries
     {
         batteries_greedy(n_input);
     }
-    else if (n_input.experiment == 0)
+    else if (n_input.experiment == 0) // --simulation full-simulation
     {
         full_simulation(n_input);
     }
-    else if (n_input.experiment == 3)
+    else if (n_input.experiment == 3) // --simulation top-comparison
     {
         top_comparison(n_input);
     }
-    else if (n_input.experiment == 4)
+    else if (n_input.experiment == 4) // --simulation print-cycles
     {
         print_cycles(n_input);
     }

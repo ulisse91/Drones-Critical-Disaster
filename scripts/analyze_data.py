@@ -184,7 +184,7 @@ for pv in plot_time.keys():
 ### GRAPHS PRIORITY TIME ####
 #############################
 
-drones = 4
+drones = 10
 for pv in time_graphs.keys():
     pvalue = float(pv)/100.0
     f = open("data/plots/graph_priority_ctime_q"+str(drones)+"-p" +

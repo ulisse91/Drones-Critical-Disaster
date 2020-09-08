@@ -188,28 +188,29 @@ double simulator::obj_ct_batteries(double recharge_time, std::vector<std::vector
 std::vector<double> simulator::completion_time_priorities(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
 {
     std::vector<double> value_fun = {0, 0, 0};
-    for (auto const &drone : sol)
+    for (int drone = 0; drone < sol.size(); drone ++)
     {
         double previous_time_cycle = 0;
-        for (auto const &cycle : drone)
+        for (int cycle = 0; cycle<sol[drone].size(); cycle++)
         {
-            for (int nodo = 1; nodo < (int)cycle.size(); nodo++)
+            for (int nodo = 1; nodo < (int)sol[drone][cycle].size(); nodo++)
             {
-                int previous_node_index = cycle[nodo - 1].first;
-                int current_node_index = cycle[nodo].first;
+                int previous_node_index = sol[drone][cycle][nodo - 1].first;
+                int current_node_index = sol[drone][cycle][nodo].first;
                 double distance_prev_to_curr_node = this->G.dist(previous_node_index, current_node_index);
-
                 previous_time_cycle += distance_prev_to_curr_node + this->G.get_weight_node(current_node_index) + this->sigma_prime_probs[current_node_index] * G.get_weight_prime_node(current_node_index);
+
+                // std::cout << current_node_index << " " << this->G.get_priority_node(current_node_index) << " " << previous_time_cycle << " " << value_fun[0] << " " << value_fun[1] << " " << value_fun[2] << std::endl;
 
                 if (this->G.get_priority_node(current_node_index) == this->priority_max and value_fun[0] < previous_time_cycle)
                 {
                     value_fun[0] = previous_time_cycle;
                 }
-                else if (this->G.get_priority_node(current_node_index) == this->priority_med and value_fun[1] < previous_time_cycle)
+                if (this->G.get_priority_node(current_node_index) == this->priority_med and value_fun[1] < previous_time_cycle)
                 {
                     value_fun[1] = previous_time_cycle;
                 }
-                else if (this->G.get_priority_node(current_node_index) == this->priority_min and value_fun[2] < previous_time_cycle)
+                if (this->G.get_priority_node(current_node_index) == this->priority_min and value_fun[2] < previous_time_cycle)
                 {
                     value_fun[2] = previous_time_cycle;
                 }
