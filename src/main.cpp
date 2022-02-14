@@ -216,6 +216,27 @@ void print_graph_to_file(input n_input)
 
     return;
 }
+
+void print_graph_to_file_multi_depot(input n_input)
+{
+    graph G = graph(1, 1, n_input.n_depots);
+
+    // print::print_graph(G);
+
+    G.create_random_graph_multi_depot(n_input.n_nodes, n_input.n_depots, 3, n_input.seed);
+    
+    // print::print_graph(G);
+    simulator sim = simulator(G, n_input.n_drones, n_input.n_depots /* batteries */, n_input.budget, n_input.prob_sigma_prime, n_input.seed);
+
+    assert(sim.check_feasibility_multi_depot());
+
+    std::string nome_file = "data/graph/generated/graph_n" + std::to_string(n_input.n_nodes) + "_B" + std::to_string((int)n_input.budget) + "_p" + std::to_string(n_input.prob_sigma_prime) + "_s" + std::to_string(n_input.seed) + "_d" + std::to_string(n_input.n_depots) + "_" + n_input.distrib + ".csv";
+
+    print::print_graph_to_file(G, sim.sigma_prime_probs, nome_file);
+
+    return;
+}
+
 /*
     print_cycles prints the ordinate coordinates of each cycle of the solution sequence
     for algorithm:
@@ -276,6 +297,8 @@ int main(int argc, char **argv)
 {
     input n_input = userinput::read_user_input(argc, argv);
 
+    userinput::print_input(n_input);
+
     if (n_input.experiment == 1) // --simulation generate-graph
     {
         print_graph_to_file(n_input);
@@ -295,6 +318,10 @@ int main(int argc, char **argv)
     else if (n_input.experiment == 4) // --simulation print-cycles
     {
         print_cycles(n_input);
+    }
+    if (n_input.experiment == 5) // --simulation generate-graph-multi-depot
+    {
+        print_graph_to_file_multi_depot(n_input);
     }
 
     return 0;

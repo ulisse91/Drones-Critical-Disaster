@@ -22,6 +22,7 @@ private:
     graph G;
     int n_drones;
     int n_batteries;
+    int n_depots;
     double budget;
     double prob_sigma_prime;
     long seed;
@@ -41,12 +42,14 @@ public:
     std::map<int, int> sigma_prime_probs;
 
     simulator(graph _G, int _n_drones, int _n_batteries, double _budget, double prob_sigma_prime, long seed);
+    simulator(graph _G, int _n_drones, int _n_depots, int _n_batteries, double _budget, double prob_sigma_prime, long seed);
     ~simulator();
 
     int check_solution_feasible(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     double evaluate_solution(int which, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     std::vector<double> completion_time_priorities(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     bool check_feasibility();
+    bool check_feasibility_multi_depot();
 
     // algorithms
     std::vector<std::vector<std::vector<std::pair<int, double>>>> meta_algorithm(int which_alg);

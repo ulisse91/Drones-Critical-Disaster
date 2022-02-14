@@ -10,12 +10,67 @@ graph::graph(int _area_x, int _area_y)
     this->n_nodes = 1;
 }
 
+graph::graph(int _area_x, int _area_y, int number_of_depot)
+{
+    assert((int)number_of_depot <= 4);
+    
+    this->area_x = _area_x;
+    this->area_y = _area_y;
+
+    // DEPOTs: must have priority and weight == 0 (we use this in the code)
+    this->vertices[0] = node(0, 0, 0, 0, 0, 0); // depot 1
+    if (number_of_depot > 1)
+    {
+        this->vertices[1] = node(1, 0, 1, 0, 0, 0); // depot 2
+    }
+    if (number_of_depot > 2)
+    {
+        this->vertices[2] = node(2, 1, 1, 0, 0, 0); // depot 3
+    }
+    if (number_of_depot > 3)
+    {
+        this->vertices[3] = node(3, 1, 0, 0, 0, 0); // depot 4
+    }
+
+    this->n_nodes = number_of_depot;
+}
+
 graph::graph() {}
 graph::~graph() {}
 
 void graph::create_random_graph(int number_of_nodes, double max_weight, int max_priority)
 {
     create_random_graph(number_of_nodes, max_weight, max_priority, std::random_device{}());
+}
+
+void graph::create_random_graph_multi_depot(int number_of_nodes, int number_of_depot, double max_weight, long seed)
+{
+
+    if (seed == -1)
+        seed = std::random_device{}();
+
+    std::uniform_real_distribution<double> unif_1(0, this->area_x);
+    std::uniform_real_distribution<double> unif_2(0, this->area_y);
+    // std::uniform_real_distribution<double> unif_3(1, max_weight + 1);
+    // std::uniform_real_distribution<double> unif_5(1, max_weight + 1);
+    std::uniform_real_distribution<double> unif_3(0, 3);
+    // std::uniform_real_distribution<double> unif_5(0, 3);
+    // std::uniform_real_distribution<double> unif_4(1, max_priority + 1);
+
+    // Mersenne Twister: Good quality random number generator
+    std::mt19937 re(seed);
+
+    for (size_t i = 0; i <= (unsigned)number_of_nodes - number_of_depot; i++)
+    {
+        double _x = unif_1(re);
+        double _y = unif_2(re);
+        double _w = round(unif_3(re) * 100.0) / 100.0;
+        int _p = 1;
+        double _wp = 0;
+
+        this->add_node(_x, _y, _w, _p, _wp);
+    }
+    assert((int)this->vertices.size() == this->n_nodes);
 }
 
 void graph::create_random_graph(int number_of_nodes, double max_weight, int max_priority, long seed)
@@ -29,11 +84,11 @@ void graph::create_random_graph(int number_of_nodes, double max_weight, int max_
     std::uniform_real_distribution<double> unif_2(0, this->area_y);
     // std::uniform_real_distribution<double> unif_3(1, max_weight + 1);
     // std::uniform_real_distribution<double> unif_5(1, max_weight + 1);
-    std::uniform_real_distribution<double> unif_3(0,3);
-    std::uniform_real_distribution<double> unif_5(0,3);
+    std::uniform_real_distribution<double> unif_3(0, 3);
+    std::uniform_real_distribution<double> unif_5(0, 3);
     std::uniform_real_distribution<double> unif_4(1, max_priority + 1);
 
-    //Mersenne Twister: Good quality random number generator
+    // Mersenne Twister: Good quality random number generator
     std::mt19937 re(seed);
 
     for (size_t i = 0; i < (unsigned)number_of_nodes; i++)
@@ -60,11 +115,11 @@ void graph::create_random_graph_poisson(int number_of_nodes, double max_weight, 
     // std::uniform_real_distribution<double> unif_2(this->area_y);
     // std::uniform_real_distribution<double> unif_3(1, max_weight + 1);
     // std::uniform_real_distribution<double> unif_5(1, max_weight + 1);
-    std::uniform_real_distribution<double> unif_3(0,3);
-    std::uniform_real_distribution<double> unif_5(0,3);
+    std::uniform_real_distribution<double> unif_3(0, 3);
+    std::uniform_real_distribution<double> unif_5(0, 3);
     std::uniform_real_distribution<double> unif_4(1, max_priority + 1);
 
-    //Mersenne Twister: Good quality random number generator
+    // Mersenne Twister: Good quality random number generator
     std::mt19937 re(seed);
 
     double _t = this->get_area_x() * 1000.0 / 8.0;

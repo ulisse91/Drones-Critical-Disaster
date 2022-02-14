@@ -10,7 +10,8 @@ input userinput::read_user_input(int argc, char **argv)
          {"test-batteries", 2},
          {"full-simulation", 0},
          {"top-comparison", 3},
-         {"print-cycles", 4}};
+         {"print-cycles", 4},
+         {"generate-graph-multi-depot", 5}};
 
     time_t my_time = time(NULL);
     std::cout << std::endl
@@ -19,7 +20,7 @@ input userinput::read_user_input(int argc, char **argv)
     input n_input = input();
 
     po::options_description desc{"Options"};
-    desc.add_options()("help,h", "Help screen")("nodes,n", po::value<int>(), "[int] Number of nodes (default = 10)")("drones,q", po::value<int>(), "[int] Number of drones (default = 1)")("budget,b", po::value<double>(), "[double] Budget (default = 1)")("progsigma,p", po::value<double>(), "[double] Probability sigma prime (default = 0). The value must be between 0 and 1")("seed,s", po::value<int>(), "[int] seed for random graph generator")("batteries,m", po::value<int>(), "[int] Number of batteries (default = number of drones). The value must be greater than number of drones")("file,f", po::value<std::string>(), "[path] Graph file")("distrib,z", po::value<std::string>(), "[string] Distribution (default = \"uniform\"). Possible values: uniform, poisson")("simulation", po::value<std::string>(), "[string] Which simulation/experiment to launch (default = \"full-simulation\"). Possible values: generate-graph (1), test-batteries (2), full-simulation (0), top-comparison (3), print-cycles (4)")("e", po::value<int>(), "[int] Which simulation/experiment to launch (default = 0). Possible values: see \"simulation\"");
+    desc.add_options()("help,h", "Help screen")("nodes,n", po::value<int>(), "[int] Number of nodes (default = 10)")("drones,q", po::value<int>(), "[int] Number of drones (default = 1)")("budget,b", po::value<double>(), "[double] Budget (default = 1)")("progsigma,p", po::value<double>(), "[double] Probability sigma prime (default = 0). The value must be between 0 and 1")("depots,d", po::value<int>(), "[int] number of depots (default = 1)")("seed,s", po::value<int>(), "[int] seed for random graph generator")("batteries,m", po::value<int>(), "[int] Number of batteries (default = number of drones). The value must be greater than number of drones")("file,f", po::value<std::string>(), "[path] Graph file")("distrib,z", po::value<std::string>(), "[string] Distribution (default = \"uniform\"). Possible values: uniform, poisson")("simulation", po::value<std::string>(), "[string] Which simulation/experiment to launch (default = \"full-simulation\"). Possible values: generate-graph (1), test-batteries (2), full-simulation (0), top-comparison (3), print-cycles (4)")("e", po::value<int>(), "[int] Which simulation/experiment to launch (default = 0). Possible values: see \"simulation\"");
 
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -77,10 +78,25 @@ input userinput::read_user_input(int argc, char **argv)
             std::cout << "Number of drones was not set. ";
             std::cout << "Set Default value: " << n_input.n_drones << std::endl;
         }
+        if (vm.count("depots"))
+        {
+            n_input.n_depots = vm["depots"].as<int>();
+            std::cout << "Number of depots: " << vm["depots"].as<int>() << std::endl;
+            if (not vm.count("depots"))
+            {
+                std::cout << "Number of depots was not set. ";
+                std::cout << "Set Default value: " << n_input.n_depots << std::endl;
+            }
+        }
+        else
+        {
+            std::cout << "Number of drones was not set. ";
+            std::cout << "Set Default value: " << n_input.n_drones << std::endl;
+        }
         if (vm.count("batteries"))
         {
             n_input.n_batteries = vm["batteries"].as<int>();
-            if(n_input.n_batteries < n_input.n_drones)
+            if (n_input.n_batteries < n_input.n_drones)
             {
                 std::cout << "[ERROR] Number of batteries less than number of drones" << std::endl;
                 exit(EXIT_FAILURE);
@@ -151,4 +167,18 @@ input userinput::read_user_input(int argc, char **argv)
     std::cout << std::endl;
 
     return n_input;
+}
+
+void userinput::print_input(input n_input)
+{
+    std::cout << "n_nodes: " << n_input.n_nodes << "\n" << 
+    "n_drones:" << n_input.n_drones << "\n" <<
+    "n_batteries: " << n_input.n_batteries << "\n" <<
+    "n_depots: " << n_input.n_depots << "\n" <<
+    "budget: " << n_input.budget << "\n" <<
+    "seed: " << n_input.seed << "\n" <<
+    "prob_sigma_prime: " << n_input.prob_sigma_prime << "\n" <<
+    "graph_file: " << n_input.graph_file << "\n" <<
+    "distrib: " << n_input.distrib << "\n" <<
+    "experiment: " << n_input.experiment << "\n"; 
 }

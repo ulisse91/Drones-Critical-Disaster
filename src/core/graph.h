@@ -35,6 +35,7 @@ private:
 public:
     graph();
     graph(int _area_x, int _area_y);
+    graph(int _area_x, int _area_y, int number_of_depot);
     ~graph();
 
     int get_area_x();
@@ -56,6 +57,7 @@ public:
 
     void create_random_graph(int number_of_nodes, double max_weight, int max_priority);
     void create_random_graph(int number_of_nodes, double max_weight, int max_priority, long seed);
+    void create_random_graph_multi_depot(int number_of_nodes, int number_of_depot, double max_weight, long seed);
     void create_random_graph_poisson(int number_of_nodes, double max_weight, int max_priority, long seed);
     int add_node(int id, double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime);
     int add_node(double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime);
