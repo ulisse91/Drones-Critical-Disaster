@@ -14,21 +14,6 @@ simulator::simulator(graph _G, int _n_drones, int _n_batteries, double _budget, 
     assert(this->n_batteries >= this->n_drones);
 }
 
-simulator::simulator(graph _G, int _n_drones, int _n_depots, int _n_batteries, double _budget, double _prob_sigma_prime, long _seed)
-{
-    this->G = _G;
-    this->n_drones = _n_drones;
-    this->n_depots = _n_depots;
-    this->n_batteries = _n_batteries;
-    this->budget = _budget;
-    this->seed = _seed;
-    this->prob_sigma_prime = _prob_sigma_prime;
-    update_sigma_prime();
-
-    assert(this->budget > 0);
-    assert(this->n_batteries >= this->n_drones);
-}
-
 simulator::~simulator() {}
 
 void simulator::update_sigma_prime()
@@ -301,17 +286,6 @@ bool simulator::check_feasibility()
     for (auto &v : this->G.get_vertices())
         if (2 * G.distw(0, v) + this->sigma_prime_probs[v] * G.get_weight_prime_node(v) > this->budget)
             return false;
-    return true;
-}
-
-bool simulator::check_feasibility_multi_depot()
-{
-    for (auto &v : this->G.get_vertices())
-        for (size_t i = 0; i < n_depots; i++)
-        {
-            if (2 * G.distw(i, v) + this->sigma_prime_probs[v] * G.get_weight_prime_node(v) > this->budget)
-                return false;
-        }
     return true;
 }
 

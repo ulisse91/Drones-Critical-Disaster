@@ -6,12 +6,13 @@
 
 #include "core/user_input.h"
 #include "simulator/simulator.h"
+#include "simulator/simulator_multi_depot.h"
 
 /*
     batteries_greedy:
     simulate the problem using algorithm Greedy round with a number of batteries equal to q+b, with 0<= b <= 2q
     The function produces an output of the form:
-    <number of batteries> <value of function ct> 
+    <number of batteries> <value of function ct>
 */
 void batteries_greedy(input n_input)
 {
@@ -186,7 +187,7 @@ void top_comparison(input n_input)
     - s = seed per la generazione dei dati
     - distribuzione utilizzata per la creazione dei punti nel piano [uniform/poisson]
 
-    Esempio: 
+    Esempio:
     file graph_n20_B50_p0.750000_s100000_uniform.csv
     si hanno 20 nodi
     budget 50
@@ -224,15 +225,33 @@ void print_graph_to_file_multi_depot(input n_input)
     // print::print_graph(G);
 
     G.create_random_graph_multi_depot(n_input.n_nodes, n_input.n_depots, 3, n_input.seed);
-    
-    // print::print_graph(G);
-    simulator sim = simulator(G, n_input.n_drones, n_input.n_depots /* batteries */, n_input.budget, n_input.prob_sigma_prime, n_input.seed);
+
+    /*
+        Generate drones
+    */
+
+    typedef std::vector<std::tuple<int, int, double>> my_tuple;
+    my_tuple drones;
+    drones.push_back(std::tuple<int, int, double>(0, 0, 50));
+    drones.push_back(std::tuple<int, int, double>(1, 0, 40));
+    drones.push_back(std::tuple<int, int, double>(2, 1, 30));
+    drones.push_back(std::tuple<int, int, double>(3, 1, 20));
+    // for (const auto &i : tl)
+    // {
+    //     std::cout << std::get<0>(i) << ", " << std::get<1>(i) << ", " << std::get<2>(i) << "\n";
+    // }
+
+    // // print::print_graph(G);
+    simulator_md sim = simulator_md(G, drones, n_input.n_depots, n_input.seed);
 
     assert(sim.check_feasibility_multi_depot());
 
-    std::string nome_file = "data/graph/generated/graph_n" + std::to_string(n_input.n_nodes) + "_B" + std::to_string((int)n_input.budget) + "_p" + std::to_string(n_input.prob_sigma_prime) + "_s" + std::to_string(n_input.seed) + "_d" + std::to_string(n_input.n_depots) + "_" + n_input.distrib + ".csv";
+    std::string nome_file_graph = "data/graph/generated/graph_n" + std::to_string(n_input.n_nodes) + "_d" + std::to_string(n_input.n_depots) + "_s" + std::to_string(n_input.seed) + ".csv";
 
-    print::print_graph_to_file(G, sim.sigma_prime_probs, nome_file);
+    print::print_graph_to_file_multi_depots(G, nome_file_graph);
+
+    std::string nome_file_drones = "data/graph/generated/drones_q" + std::to_string(n_input.n_drones) + "_d" + std::to_string(n_input.n_depots) + "_s" + std::to_string(n_input.seed) + ".csv";
+    print::print_drones_to_file_multi_depots(drones, nome_file_drones);
 
     return;
 }

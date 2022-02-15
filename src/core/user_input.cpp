@@ -171,14 +171,14 @@ input userinput::read_user_input(int argc, char **argv)
 
 void userinput::print_input(input n_input)
 {
-    std::cout << "n_nodes: " << n_input.n_nodes << "\n" << 
-    "n_drones:" << n_input.n_drones << "\n" <<
-    "n_batteries: " << n_input.n_batteries << "\n" <<
-    "n_depots: " << n_input.n_depots << "\n" <<
-    "budget: " << n_input.budget << "\n" <<
-    "seed: " << n_input.seed << "\n" <<
-    "prob_sigma_prime: " << n_input.prob_sigma_prime << "\n" <<
-    "graph_file: " << n_input.graph_file << "\n" <<
-    "distrib: " << n_input.distrib << "\n" <<
-    "experiment: " << n_input.experiment << "\n"; 
+    std::cout << "n_nodes: " << n_input.n_nodes << "\n"
+              << "n_drones:" << n_input.n_drones << "\n"
+              << "n_batteries: " << n_input.n_batteries << "\n"
+              << "n_depots: " << n_input.n_depots << "\n"
+              << "budget: " << n_input.budget << "\n"
+              << "seed: " << n_input.seed << "\n"
+              << "prob_sigma_prime: " << n_input.prob_sigma_prime << "\n"
+              << "graph_file: " << n_input.graph_file << "\n"
+              << "distrib: " << n_input.distrib << "\n"
+              << "experiment: " << n_input.experiment << "\n";
 }

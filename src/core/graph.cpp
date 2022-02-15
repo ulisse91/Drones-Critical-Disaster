@@ -13,7 +13,7 @@ graph::graph(int _area_x, int _area_y)
 graph::graph(int _area_x, int _area_y, int number_of_depot)
 {
     assert((int)number_of_depot <= 4);
-    
+
     this->area_x = _area_x;
     this->area_y = _area_y;
 

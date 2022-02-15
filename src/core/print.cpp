@@ -94,7 +94,7 @@ void print::print_graph(graph G)
 
     Esempio:
 
-    0, 0, 0, 0, 0, 0, 0 
+    0, 0, 0, 0, 0, 0, 0
     # il depot e si trova sempre in posizione (0,0)
 
     1, 0.939447, 0.4357, 3, 1.82, 2.34, 1
@@ -121,5 +121,31 @@ void print::print_graph_to_file(graph G, std::map<int, int> sigma_prime_probs, s
 
     for (auto const &v : G.get_vertices())
         myfile << v << ", " << G.get_coord_x(v) << ", " << G.get_coord_y(v) << ", " << G.get_priority_node(v) << ", " << G.get_weight_node(v) << ", " << G.get_weight_prime_node(v) << ", " << sigma_prime_probs[v] << std::endl;
+    myfile.close();
+}
+
+void print::print_graph_to_file_multi_depots(graph G, std::string path)
+{
+    std::ofstream myfile;
+    myfile.open(path);
+    myfile << "id, x, y, sigma" << std::endl;
+
+    // print_map_int_int(sigma_prime_probs);
+
+    for (auto const &v : G.get_vertices())
+        myfile << v << ", " << G.get_coord_x(v) << ", " << G.get_coord_y(v) << ", " << G.get_weight_node(v) << std::endl;
+    myfile.close();
+}
+
+void print::print_drones_to_file_multi_depots(std::vector<std::tuple<int, int, double>> drones, std::string path)
+{
+    std::ofstream myfile;
+    myfile.open(path);
+    myfile << "id, depot_id, budget" << std::endl;
+
+    // print_map_int_int(sigma_prime_probs);
+
+    for (const auto &i : drones)
+        myfile << std::get<0>(i) << ", " << std::get<1>(i) << ", " << std::get<2>(i) << std::endl;
     myfile.close();
 }
