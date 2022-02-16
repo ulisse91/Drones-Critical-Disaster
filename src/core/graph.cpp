@@ -231,11 +231,42 @@ int graph::read_graph_from_file(std::string file)
     return -1; // Unable to open file
 }
 
+int graph::read_graph_from_file_multi_depot(std::string file)
+{
+    std::fstream fin;
+    fin.open(file, std::ios::in);
+
+    if (fin.is_open())
+    {
+        int count_lines = 1;
+        std::string _id, _x, _y, _node_weight;
+        while (fin.good())
+        {            
+            getline(fin, _id, ',');
+            getline(fin, _x, ',');
+            getline(fin, _y, ',');
+            getline(fin, _node_weight);
+            std::cout <<  _id << " " << _x << " " << _y << " " << _node_weight << "\n";
+
+            std::cout << count_lines << "\n";
+            if (++count_lines <= 2 /* how many lines in the file to skip (starting from 1) */ or _id == "" /* skip blank lines (last line)*/)
+                continue;
+
+            add_node(stod(_id), stod(_x), stod(_y), stod(_node_weight), 1, 0);
+            // (int id, double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime)
+        }
+        fin.close();
+        return 1;
+    }
+    return -1; // Unable to open file
+}
+
+
 void graph::erase_graph()
 {
     this->n_nodes = 1;
     this->vertices = std::map<int, node>();
-    this->vertices[0] = node(0, 0, 0, 0, 0, 0); // v_0 = depot
+    // this->vertices[0] = node(0, 0, 0, 0, 0, 0); // v_0 = depot
 }
 
 /////////////////////////////////////////////////

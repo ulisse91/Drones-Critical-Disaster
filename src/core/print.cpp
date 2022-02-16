@@ -124,10 +124,12 @@ void print::print_graph_to_file(graph G, std::map<int, int> sigma_prime_probs, s
     myfile.close();
 }
 
-void print::print_graph_to_file_multi_depots(graph G, std::string path)
+void print::print_graph_to_file_multi_depots(graph G, int number_of_depots, std::string path)
 {
     std::ofstream myfile;
     myfile.open(path);
+
+    myfile << "D " << number_of_depots << std::endl;
     myfile << "id, x, y, sigma" << std::endl;
 
     // print_map_int_int(sigma_prime_probs);
@@ -141,6 +143,7 @@ void print::print_drones_to_file_multi_depots(std::vector<std::tuple<int, int, d
 {
     std::ofstream myfile;
     myfile.open(path);
+    myfile << "U " << drones.size() << std::endl;
     myfile << "id, depot_id, budget" << std::endl;
 
     // print_map_int_int(sigma_prime_probs);

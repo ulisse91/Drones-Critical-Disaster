@@ -10,16 +10,17 @@ make examples
 ```
 Then run the examples singularly from the examples/build directory
 
-The main file is src/main.cpp
-```bash
-make curr
-```
 
 # TO_DO
 Algorithms:
+- greedy algorithm multi depot
+- Kim algorithm multi depot (no priority)
 
 Features:
+- fun: read drones csv file
 - fun: print solution in file
+
+Features (low priority):
 - fun: read solution from file
 - input from "config file"
 - move build up one level

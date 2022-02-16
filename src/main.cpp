@@ -232,14 +232,36 @@ void print_graph_to_file_multi_depot(input n_input)
 
     typedef std::vector<std::tuple<int, int, double>> my_tuple;
     my_tuple drones;
-    drones.push_back(std::tuple<int, int, double>(0, 0, 50));
-    drones.push_back(std::tuple<int, int, double>(1, 0, 40));
-    drones.push_back(std::tuple<int, int, double>(2, 1, 30));
-    drones.push_back(std::tuple<int, int, double>(3, 1, 20));
-    // for (const auto &i : tl)
-    // {
-    //     std::cout << std::get<0>(i) << ", " << std::get<1>(i) << ", " << std::get<2>(i) << "\n";
-    // }
+    drones.push_back(std::tuple<int, int, double>(0, 0, 20));
+    drones.push_back(std::tuple<int, int, double>(1, 0, 20));
+    drones.push_back(std::tuple<int, int, double>(2, 0, 20));
+    drones.push_back(std::tuple<int, int, double>(3, 0, 20));
+    drones.push_back(std::tuple<int, int, double>(4, 0, 20));
+
+    drones.push_back(std::tuple<int, int, double>(5, 1, 50));
+    drones.push_back(std::tuple<int, int, double>(6, 1, 50));
+
+    // drones.push_back(std::tuple<int, int, double>(10, 2, 40));
+    // drones.push_back(std::tuple<int, int, double>(11, 2, 40));
+    // drones.push_back(std::tuple<int, int, double>(12, 2, 40));
+    // drones.push_back(std::tuple<int, int, double>(13, 2, 40));
+    // drones.push_back(std::tuple<int, int, double>(14, 2, 40));
+
+    // drones.push_back(std::tuple<int, int, double>(15, 3, 20));
+    // drones.push_back(std::tuple<int, int, double>(16, 3, 20));
+    // drones.push_back(std::tuple<int, int, double>(17, 3, 20));
+    // drones.push_back(std::tuple<int, int, double>(18, 3, 20));
+    // drones.push_back(std::tuple<int, int, double>(19, 3, 20));
+
+
+    std::string t_depots = "";
+    std::string t_budgets = "";
+    for (const auto &i : drones)
+    {
+        t_depots = t_depots + std::to_string(std::get<1>(i));
+        t_budgets = t_budgets + std::to_string((int) std::get<2>(i));
+        // std::cout << std::get<0>(i) << ", " <<  << ", " << std::get<2>(i) << "\n";
+    }
 
     // // print::print_graph(G);
     simulator_md sim = simulator_md(G, drones, n_input.n_depots, n_input.seed);
@@ -248,9 +270,9 @@ void print_graph_to_file_multi_depot(input n_input)
 
     std::string nome_file_graph = "data/graph/generated/graph_n" + std::to_string(n_input.n_nodes) + "_d" + std::to_string(n_input.n_depots) + "_s" + std::to_string(n_input.seed) + ".csv";
 
-    print::print_graph_to_file_multi_depots(G, nome_file_graph);
+    print::print_graph_to_file_multi_depots(G, n_input.n_depots, nome_file_graph);
 
-    std::string nome_file_drones = "data/graph/generated/drones_q" + std::to_string(n_input.n_drones) + "_d" + std::to_string(n_input.n_depots) + "_s" + std::to_string(n_input.seed) + ".csv";
+    std::string nome_file_drones = "data/graph/generated/drones_q" + std::to_string(n_input.n_drones) + "_d" + std::to_string(n_input.n_depots) + "_" + t_depots + "_" + t_budgets + ".csv";
     print::print_drones_to_file_multi_depots(drones, nome_file_drones);
 
     return;
@@ -317,6 +339,16 @@ int main(int argc, char **argv)
     input n_input = userinput::read_user_input(argc, argv);
 
     userinput::print_input(n_input);
+
+    // read from file
+
+    graph G = graph(1, 1);
+    G.erase_graph();
+    print::print_graph(G);
+    G.read_graph_from_file_multi_depot("data/graph/generated/graph_n10_d2_s100000.csv");
+    print::print_graph(G);
+
+    return 0;
 
     if (n_input.experiment == 1) // --simulation generate-graph
     {
