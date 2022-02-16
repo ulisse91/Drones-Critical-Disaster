@@ -113,3 +113,33 @@ std::vector<double> utilities::stat_sol(graph G, std::vector<std::vector<std::ve
     }
     return std::vector<double>{(double)tot_n_cycles, avg_time_cycle / (tot_n_cycles - sol.size()), min_time_cycle};
 }
+
+std::vector<std::tuple<int, int, double>> utilities::read_drones_from_file(std::string file)
+{
+
+    std::vector<std::tuple<int, int, double>> drones;
+    std::fstream fin;
+    fin.open(file, std::ios::in);
+
+    if (fin.is_open())
+    {
+        int count_lines = 1;
+        std::string _id, _depot_id, _budget;
+        while (fin.good())
+        {
+            getline(fin, _id, ',');
+            getline(fin, _depot_id, ',');
+            getline(fin, _budget);
+            // std::cout << _id << " " << _depot_id << " " << _budget << "\n";
+
+            // std::cout << count_lines << "\n";
+            if (++count_lines <= 2 /* how many lines in the file to skip (starting from 1) */ or _id == "" /* skip blank lines (last line)*/)
+                continue;
+
+            drones.push_back(std::tuple<int, int, double>(stod(_id), stod(_depot_id), stod(_budget)));
+        }
+        fin.close();
+        return drones;
+    }
+    assert(false); // Unable to open file
+}

@@ -188,10 +188,10 @@ double simulator::obj_ct_batteries(double recharge_time, std::vector<std::vector
 std::vector<double> simulator::completion_time_priorities(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
 {
     std::vector<double> value_fun = {0, 0, 0};
-    for (int drone = 0; drone < sol.size(); drone++)
+    for (int drone = 0; drone < (int)sol.size(); drone++)
     {
         double previous_time_cycle = 0;
-        for (int cycle = 0; cycle < sol[drone].size(); cycle++)
+        for (int cycle = 0; cycle < (int)sol[drone].size(); cycle++)
         {
             for (int nodo = 1; nodo < (int)sol[drone][cycle].size(); nodo++)
             {

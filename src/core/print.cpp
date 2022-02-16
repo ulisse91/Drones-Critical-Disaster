@@ -152,3 +152,11 @@ void print::print_drones_to_file_multi_depots(std::vector<std::tuple<int, int, d
         myfile << std::get<0>(i) << ", " << std::get<1>(i) << ", " << std::get<2>(i) << std::endl;
     myfile.close();
 }
+
+void print::print_drones(std::vector<std::tuple<int, int, double>> drones)
+{
+    std::cout << "***** DRONES *****" << std::endl;
+    for (const auto &i : drones)
+        std::cout << std::get<0>(i) << ": d " << std::get<1>(i) << " b " << std::get<2>(i) << std::endl;
+    std::cout << "*****************" << std::endl;
+}

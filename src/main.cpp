@@ -253,13 +253,12 @@ void print_graph_to_file_multi_depot(input n_input)
     // drones.push_back(std::tuple<int, int, double>(18, 3, 20));
     // drones.push_back(std::tuple<int, int, double>(19, 3, 20));
 
-
     std::string t_depots = "";
     std::string t_budgets = "";
     for (const auto &i : drones)
     {
         t_depots = t_depots + std::to_string(std::get<1>(i));
-        t_budgets = t_budgets + std::to_string((int) std::get<2>(i));
+        t_budgets = t_budgets + std::to_string((int)std::get<2>(i));
         // std::cout << std::get<0>(i) << ", " <<  << ", " << std::get<2>(i) << "\n";
     }
 
@@ -334,6 +333,32 @@ void print_cycles(input n_input)
     return;
 }
 
+void simulation_multi_depot(input n_input)
+{
+
+    // read graph from file
+    graph G = graph(1, 1);
+    G.erase_graph();
+    print::print_graph(G);
+    G.read_graph_from_file_multi_depot("data/graph/generated/graph_n10_d2_s100000.csv");
+    print::print_graph(G);
+
+    // read drones from file
+    std::vector<std::tuple<int, int, double>> drones;
+
+    drones = utilities::read_drones_from_file("data/graph/generated/drones_q2_d2_01_5030.csv");
+    print::print_drones(drones);
+
+    // generate simulator object
+    simulator_md sim = simulator_md(G, drones, n_input.n_depots, n_input.seed);
+
+    assert(sim.check_feasibility_multi_depot());
+
+    // run both algorithms
+
+    return;
+}
+
 int main(int argc, char **argv)
 {
     input n_input = userinput::read_user_input(argc, argv);
@@ -342,13 +367,13 @@ int main(int argc, char **argv)
 
     // read from file
 
-    graph G = graph(1, 1);
-    G.erase_graph();
-    print::print_graph(G);
-    G.read_graph_from_file_multi_depot("data/graph/generated/graph_n10_d2_s100000.csv");
-    print::print_graph(G);
+    simulation_multi_depot(n_input);
 
     return 0;
+
+    ///////////////
+    ///////////////
+    //////////////
 
     if (n_input.experiment == 1) // --simulation generate-graph
     {

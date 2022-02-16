@@ -26,6 +26,8 @@ public:
     static void clean_sol(std::vector<std::vector<int>> &_temp);
     static void clean_sol_full(std::vector<std::vector<std::vector<std::pair<int, double>>>> &_sol);
     static std::vector<double> stat_sol(graph G, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol, std::map<int, int> sigma_prime_prob, double budget);
+    static std::vector<std::tuple<int, int, double>> read_drones_from_file(std::string file);
+
 };
 
 #endif // UTILITIES_H
