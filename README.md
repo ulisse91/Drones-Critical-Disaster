@@ -13,11 +13,9 @@ Then run the examples singularly from the examples/build directory
 
 # TO_DO
 Algorithms:
-- greedy algorithm multi depot
 - Kim algorithm multi depot (no priority)
 
 Features:
-- fun: read drones csv file
 - fun: print solution in file
 
 Features (low priority):
@@ -29,5 +27,6 @@ Features (low priority):
 To-Fix / Important:
 
 Tests:
+- everything with multi-depot
 - test obj func with sigma prime
 - test check_cycle_sigma_prime_cycle 

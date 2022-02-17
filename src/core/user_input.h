@@ -19,6 +19,7 @@ struct input
     double budget = 1;
     double prob_sigma_prime = 0;
     std::string graph_file = "";
+    std::string drones_file = "";
     std::string distrib = "uniform";
     int n_depots = 1;
 

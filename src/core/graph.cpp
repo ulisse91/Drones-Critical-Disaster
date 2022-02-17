@@ -60,7 +60,7 @@ void graph::create_random_graph_multi_depot(int number_of_nodes, int number_of_d
     // Mersenne Twister: Good quality random number generator
     std::mt19937 re(seed);
 
-    for (size_t i = 0; i <= (unsigned)number_of_nodes - number_of_depot; i++)
+    for (size_t i = 0; i < (unsigned)number_of_nodes - number_of_depot; i++)
     {
         double _x = unif_1(re);
         double _y = unif_2(re);

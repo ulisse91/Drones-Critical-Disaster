@@ -263,7 +263,7 @@ void print_graph_to_file_multi_depot(input n_input)
     }
 
     // // print::print_graph(G);
-    simulator_md sim = simulator_md(G, drones, n_input.n_depots, n_input.seed);
+    simulator_md sim = simulator_md(G, drones);
 
     assert(sim.check_feasibility_multi_depot());
 
@@ -336,25 +336,46 @@ void print_cycles(input n_input)
 void simulation_multi_depot(input n_input)
 {
 
+    std::cout << n_input.graph_file << " " << n_input.drones_file << "\n";
+
     // read graph from file
     graph G = graph(1, 1);
     G.erase_graph();
     print::print_graph(G);
-    G.read_graph_from_file_multi_depot("data/graph/generated/graph_n10_d2_s100000.csv");
+    G.read_graph_from_file_multi_depot(n_input.graph_file);
     print::print_graph(G);
 
     // read drones from file
     std::vector<std::tuple<int, int, double>> drones;
 
-    drones = utilities::read_drones_from_file("data/graph/generated/drones_q2_d2_01_5030.csv");
+    drones = utilities::read_drones_from_file(n_input.drones_file);
     print::print_drones(drones);
 
     // generate simulator object
-    simulator_md sim = simulator_md(G, drones, n_input.n_depots, n_input.seed);
+    simulator_md sim = simulator_md(G, drones);
 
     assert(sim.check_feasibility_multi_depot());
 
     // run both algorithms
+    std::unordered_set<int> graph_vertices = G.get_vertices_set();
+
+    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_greedy = sim.meta_algorithm(6);
+    std::cout << "---------------------\n";
+
+    print::print_solution(sol_greedy);
+
+    assert(sim.check_solution_feasible(sol_greedy) == 1);
+
+    std::cout << "," << sim.evaluate_solution(0, sol_greedy) /* wL^I */
+              << "," << sim.evaluate_solution(2, sol_greedy) /* completion time */
+              << std::endl;
+
+    std::vector<double> test = utilities::stat_sol(G, sol_greedy, 999 /* hard-coded but it should be impossible to have a budget this big */);
+
+    std::cout << "," << test[0] /* number of cycles in solution */
+              << "," << test[1] /* average time cycles (except last cycle) */
+              << "," << test[2] /* min time cycles (except last cycle) */
+              << "\n";
 
     return;
 }
@@ -363,13 +384,7 @@ int main(int argc, char **argv)
 {
     input n_input = userinput::read_user_input(argc, argv);
 
-    userinput::print_input(n_input);
-
-    // read from file
-
-    simulation_multi_depot(n_input);
-
-    return 0;
+    // userinput::print_input(n_input);
 
     ///////////////
     ///////////////
@@ -398,6 +413,10 @@ int main(int argc, char **argv)
     if (n_input.experiment == 5) // --simulation generate-graph-multi-depot
     {
         print_graph_to_file_multi_depot(n_input);
+    }
+    if (n_input.experiment == 6) // --simulation multi-depot
+    {
+        simulation_multi_depot(n_input);
     }
 
     return 0;

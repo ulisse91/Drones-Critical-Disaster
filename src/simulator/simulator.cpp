@@ -355,7 +355,9 @@ std::unordered_set<int> simulator::op_path_BB_insert_step(std::unordered_set<int
         return sol_temp;
     }
 
-    int a = graph_vertices.extract(graph_vertices.begin()).value();
+    assert(false);
+    // error in next line due to extract function -- CHECK!!
+    int a; // = graph_vertices.extract(graph_vertices.begin()).value();
     graph_vertices.erase(a);
 
     std::unordered_set<int> sol_temp_augmented = sol_temp;

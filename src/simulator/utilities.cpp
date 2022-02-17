@@ -48,6 +48,19 @@ double utilities::cost_budget_sequence(graph G, std::vector<int> sequence)
     return sum_of_elems;
 }
 
+double utilities::cost_budget_sequence(graph G, std::vector<std::pair<int, double>> _cycle)
+{
+    double sum_of_elems = 0;
+    if (_cycle.size() > 1)
+    {
+        for (size_t i = 0; i < _cycle.size() - 1; i++)
+        {
+            sum_of_elems += G.distw(_cycle[i].first, _cycle[i + 1].first);
+        }
+    }
+    return sum_of_elems;
+}
+
 double utilities::cost_budget_sequence(graph G, std::vector<std::pair<int, double>> _cycle, std::map<int, int> sigma_prime_probs)
 {
     double sum_of_elems = 0;
@@ -104,6 +117,28 @@ std::vector<double> utilities::stat_sol(graph G, std::vector<std::vector<std::ve
         for (int j = 0; j < (int)sol[i].size() - 1; j++)
         {
             double t_cycle = utilities::cost_budget_sequence(G, sol[i][j], sigma_prime_prob);
+            avg_time_cycle += t_cycle;
+            if (t_cycle < min_time_cycle)
+            {
+                min_time_cycle = t_cycle;
+            }
+        }
+    }
+    return std::vector<double>{(double)tot_n_cycles, avg_time_cycle / (tot_n_cycles - sol.size()), min_time_cycle};
+}
+
+std::vector<double> utilities::stat_sol(graph G, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol, double budget)
+{
+    int tot_n_cycles = 0;
+    double avg_time_cycle = 0;
+    double min_time_cycle = budget;
+
+    for (size_t i = 0; i < sol.size(); i++)
+    {
+        tot_n_cycles += sol[i].size();
+        for (int j = 0; j < (int)sol[i].size() - 1; j++)
+        {
+            double t_cycle = utilities::cost_budget_sequence(G, sol[i][j]);
             avg_time_cycle += t_cycle;
             if (t_cycle < min_time_cycle)
             {
