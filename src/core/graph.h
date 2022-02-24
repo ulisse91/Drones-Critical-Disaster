@@ -62,7 +62,9 @@ public:
     void create_random_graph_poisson(int number_of_nodes, double max_weight, int max_priority, long seed);
     int add_node(int id, double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime);
     int add_node(double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime);
+    int add_node_no_checks(int id, double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime);
     void erase_graph();
+    graph copy();
 };
 
 #endif // GRAPH_H

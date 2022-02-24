@@ -3,6 +3,7 @@
 #include <chrono>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/replace.hpp>
 
 #include "core/user_input.h"
 #include "simulator/simulator.h"
@@ -230,16 +231,16 @@ void print_graph_to_file_multi_depot(input n_input)
         Generate drones
     */
 
-    typedef std::vector<std::tuple<int, int, double>> my_tuple;
-    my_tuple drones;
-    drones.push_back(std::tuple<int, int, double>(0, 0, 20));
-    drones.push_back(std::tuple<int, int, double>(1, 0, 20));
-    drones.push_back(std::tuple<int, int, double>(2, 0, 20));
-    drones.push_back(std::tuple<int, int, double>(3, 0, 20));
-    drones.push_back(std::tuple<int, int, double>(4, 0, 20));
+    // typedef std::vector<std::tuple<int, int, double>> my_tuple;
+    // my_tuple drones;
+    // drones.push_back(std::tuple<int, int, double>(0, 0, 20));
+    // drones.push_back(std::tuple<int, int, double>(1, 0, 20));
+    // drones.push_back(std::tuple<int, int, double>(2, 0, 20));
+    // drones.push_back(std::tuple<int, int, double>(3, 0, 20));
+    // drones.push_back(std::tuple<int, int, double>(4, 0, 20));
 
-    drones.push_back(std::tuple<int, int, double>(5, 1, 50));
-    drones.push_back(std::tuple<int, int, double>(6, 1, 50));
+    // drones.push_back(std::tuple<int, int, double>(5, 1, 50));
+    // drones.push_back(std::tuple<int, int, double>(6, 1, 50));
 
     // drones.push_back(std::tuple<int, int, double>(10, 2, 40));
     // drones.push_back(std::tuple<int, int, double>(11, 2, 40));
@@ -253,26 +254,26 @@ void print_graph_to_file_multi_depot(input n_input)
     // drones.push_back(std::tuple<int, int, double>(18, 3, 20));
     // drones.push_back(std::tuple<int, int, double>(19, 3, 20));
 
-    std::string t_depots = "";
-    std::string t_budgets = "";
-    for (const auto &i : drones)
-    {
-        t_depots = t_depots + std::to_string(std::get<1>(i));
-        t_budgets = t_budgets + std::to_string((int)std::get<2>(i));
-        // std::cout << std::get<0>(i) << ", " <<  << ", " << std::get<2>(i) << "\n";
-    }
+    // std::string t_depots = "";
+    // std::string t_budgets = "";
+    // for (const auto &i : drones)
+    // {
+    //     t_depots = t_depots + std::to_string(std::get<1>(i));
+    //     t_budgets = t_budgets + std::to_string((int)std::get<2>(i));
+    //     // std::cout << std::get<0>(i) << ", " <<  << ", " << std::get<2>(i) << "\n";
+    // }
 
     // // print::print_graph(G);
-    simulator_md sim = simulator_md(G, drones);
+    // simulator_md sim = simulator_md(G, drones);
 
-    assert(sim.check_feasibility_multi_depot());
+    // assert(sim.check_feasibility_multi_depot());
 
     std::string nome_file_graph = "data/graph/generated/graph_n" + std::to_string(n_input.n_nodes) + "_d" + std::to_string(n_input.n_depots) + "_s" + std::to_string(n_input.seed) + ".csv";
 
     print::print_graph_to_file_multi_depots(G, n_input.n_depots, nome_file_graph);
 
-    std::string nome_file_drones = "data/graph/generated/drones_q" + std::to_string(n_input.n_drones) + "_d" + std::to_string(n_input.n_depots) + "_" + t_depots + "_" + t_budgets + ".csv";
-    print::print_drones_to_file_multi_depots(drones, nome_file_drones);
+    // std::string nome_file_drones = "data/graph/generated/drones_q" + std::to_string(n_input.n_drones) + "_d" + std::to_string(n_input.n_depots) + "_" + t_depots + "_" + t_budgets + ".csv";
+    // print::print_drones_to_file_multi_depots(drones, nome_file_drones);
 
     return;
 }
@@ -335,48 +336,99 @@ void print_cycles(input n_input)
 
 void simulation_multi_depot(input n_input)
 {
-
-    std::cout << n_input.graph_file << " " << n_input.drones_file << "\n";
-
     // read graph from file
     graph G = graph(1, 1);
     G.erase_graph();
-    print::print_graph(G);
     G.read_graph_from_file_multi_depot(n_input.graph_file);
     print::print_graph(G);
 
     // read drones from file
     std::vector<std::tuple<int, int, double>> drones;
-
     drones = utilities::read_drones_from_file(n_input.drones_file);
     print::print_drones(drones);
 
-    // generate simulator object
-    simulator_md sim = simulator_md(G, drones);
+    // count number of depots
+    std::vector<int> number_of_depots_vec(drones.size(), 0);
+
+    for (size_t i = 0; i < drones.size(); i++)
+        number_of_depots_vec[std::get<1>(drones[i])]++;
+
+    // print::print_vector(number_of_depots_vec);
+    int number_of_depots = 0;
+    for (size_t i = 0; i < number_of_depots_vec.size(); i++)
+        if (number_of_depots_vec[i] > 0)
+            number_of_depots++;
+
+    simulator_md sim = simulator_md(G, drones, number_of_depots);
 
     assert(sim.check_feasibility_multi_depot());
 
-    // run both algorithms
-    std::unordered_set<int> graph_vertices = G.get_vertices_set();
+    {
+        auto start_t = std::chrono::high_resolution_clock::now();
+        std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_greedy = sim.greedy_out_loop();
+        auto stop_t = std::chrono::high_resolution_clock::now();
 
-    std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_greedy = sim.meta_algorithm(6);
-    std::cout << "---------------------\n";
+        std::cout << std::endl
+                  << "GREEDY ALGORITHM" << std::endl;
+        print::print_e_solution(G, sol_greedy);
 
-    print::print_solution(sol_greedy);
+        std::cout << "wL^I: " << sim.evaluate_solution(0, sol_greedy) << " wL^II: " << sim.evaluate_solution(1, sol_greedy) << " ct: " << sim.evaluate_solution(2, sol_greedy) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() << std::endl;
+        std::vector<double> test = utilities::stat_sol(G, sol_greedy, 999 /* hard-coded but it should be impossible to have a budget this big */);
+        std::cout << "number of cycles: " << test[0] << " avg time in cycles: " << test[1] << " min budget spent in cycles: " << test[2] << std::endl;
+        assert(sim.check_solution_feasible(sol_greedy) == 1);
 
-    assert(sim.check_solution_feasible(sol_greedy) == 1);
+        std::ofstream outfile;
+        boost::algorithm::replace_all(n_input.graph_file, "data/graph/generated/", "");
+        boost::algorithm::replace_all(n_input.drones_file, "data/graph/generated/", "");
+        outfile.open("data/output/greedy.csv", std::ios_base::app);
+        outfile << n_input.graph_file
+                << "," << n_input.drones_file
+                << "," << n_input.n_nodes
+                << "," << number_of_depots                                                                /* number of depots */
+                << "," << drones.size()                                                                   /* number of drones */
+                << "," << n_input.seed                                                                    /* seed */
+                << "," << sim.evaluate_solution(0, sol_greedy)                                            /* wL^I */
+                << "," << sim.evaluate_solution(1, sol_greedy)                                            /* wL^II */
+                << "," << sim.evaluate_solution(2, sol_greedy)                                            /* completion time */
+                << "," << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() /* microsends computation algorithm */
+                << "," << test[0]                                                                         /* number of cycles in solution */
+                << "," << test[1]                                                                         /* average time cycles (except last cycle) */
+                << "," << test[2]                                                                         /* min time cycles (except last cycle) */
+                << "\n";
+        outfile.close();
+    }
+    {
+        auto start_t = std::chrono::high_resolution_clock::now();
+        std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_kim = sim.kim_alternativo();
+        auto stop_t = std::chrono::high_resolution_clock::now();
 
-    std::cout << "," << sim.evaluate_solution(0, sol_greedy) /* wL^I */
-              << "," << sim.evaluate_solution(2, sol_greedy) /* completion time */
-              << std::endl;
+        std::cout << std::endl
+                  << "KIM ALGORITHM" << std::endl;
+        print::print_e_solution(G, sol_kim);
 
-    std::vector<double> test = utilities::stat_sol(G, sol_greedy, 999 /* hard-coded but it should be impossible to have a budget this big */);
+        std::cout << "wL^I: " << sim.evaluate_solution(0, sol_kim) << " wL^II: " << sim.evaluate_solution(1, sol_kim) << " ct: " << sim.evaluate_solution(2, sol_kim) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() << std::endl;
+        std::vector<double> test = utilities::stat_sol(G, sol_kim, 999 /* hard-coded but it should be impossible to have a budget this big */);
+        std::cout << "number of cycles: " << test[0] << " avg time in cycles: " << test[1] << " min budget spent in cycles: " << test[2] << std::endl;
+        assert(sim.check_solution_feasible(sol_kim) == 1);
 
-    std::cout << "," << test[0] /* number of cycles in solution */
-              << "," << test[1] /* average time cycles (except last cycle) */
-              << "," << test[2] /* min time cycles (except last cycle) */
-              << "\n";
-
+        std::ofstream outfile;
+        outfile.open("data/output/kim.csv", std::ios_base::app);
+        outfile << n_input.graph_file
+                << "," << n_input.drones_file
+                << "," << n_input.n_nodes
+                << "," << number_of_depots                                                                /* number of depots */
+                << "," << drones.size()                                                                   /* number of drones */
+                << "," << n_input.seed                                                                    /* seed */
+                << "," << sim.evaluate_solution(0, sol_kim)                                               /* wL^I */
+                << "," << sim.evaluate_solution(1, sol_kim)                                               /* wL^II */
+                << "," << sim.evaluate_solution(2, sol_kim)                                               /* completion time */
+                << "," << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() /* microsends computation algorithm */
+                << "," << test[0]                                                                         /* number of cycles in solution */
+                << "," << test[1]                                                                         /* average time cycles (except last cycle) */
+                << "," << test[2]                                                                         /* min time cycles (except last cycle) */
+                << "\n";
+        outfile.close();
+    }
     return;
 }
 

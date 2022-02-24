@@ -38,6 +38,25 @@ void print::print_e_solution(graph G, std::vector<std::vector<std::vector<std::p
     std::cout << "*****************" << std::endl;
 }
 
+void print::print_e_solution(graph G, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
+{
+    std::cout << "**** SOLUTION ***" << std::endl;
+    for (size_t i = 0; i < sol.size(); i++)
+    {
+        std::cout << "Drone " << i << std::endl;
+        for (size_t j = 0; j < sol[i].size(); j++)
+        {
+            std::cout << "- cycle " << j << ": ";
+            for (size_t k = 0; k < sol[i][j].size(); k++)
+            {
+                std::cout << sol[i][j][k].first << " ";
+            }
+            std::cout << "\tb: " << utilities::cost_budget_sequence(G, sol[i][j]) << std::endl;
+        }
+    }
+    std::cout << "*****************" << std::endl;
+}
+
 void print::print_cycle_sol(std::vector<std::pair<int, double>> _cycle)
 {
     if (_cycle.size() > 1)

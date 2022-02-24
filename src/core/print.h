@@ -32,6 +32,7 @@ public:
     static void print_graph_to_file_multi_depots(graph G, int number_of_depots, std::string path);
     static void print_drones_to_file_multi_depots(std::vector<std::tuple<int, int, double>> drones, std::string path);
     static void print_drones(std::vector<std::tuple<int, int, double>> drones);
+    static void print_e_solution(graph G, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
 
 };
 

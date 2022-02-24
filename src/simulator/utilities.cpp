@@ -56,6 +56,7 @@ double utilities::cost_budget_sequence(graph G, std::vector<std::pair<int, doubl
         for (size_t i = 0; i < _cycle.size() - 1; i++)
         {
             sum_of_elems += G.distw(_cycle[i].first, _cycle[i + 1].first);
+            // std::cout << _cycle[i].first << " -> " <<  _cycle[i + 1].first << " = " << G.distw(_cycle[i].first, _cycle[i + 1].first) << " | " << sum_of_elems << "\n";
         }
     }
     return sum_of_elems;

@@ -173,6 +173,14 @@ int graph::add_node(int id, double _x, double _y, double _node_weight, int _prio
     return 1;
 }
 
+int graph::add_node_no_checks(int id, double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime)
+{
+    this->vertices[id] = node(id, _x, _y, _node_weight, _priority, _node_sigma_prime);
+    this->n_nodes++;
+
+    return 1;
+}
+
 int graph::add_node(double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime)
 {
     if (not check_double_node(_x, _y))
@@ -263,7 +271,7 @@ int graph::read_graph_from_file_multi_depot(std::string file)
 
 void graph::erase_graph()
 {
-    this->n_nodes = 1;
+    this->n_nodes = 0;
     this->vertices = std::map<int, node>();
     // this->vertices[0] = node(0, 0, 0, 0, 0, 0); // v_0 = depot
 }
@@ -292,6 +300,7 @@ std::vector<int> graph::get_vertices()
     std::vector<int> nodes_id;
     for (auto const &pair : this->vertices)
     {
+        // std::cout << pair.first << " " << pair.second.id << std::endl;
         assert(pair.first == pair.second.id);
         nodes_id.push_back(pair.first);
     }
@@ -334,12 +343,25 @@ std::unordered_set<int> graph::get_vertices_set()
     return nodes_id;
 }
 
+graph graph::copy() {
+    graph _G = graph(1, 1);
+    _G.erase_graph();
+    // print::print_graph(_G);
+
+    for (size_t i = 0; i < this->vertices.size(); i++)
+    {
+        _G.add_node(vertices[i].id, vertices[i].x, vertices[i].y, vertices[i].node_weight, 1, 0);
+    }
+    return _G;
+}
+
 /////////////////////////////////////////////////
 //////////////// DISTANCES //////////////////////
 /////////////////////////////////////////////////
 
 double graph::distw(int u, int v)
 {
+    // std::cout << "\n distw: " << dist(u, v) << " " << this->vertices[u].node_weight / 2 << " " << this->vertices[v].node_weight / 2 << std::endl;
     return dist(u, v) + this->vertices[u].node_weight / 2 + this->vertices[v].node_weight / 2;
 }
 

@@ -41,6 +41,136 @@ int algo::find_in_subtree(std::map<int, std::pair<double, std::unordered_set<int
 /////////////////////////// MAIN ////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 
+std::map<int, int> algo::primMST_multi_depot(graph G, std::vector<int> forced_nodes, std::vector<std::tuple<int, int, double>> drones)
+{
+    // Array to store constructed MST
+    std::map<int, int> parent;
+    // Key values used to pick minimum weight edge in cut
+    std::map<int, double> key;
+    // To represent set of vertices included in MST
+    std::map<int, bool> mstSet;
+    std::map<int, std::pair<double, std::unordered_set<int>>> sub_trees;
+
+    std::vector<int> id_vertices = G.get_vertices();
+
+    // double _max = budget * 2;
+
+    for (auto const &i : id_vertices)
+    {
+        key[i] = 999;
+        mstSet[i] = false;
+        parent[i] = -1;
+    }
+
+    // Always include first 1st vertex in MST.
+    // Make key 0 so that this vertex is picked as first vertex.
+    key[0] = 0;
+    parent[0] = -1; // First node is always root of MST
+
+    int ddd = 0;
+    for (auto const &i : forced_nodes)
+    {
+        // std::cout << i;
+        parent[i] = 0;
+        key[i] = 999;
+        std::unordered_set<int> myset = {i};
+        sub_trees[i] = std::make_pair(std::get<2>(drones[ddd++]), myset);
+        // std::unordered_set<int> myset = {i};
+        // sub_trees[i] = std::make_pair(std::get<2>(drones[ddd++]), myset);
+        // mstSet[i] = true;
+    }
+
+    mstSet[0] = true, mstSet[1] = true;
+
+    for (int count = 0; count < G.get_n_nodes(); count++)
+    {
+        // Pick the minimum key vertex from the
+        // set of vertices not yet included in MST
+        int u = minKey_index(key, mstSet, 999, G.get_n_nodes());
+
+        if (u == -1)
+        {
+            break;
+        }
+
+        // Add the picked vertex to the MST Set
+        mstSet[u] = true;
+
+        int index = find_in_subtree(sub_trees, u);
+
+        // Update key value and parent index of
+        // the adjacent vertices of the picked vertex.
+        // Consider only those vertices which are not
+        // yet included in MST
+        for (auto const &pair : key)
+        {
+            int v = pair.first;
+            // std::cerr << " " << u << " " << std::flush
+            //           << v << " " << std::flush
+            //           << index << " " << std::flush
+            //           << sub_trees[index].first << " " << std::flush
+            //           << mstSet[v] << " " << std::flush
+            //           << parent[v] << " " << std::flush
+            //           << G.distw(u, v) << " " << std::flush
+            //           << key[v] << std::endl
+            //           << std::flush;
+
+            if (std::count(forced_nodes.begin(), forced_nodes.end(), v) and std::count(forced_nodes.begin(), forced_nodes.end(), u))
+                continue;
+
+            // graph[u][v] is non zero only for adjacent vertices of m
+            // mstSet[v] is false for vertices not yet included in MST
+            // Update the key only if graph[u][v] is smaller than key[v]
+            if (mstSet[v] == false && G.distw(u, v) < key[v])
+            {
+
+                if (parent[v] == -1)
+                {
+
+                    if (sub_trees[index].first - G.distw(u, v) >= 0)
+                    {
+                        sub_trees[index].first -= G.distw(u, v);
+                        sub_trees[index].second.insert(v);
+                        parent[v] = u, key[v] = G.distw(u, v);
+                    }
+                }
+                else
+                {
+                    int index_p = find_in_subtree(sub_trees, v);
+                    if (index == index_p)
+                    {
+                        if (sub_trees[index].first + G.distw(parent[v], v) - G.distw(u, v) >= 0)
+                        {
+                            sub_trees[index_p].first += G.distw(v, parent[v]) - G.distw(u, v);
+                            parent[v] = u, key[v] = G.distw(u, v);
+                        }
+                    }
+                    else
+                    {
+                        if (sub_trees[index].first - G.distw(u, v) >= 0)
+                        {
+                            sub_trees[index_p].first += G.distw(v, parent[v]);
+                            sub_trees[index_p].second.erase(v);
+                            sub_trees[index].first -= G.distw(u, v);
+                            sub_trees[index].second.insert(v);
+                            parent[v] = u, key[v] = G.distw(u, v);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    // std::cout << std::endl
+    //           << "print finale:\n";
+    // for (auto const &pair : parent)
+    // {
+    //     std::cout << pair.first << ":" << pair.second << " ";
+    // }
+    // std::cout << std::endl;
+
+    return parent;
+}
+
 std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double budget)
 {
     std::map<int, int> parent;
@@ -49,7 +179,7 @@ std::map<int, int> algo::primMST(graph G, std::vector<int> forced_nodes, double 
     std::map<int, std::pair<double, std::unordered_set<int>>> sub_trees;
     std::vector<int> id_vertices = G.get_vertices();
 
-    double _max = budget*2;
+    double _max = budget * 2;
 
     for (auto const &i : id_vertices)
     {
@@ -218,13 +348,13 @@ void algo::DFSUtil(graph G, int v, std::map<int, int> tree, std::map<int, bool> 
 {
     if (sol.size() > 0)
     {
-        //std::cerr << " " << sol[sol.size() - 1] << " " << G.distw(sol[sol.size() - 1], v) << " " << G.distw(v, 0) << " " << budget << std::endl;
+        // std::cerr << " " << sol[sol.size() - 1] << " " << G.distw(sol[sol.size() - 1], v) << " " << G.distw(v, 0) << " " << budget << std::endl;
 
         if (cost_cycle + G.distw(sol[sol.size() - 1], v) + G.distw(v, 0) > budget)
             return;
         cost_cycle += G.distw(sol[sol.size() - 1], v);
 
-        //std::cerr << " " << cost_cycle << std::endl;
+        // std::cerr << " " << cost_cycle << std::endl;
     }
     sol.push_back(v);
     visited[v] = true;
@@ -237,9 +367,34 @@ void algo::DFSUtil(graph G, int v, std::map<int, int> tree, std::map<int, bool> 
     }
 }
 
+void algo::DFSUtil_multi_depot(graph G, int v, int end, std::map<int, int> tree, std::map<int, bool> visited, std::vector<int> &sol, double &cost_cycle, double budget)
+{
+    if (sol.size() > 0)
+    {
+        // print::print_graph(G);
+        // std::cout << "line 1: " << v << " " << sol[sol.size() - 1] << " " << sol[sol.size() - 1] << " " << G.distw(sol[sol.size() - 1], v) << " " << G.distw(v, end) << " " << budget << std::endl;
+
+            if (cost_cycle + G.distw(sol[sol.size() - 1], v) + G.distw(v, end) > budget){
+                // sol.push_back(end);
+                return;}
+        cost_cycle += G.distw(sol[sol.size() - 1], v);
+
+        // std::cerr << "cost_cycle: " << cost_cycle << std::endl;
+    }
+    sol.push_back(v);
+    visited[v] = true;
+    for (auto const &pair : tree)
+    {
+        if (tree[pair.first] == v and not visited[pair.first])
+        {
+            DFSUtil_multi_depot(G, pair.first, end, tree, visited, sol, cost_cycle, budget);
+        }
+    }
+}
+
 std::vector<int> algo::find_TSP(graph G, double budget, int start, std::map<int, int> tree)
 {
-    // std::cout << "tree: "; print::print_map_int_int(tree);
+    // std::cout << "+++++++\ntree: "; print::print_map_int_int(tree);
 
     std::vector<int> sol;
     std::map<int, bool> visited;
@@ -258,7 +413,137 @@ std::vector<int> algo::find_TSP(graph G, double budget, int start, std::map<int,
     // std::cout << "TSP-i-cost: " << cost_cycle << "\n";
     DFSUtil(G, start, tree, visited, sol, cost_cycle, budget);
 
-    // std::cout << "sol find_TSP: "; print::print_vector_int(sol);
-
+    // std::cout << "sol find_TSP: "; print::print_vector(sol);
+    // std::cout << "\n+++++++\n";
     return sol;
+}
+
+std::vector<int> algo::find_TSP_multi_depot(graph G, double budget, int start, std::map<int, int> tree)
+{
+    // std::cout << "+++++++\ntree: "; print::print_map_int_int(tree);
+
+    std::vector<int> sol;
+    std::map<int, bool> visited;
+    for (auto const &pair : tree)
+    {
+        // std::cerr << pair.first << ":" << pair.second << " ";
+        visited[pair.first] = false;
+    }
+
+    double cost_cycle = 0;
+    // visited[0] = true;
+
+    // std::cout << "start in find_TSP_multi_depot: " << start << "\n";
+
+    // std::cout << "TSP-i-cost: " << cost_cycle << "\n";
+    DFSUtil_multi_depot(G, start, start, tree, visited, sol, cost_cycle, budget);
+
+    // std::cout << "sol find_TSP: "; print::print_vector(sol);
+    // std::cout << "\n+++++++\n";
+    return sol;
+}
+
+std::map<int, int> algo::primMST_multi_depot_alternativo(graph G, int start, int budget, int number_of_depots)
+{
+
+    // std::cout << start << " " << budget << " " << number_of_depots << std::endl;
+    // Array to store constructed MST
+    std::map<int, int> parent;
+    // Key values used to pick minimum weight edge in cut
+    std::map<int, double> key;
+    // To represent set of vertices included in MST
+    std::map<int, bool> mstSet;
+    // std::map<int, std::pair<double, std::unordered_set<int>>> sub_trees;
+
+    double residual_budget = budget;
+
+    std::vector<int> id_vertices = G.get_vertices();
+
+    // double _max = budget * 2;
+
+    for (auto const &i : id_vertices)
+    {
+        key[i] = 999;
+        mstSet[i] = false;
+        parent[i] = -1;
+    }
+
+    // Always include first 1st vertex in MST.
+    // Make key 0 so that this vertex is picked as first vertex.
+    key[start] = 0;
+    parent[start] = -1; // First node is always root of MST
+
+    // mstSet[0] = true;
+
+    for (int count = 0; count < G.get_n_nodes(); count++)
+    {
+        // Pick the minimum key vertex from the
+        // set of vertices not yet included in MST
+        int u = minKey_index(key, mstSet, 999, G.get_n_nodes());
+
+        if (u == -1)
+        {
+            break;
+        }
+
+        // Add the picked vertex to the MST Set
+        mstSet[u] = true;
+
+        // int index = find_in_subtree(sub_trees, u);
+
+        // Update key value and parent index of
+        // the adjacent vertices of the picked vertex.
+        // Consider only those vertices which are not
+        // yet included in MST
+        for (auto const &pair : key)
+        {
+            int v = pair.first;
+            // std::cerr << " " << u << " " << std::flush
+            //           << v << " " << std::flush
+            //           //   << index << " " << std::flush
+            //           //   << sub_trees[index].first << " " << std::flush
+            //           << mstSet[v] << " " << std::flush
+            //           << parent[v] << " " << std::flush
+            //           << G.distw(u, v) << " " << std::flush
+            //           << key[v] << std::endl
+            //           << std::flush;
+
+            if (u == v or v < number_of_depots)
+                continue;
+
+            // graph[u][v] is non zero only for adjacent vertices of m
+            // mstSet[v] is false for vertices not yet included in MST
+            // Update the key only if graph[u][v] is smaller than key[v]
+            if (mstSet[v] == false and G.distw(u, v) < key[v])
+            {
+                if (parent[v] == -1)
+                {
+                    if (residual_budget - G.distw(u, v) >= 0)
+                    {
+                        residual_budget -= G.distw(u, v);
+                        parent[v] = u;
+                        key[v] = G.distw(u, v);
+                    }
+                }
+                else
+                {
+                    if (residual_budget - G.distw(u, v) + G.distw(parent[v], v) >= 0)
+                    {
+                        residual_budget = residual_budget - G.distw(u, v) + G.distw(parent[v], v);
+                        parent[v] = u;
+                        key[v] = G.distw(u, v);
+                    }
+                }
+            }
+        }
+    }
+    // std::cout << std::endl
+    //           << "print finale:\n";
+    // for (auto const &pair : parent)
+    // {
+    //     std::cout << pair.first << ":" << pair.second << " ";
+    // }
+    // std::cout << std::endl;
+
+    return parent;
 }

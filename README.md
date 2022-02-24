@@ -19,6 +19,7 @@ Features:
 - fun: print solution in file
 
 Features (low priority):
+- few functions have hardcoded "max budget = 999". It should be changed to max budget between the available ones.
 - fun: read solution from file
 - input from "config file"
 - move build up one level
