@@ -242,7 +242,7 @@ int simulator_md::check_solution_feasible(std::vector<std::vector<std::vector<st
             if (used_budget > std::get<2>(this->drones[current_drone]))
             {
                 std::cout << "[ERROR:simulator]:: drone " << current_drone << " cycle " << cycle << " not feasible (over budget)!" << std::endl;
-                // std::cout << used_budget << " " << std::get<2>(this->drones[current_drone]) << std::endl;
+                std::cout << used_budget << " " << std::get<2>(this->drones[current_drone]) << std::endl;
                 return -2;
             }
         }
@@ -325,18 +325,48 @@ double simulator_md::objective_function_completion_time(std::vector<std::vector<
 
         // std::cout << "-------------\n";
     }
-    
+
+    return value_fun;
+}
+
+double simulator_md::objective_function_total_flying_time(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
+{
+    // std::cout << "\n\n======================================\n";
+    double value_fun = 0;
+    // double _temp = 0;
+    for (auto const &drone : sol)
+    {
+        for (auto const &cycle : drone)
+        {
+            // print::print_cycle_sol(cycle);
+            value_fun += utilities::cost_budget_sequence(this->G, cycle);
+            // std::cout << "\n1st: " << value_fun << "\n";
+        }
+    }
     return value_fun;
 }
 
 double simulator_md::evaluate_solution(int which, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol)
 {
     double val_sol = -1;
-    if (which == 0)
-        val_sol = objective_function_cycle(sol);
 
-    if (which == 2)
+    switch (which)
+    {
+    case 0:
+        val_sol = objective_function_cycle(sol);
+        break;
+    case 2:
         val_sol = objective_function_completion_time(sol);
+        break;
+    case 3:
+        val_sol = objective_function_total_flying_time(sol);
+        break;
+
+    default:
+        std::cerr << "\n[ERROR simulator_md::evaluate_solution] objective function not existing\n";
+        assert(false);
+        break;
+    }
 
     return val_sol;
 }
@@ -407,6 +437,9 @@ std::vector<std::vector<std::vector<std::pair<int, double>>>> simulator_md::kim_
 
     while (not graph_vertices.empty() and counter <= 2 * G.get_n_nodes())
     {
+
+        // std::cout << "kim_alternativo: " << std::get<1>(this->drones[current_drone]) << " " << std::get<2>(this->drones[current_drone])  << " " << current_drone<< std::endl;
+
         std::vector<int> cycle_tsp = prim_based_alternativo(graph_vertices, std::get<1>(this->drones[current_drone]), std::get<2>(this->drones[current_drone]), current_drone);
 
         std::vector<std::pair<int, double>> _temp;

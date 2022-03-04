@@ -36,6 +36,7 @@ public:
     double evaluate_solution(int which, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     double objective_function_cycle(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     double objective_function_completion_time(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
+    double objective_function_total_flying_time(std::vector<std::vector<std::vector<std::pair<int, double>>>> sol);
     std::vector<std::vector<int>> prim_based(std::unordered_set<int> graph_vertices);
     std::vector<std::vector<std::vector<std::pair<int, double>>>> greedy_out_loop();
     std::vector<std::vector<std::vector<std::pair<int, double>>>> kim_out_loop();

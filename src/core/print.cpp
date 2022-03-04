@@ -57,6 +57,25 @@ void print::print_e_solution(graph G, std::vector<std::vector<std::vector<std::p
     std::cout << "*****************" << std::endl;
 }
 
+void print::print_e_solution(graph G, std::vector<std::vector<std::vector<std::pair<int, double>>>> sol, std::vector<std::tuple<int, int, double>> drones)
+{
+    std::cout << "**** SOLUTION ***" << std::endl;
+    for (size_t i = 0; i < sol.size(); i++)
+    {
+        std::cout << "Drone " << i << " b: "<< std::get<2>(drones[i] )<< std::endl;
+        for (size_t j = 0; j < sol[i].size(); j++)
+        {
+            std::cout << "- cycle " << j << ": ";
+            for (size_t k = 0; k < sol[i][j].size(); k++)
+            {
+                std::cout << sol[i][j][k].first << " ";
+            }
+            std::cout << "\tb: " << utilities::cost_budget_sequence(G, sol[i][j]) << std::endl;
+        }
+    }
+    std::cout << "*****************" << std::endl;
+}
+
 void print::print_cycle_sol(std::vector<std::pair<int, double>> _cycle)
 {
     if (_cycle.size() > 1)
@@ -148,6 +167,7 @@ void print::print_graph_to_file_multi_depots(graph G, int number_of_depots, std:
     std::ofstream myfile;
     myfile.open(path);
 
+    myfile << "I " << G.get_n_nodes() - number_of_depots << std::endl;
     myfile << "D " << number_of_depots << std::endl;
     myfile << "id, x, y, sigma" << std::endl;
 
