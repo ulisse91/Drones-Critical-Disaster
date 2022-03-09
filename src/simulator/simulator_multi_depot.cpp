@@ -19,7 +19,7 @@ bool simulator_md::check_feasibility_multi_depot()
         for (std::tuple<int, int, double> drone : this->drones)
         {
             temp = temp or (2 * G.distw(std::get<1>(drone), v) <= std::get<2>(drone));
-            // std::cout << temp << ": distw(" << v << ", " << std::get<1>(drone) << ") = " << 2 * G.distw(std::get<1>(drone), v) << " | budget: " << std::get<2>(drone) << "\n";
+            std::cout << temp << ": distw(" << v << ", " << std::get<1>(drone) << ") = " << 2 * G.distw(std::get<1>(drone), v) << " | budget: " << std::get<2>(drone) << "\n";
         }
         if (not temp)
         {

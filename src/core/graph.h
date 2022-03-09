@@ -65,6 +65,7 @@ public:
     int add_node_no_checks(int id, double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime);
     void erase_graph();
     graph copy();
+    graph copy_add_weight(double weight_to_add);
 };
 
 #endif // GRAPH_H

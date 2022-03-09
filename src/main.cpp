@@ -398,6 +398,22 @@ void print_graph_to_file_multi_depot(input n_input)
 
     print::print_graph_to_file_multi_depots(G, n_input.n_depots, nome_file_graph);
 
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////
+
+    graph G_plus_seven = graph(1, 1, n_input.n_depots);
+
+    double weight_to_add = 5;
+
+    G_plus_seven = G.copy_add_weight(weight_to_add);
+
+    // // print::print_graph(G);
+
+    std::string nome_file_graph_wadd = "data/graph/generated/graph_n" + std::to_string(n_input.n_nodes) + "_d" + std::to_string(n_input.n_depots) + "_s" + std::to_string(n_input.seed) + "_wadd" + std::to_string(int(weight_to_add)) + ".csv";
+
+    print::print_graph_to_file_multi_depots(G_plus_seven, n_input.n_depots, nome_file_graph_wadd);
+
     return;
 }
 
@@ -511,7 +527,7 @@ void simulation_multi_depot(input n_input)
                   << "GREEDY ALGORITHM" << std::endl;
         print::print_e_solution(G, sol_greedy, drones);
 
-        std::cout << "wL^I: " << sim.evaluate_solution(0, sol_greedy) << " wL^II: " << sim.evaluate_solution(1, sol_greedy) << " ct: " << sim.evaluate_solution(2, sol_greedy) << " tft: " << sim.evaluate_solution(3, sol_greedy) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() << std::endl;
+        std::cout << " ct: " << sim.evaluate_solution(2, sol_greedy) << " tft: " << sim.evaluate_solution(3, sol_greedy) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() << std::endl;
         std::vector<double> test = utilities::stat_sol(G, sol_greedy, 999 /* hard-coded but it should be impossible to have a budget this big */);
         std::cout << "number of cycles: " << test[0] << " avg time in cycles: " << test[1] << " min budget spent in cycles: " << test[2] << std::endl;
         assert(sim.check_solution_feasible(sol_greedy) == 1);
@@ -548,7 +564,7 @@ void simulation_multi_depot(input n_input)
                   << "KIM ALGORITHM" << std::endl;
         print::print_e_solution(G, sol_kim, drones);
 
-        std::cout << "wL^I: " << sim.evaluate_solution(0, sol_kim) << " wL^II: " << sim.evaluate_solution(1, sol_kim) << " ct: " << sim.evaluate_solution(2, sol_kim) << " tft: " << sim.evaluate_solution(3, sol_kim) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() << std::endl;
+        std::cout << " ct: " << sim.evaluate_solution(2, sol_kim) << " tft: " << sim.evaluate_solution(3, sol_kim) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() << std::endl;
         std::vector<double> test = utilities::stat_sol(G, sol_kim, 999 /* hard-coded but it should be impossible to have a budget this big */);
         std::cout << "number of cycles: " << test[0] << " avg time in cycles: " << test[1] << " min budget spent in cycles: " << test[2] << std::endl;
         assert(sim.check_solution_feasible(sol_kim) == 1);
@@ -585,38 +601,46 @@ int main(int argc, char **argv)
     ///////////////
     //////////////
 
-    if (n_input.experiment == 1) // --simulation generate-graph
+    switch (n_input.experiment)
     {
-        print_graph_to_file(n_input);
-    }
-    else if (n_input.experiment == 2) // --simulation test-batteries
-    {
-        batteries_greedy(n_input);
-    }
-    else if (n_input.experiment == 0) // --simulation full-simulation
-    {
-        full_simulation(n_input);
-    }
-    else if (n_input.experiment == 3) // --simulation top-comparison
-    {
-        top_comparison(n_input);
-    }
-    else if (n_input.experiment == 4) // --simulation print-cycles
-    {
-        print_cycles(n_input);
-    }
-    if (n_input.experiment == 5) // --simulation generate-graph-multi-depot
-    {
-        print_graph_to_file_multi_depot(n_input);
-    }
-    if (n_input.experiment == 6) // --simulation multi-depot
-    {
-        simulation_multi_depot(n_input);
-    }
-    if (n_input.experiment == 7) // --simulation generate-drones-multi-depot
-    {
-        print_drones_to_file_multi_depot();
-    }
 
+    case 1: // --simulation generate-graph
+
+        print_graph_to_file(n_input);
+        break;
+    case 2: // --simulation test-batteries
+
+        batteries_greedy(n_input);
+        break;
+    case 0: // --simulation full-simulation
+
+        full_simulation(n_input);
+        break;
+    case 3: // --simulation top-comparison
+
+        top_comparison(n_input);
+        break;
+    case 4: // --simulation print-cycles
+
+        print_cycles(n_input);
+        break;
+    case 5: // --simulation generate-graph-multi-depot
+
+        print_graph_to_file_multi_depot(n_input);
+        break;
+    case 6: // --simulation multi-depot
+
+        simulation_multi_depot(n_input);
+        break;
+    case 7: // --simulation generate-drones-multi-depot
+
+        print_drones_to_file_multi_depot();
+        break;
+
+    default:
+        std::cerr << "\n[ERROR main] experiment to run not present\n";
+        assert(0);
+        break;
+    }
     return 0;
 }

@@ -343,14 +343,35 @@ std::unordered_set<int> graph::get_vertices_set()
     return nodes_id;
 }
 
-graph graph::copy() {
+graph graph::copy()
+{
     graph _G = graph(1, 1);
     _G.erase_graph();
     // print::print_graph(_G);
 
     for (size_t i = 0; i < this->vertices.size(); i++)
     {
-        _G.add_node(vertices[i].id, vertices[i].x, vertices[i].y, vertices[i].node_weight, 1, 0);
+        _G.add_node(vertices[i].id, vertices[i].x, vertices[i].y, vertices[i].node_weight, vertices[i].priority, vertices[i].node_sigma_prime);
+    }
+    return _G;
+}
+
+graph graph::copy_add_weight(double weight_to_add)
+{
+    graph _G = graph(1, 1);
+    _G.erase_graph();
+    // print::print_graph(_G);
+
+    for (size_t i = 0; i < this->vertices.size(); i++)
+    {
+        if (vertices[i].x == 0 or vertices[i].x == 1)
+        {
+            _G.add_node(vertices[i].id, vertices[i].x, vertices[i].y, vertices[i].node_weight, vertices[i].priority, vertices[i].node_sigma_prime);
+        }
+        else
+        {
+            _G.add_node(vertices[i].id, vertices[i].x, vertices[i].y, vertices[i].node_weight + weight_to_add, vertices[i].priority, vertices[i].node_sigma_prime);
+        }
     }
     return _G;
 }
