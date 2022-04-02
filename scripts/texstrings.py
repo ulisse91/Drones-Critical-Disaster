@@ -14,6 +14,19 @@ plot_file_1 = """
     xlabel={\\(|V|\\)},
 """
 
+plot_file_1v2 = """
+\\documentclass{standalone}
+\\usepackage{tikz}
+\\usepackage{pgfplots}
+
+\\pgfplotsset{width=7cm, compat=1.15}\n
+
+\\begin{document}
+\\begin{tikzpicture}
+\\begin{axis}[
+    xlabel={\\(|I|\\)},
+"""
+
 plot_file_3 = """
 legend style={
         legend pos=outer north east,
@@ -26,6 +39,18 @@ plot_file_4 = """
     xmajorgrids, ymajorgrids,
     width=5.5cm, height=5.5cm,
     xtick={50,75,100,125,150,175,200},
+    y label style={at={(-0.15,0.5)}},
+    x label style={at={(0.5,-0.075)}},
+    yticklabel style = {font=\\tiny,xshift=0.5ex},
+    xticklabel style = {font=\\tiny,xshift=0.5ex}
+]
+"""
+
+plot_file_4v2 = """
+    every axis plot/.append style={thick},
+    xmajorgrids, ymajorgrids,
+    width=5.5cm, height=5.5cm,
+    xtick={10,20,30,40,50,75,100,125,150,175,200},
     y label style={at={(-0.15,0.5)}},
     x label style={at={(0.5,-0.075)}},
     yticklabel style = {font=\\tiny,xshift=0.5ex},

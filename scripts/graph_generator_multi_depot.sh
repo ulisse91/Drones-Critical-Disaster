@@ -3,7 +3,7 @@
 # Note that this script uses the main cpp code
 make main
 
-budget=60
+budget=50
 main="./build/main"
 pathoutput="data/graph/generated"
 baseseed=100000
@@ -11,7 +11,7 @@ baseseed=100000
 mkdir -p $pathoutput
 p=0
 
-for nodes in {10,20,30,50,75,100,125,150,175,200}; do # {50..200..25}
+for nodes in {10,20,30,40,50,75,100,125,150,175,200}; do
     for depots in {2,3,4}; do
         for seed in {0..19}; do # {0..19}
             $main -b $budget -q 2 -n $nodes -p $p -s $(($baseseed + $seed)) -d $depots --simulation "generate-graph-multi-depot"
