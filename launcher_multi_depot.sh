@@ -87,17 +87,17 @@ pathplots="data/plots"
 
 mkdir -p data/bkp/ data/plots data/output
 
-declare -a StringArray_2=("drones_q2_d2.csv" "drones_q4_d2.csv" "drones_q6_d2.csv" "drones_q9_d2.csv")
+declare -a StringArray_2=("drones_q2_d2.csv" "drones_q4_d2.csv" "drones_q6_d2.csv" "drones_q9_d2.csv" "drones_q20_d2.csv")
 run_simulation StringArray_2 2
 run_simulation_wadd StringArray_2 2
 
-# declare -a StringArray_3=("drones_q3_d3.csv" "drones_q6_d3.csv" "drones_q9_d3.csv" "drones_q12_d3.csv")
-# run_simulation StringArray_3 3
-# run_simulation_wadd StringArray_3 3
+declare -a StringArray_3=("drones_q3_d3.csv" "drones_q6_d3.csv" "drones_q9_d3.csv" "drones_q12_d3.csv")
+run_simulation StringArray_3 3
+run_simulation_wadd StringArray_3 3
 
-# declare -a StringArray_4=("drones_q4_d4.csv" "drones_q8_d4.csv" "drones_q12_d4.csv" "drones_q15_d4.csv")
-# run_simulation StringArray_4 4
-# run_simulation_wadd StringArray_4 4
+declare -a StringArray_4=("drones_q4_d4.csv" "drones_q8_d4.csv" "drones_q12_d4.csv" "drones_q15_d4.csv")
+run_simulation StringArray_4 4
+run_simulation_wadd StringArray_4 4
 
 echo -n "Starting analysis script uniform ..."
 python3 scripts/analyze_data_multi_depot.py

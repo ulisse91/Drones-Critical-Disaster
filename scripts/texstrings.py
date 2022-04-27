@@ -41,8 +41,8 @@ plot_file_4 = """
     xtick={50,75,100,125,150,175,200},
     y label style={at={(-0.15,0.5)}},
     x label style={at={(0.5,-0.075)}},
-    yticklabel style = {font=\\tiny,xshift=0.5ex},
-    xticklabel style = {font=\\tiny,xshift=0.5ex}
+    yticklabel style = {font=\\tiny},
+    xticklabel style = {font=\\tiny}
 ]
 """
 
@@ -53,8 +53,9 @@ plot_file_4v2 = """
     xtick={10,20,30,40,50,75,100,125,150,175,200},
     y label style={at={(-0.15,0.5)}},
     x label style={at={(0.5,-0.075)}},
-    yticklabel style = {font=\\tiny,xshift=0.5ex},
-    xticklabel style = {font=\\tiny,xshift=0.5ex}
+    yticklabel style = {font=\\tiny},
+    xticklabel style = {font=\\tiny},
+    xticklabels={10,,30,,50,75,100,125,150,175,200}
 ]
 """
 

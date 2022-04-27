@@ -384,6 +384,31 @@ void print_drones_to_file_multi_depot()
 
     nome_file_drones = "data/graph/generated/drones_q15_d4.csv";
     print::print_drones_to_file_multi_depots(drones, nome_file_drones);
+
+    drones = {};
+    drones.push_back(std::tuple<int, int, double>(0, 0, 50));
+    drones.push_back(std::tuple<int, int, double>(1, 0, 50));
+    drones.push_back(std::tuple<int, int, double>(2, 0, 50));
+    drones.push_back(std::tuple<int, int, double>(3, 0, 50));
+    drones.push_back(std::tuple<int, int, double>(4, 0, 50));
+    drones.push_back(std::tuple<int, int, double>(5, 0, 50));
+    drones.push_back(std::tuple<int, int, double>(6, 0, 50));
+    drones.push_back(std::tuple<int, int, double>(7, 0, 50));
+    drones.push_back(std::tuple<int, int, double>(8, 0, 50));
+    drones.push_back(std::tuple<int, int, double>(9, 0, 50));
+    drones.push_back(std::tuple<int, int, double>(10, 1, 30));
+    drones.push_back(std::tuple<int, int, double>(11, 1, 30));
+    drones.push_back(std::tuple<int, int, double>(12, 1, 30));
+    drones.push_back(std::tuple<int, int, double>(13, 1, 30));
+    drones.push_back(std::tuple<int, int, double>(14, 1, 30));
+    drones.push_back(std::tuple<int, int, double>(15, 1, 30));
+    drones.push_back(std::tuple<int, int, double>(16, 1, 30));
+    drones.push_back(std::tuple<int, int, double>(17, 1, 30));
+    drones.push_back(std::tuple<int, int, double>(18, 1, 30));
+    drones.push_back(std::tuple<int, int, double>(19, 1, 30));
+
+    nome_file_drones = "data/graph/generated/drones_q20_d2.csv";
+    print::print_drones_to_file_multi_depots(drones, nome_file_drones);
 }
 
 void print_graph_to_file_multi_depot(input n_input)
@@ -470,6 +495,90 @@ void print_cycles(input n_input)
             }
         }
     }
+    return;
+}
+
+void divide_graph_four_quadrants(input n_input)
+{
+    int n_nodes = 20;
+    
+    for (int seed = 100000; seed < 100020; seed++)
+    {
+        std::string file_input = "data/graph/generated/graph_n" + std::to_string(n_nodes) + "_d4_s" + std::to_string(seed) + "_wadd5.csv";
+    
+        std::cout << file_input << std::endl;
+    
+
+    // read graph from file
+    graph G = graph(1, 1);
+    G.erase_graph();
+    int check_existing_file = G.read_graph_from_file_multi_depot(file_input);
+    std::cout << check_existing_file;
+    assert(check_existing_file != -1);
+
+
+    print::print_graph(G);
+
+    graph G_NW = graph(1, 1);
+    G_NW.erase_graph();
+    graph G_NE = graph(1, 1);
+    G_NE.erase_graph();
+    graph G_SW = graph(1, 1);
+    G_SW.erase_graph();
+    graph G_SE = graph(1, 1);
+    G_SE.erase_graph();
+
+
+    // std::vector<int> vertices = G.get_vertices();
+    for (int i = 0; i < G.get_n_nodes(); i++)
+    {
+         int _p = 1;
+            double _wp = 0;
+            //std::cout << G.get_coord_x(i) << " " << G.get_coord_y(i) << std::endl;
+        if (G.get_coord_x(i) < G.get_area_x()/2.0 and G.get_coord_y(i) > G.get_area_y()/2.0)
+        {
+            G_NW.add_node(G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), _p, _wp);
+        }
+        if (G.get_coord_x(i) > G.get_area_x()/2.0 and G.get_coord_y(i) >= G.get_area_y()/2.0)
+        {
+            G_NE.add_node(G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), _p, _wp);
+        }
+        if (G.get_coord_x(i) < G.get_area_x()/2.0 and G.get_coord_y(i) < G.get_area_y()/2.0)
+        {
+            G_SW.add_node(G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), _p, _wp);
+        }
+        if (G.get_coord_x(i) > G.get_area_x()/2.0 and G.get_coord_y(i) < G.get_area_y()/2.0)
+        {
+            G_SE.add_node(G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), _p, _wp);
+        }
+    }
+    
+    std::cout << "G_NW:\n";
+    print::print_graph(G_NW);
+    std::cout << "G_NE:\n";
+    print::print_graph(G_NE);
+    std::cout << "G_SW:\n";
+    print::print_graph(G_SW);
+    std::cout << "G_SE:\n";
+    print::print_graph(G_SE);
+
+    assert(G.get_n_nodes() == (G_NW.get_n_nodes() + G_NE.get_n_nodes() + G_SW.get_n_nodes() + G_SE.get_n_nodes()));
+
+    std::string nome_file_graph = "data/graph/generated/quadrants/graph_n" + std::to_string(n_nodes) + "_d1_s" + std::to_string(seed) + "_wadd5_NW.csv";
+    print::print_graph_to_file_multi_depots(G_NW, 1, nome_file_graph);
+
+    nome_file_graph = "data/graph/generated/quadrants/graph_n" + std::to_string(n_nodes) + "_d1_s" + std::to_string(seed) + "_wadd5_NE.csv";
+    print::print_graph_to_file_multi_depots(G_NE, 1, nome_file_graph);
+
+    nome_file_graph = "data/graph/generated/quadrants/graph_n" + std::to_string(n_nodes) + "_d1_s" + std::to_string(seed) + "_wadd5_SW.csv";
+    print::print_graph_to_file_multi_depots(G_SW, 1, nome_file_graph);
+
+    nome_file_graph = "data/graph/generated/quadrants/graph_n" + std::to_string(n_nodes) + "_d1_s" + std::to_string(seed) + "_wadd5_SE.csv";
+    print::print_graph_to_file_multi_depots(G_SE, 1, nome_file_graph);
+
+    
+    }
+    std::cout << "DONE!\n";
     return;
 }
 
@@ -635,6 +744,11 @@ int main(int argc, char **argv)
     case 7: // --simulation generate-drones-multi-depot
 
         print_drones_to_file_multi_depot();
+        break;
+
+    case 8: // --simulation divide-graphs-four-quadrants
+
+        divide_graph_four_quadrants(n_input);
         break;
 
     default:
