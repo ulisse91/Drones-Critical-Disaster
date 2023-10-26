@@ -9,6 +9,163 @@
 #include "simulator/simulator.h"
 #include "simulator/simulator_multi_depot.h"
 
+void testing_one_depot()
+{
+    typedef std::vector<std::tuple<int, int, double>> my_tuple;
+    std::string nome_file_drones;
+    my_tuple _drones;
+
+    // _drones = {};
+    // _drones.push_back(std::tuple<int, int, double>(0, 0, 50));
+    // _drones.push_back(std::tuple<int, int, double>(1, 0, 50));
+
+    // nome_file_drones = "data/graph/generated/newtest_drones_q1_d4.csv";
+    // print::print_drones_to_file_multi_depots(_drones, nome_file_drones);
+
+    _drones = {};
+    _drones.push_back(std::tuple<int, int, double>(0, 0, 50));
+    _drones.push_back(std::tuple<int, int, double>(1, 1, 50));
+    _drones.push_back(std::tuple<int, int, double>(2, 2, 50));
+    _drones.push_back(std::tuple<int, int, double>(3, 3, 50));
+
+    nome_file_drones = "data/graph/generated/newtest_drones_q4_d4.csv";
+    print::print_drones_to_file_multi_depots(_drones, nome_file_drones);
+
+    ////////////////////////////////////////
+    int _number_of_depots = 4;
+
+
+    graph G = graph(1, 1, _number_of_depots);
+
+    // G.create_random_graph_multi_depot(30, _number_of_depots, 3, 0);
+    double min_area_x = 0.5;
+    double max_area_x = 1;
+    double min_area_y = 0.5;
+    double max_area_y = 1;
+    G.create_random_graph_multi_depot_newtest(30, _number_of_depots, 3, 0, min_area_x, max_area_x, min_area_y, max_area_y);
+
+    // // print::print_graph(G);
+
+    std::string nome_file_graph = "data/graph/generated/newtest_graph_n30_d" + std::to_string(_number_of_depots) + "_s0_" + std::to_string((int)(min_area_x * 10))+ "-" + std::to_string((int)(max_area_x * 10))+ "-" + std::to_string((int)(min_area_y * 10))+ "-" + std::to_string((int)(max_area_y * 10)) + ".csv";
+
+    print::print_graph_to_file_multi_depots(G, _number_of_depots, nome_file_graph);
+
+    G.read_graph_from_file_multi_depot(nome_file_graph);
+    print::print_graph(G);
+
+    // read drones from file
+    std::vector<std::tuple<int, int, double>> drones;
+    drones = utilities::read_drones_from_file(nome_file_drones);
+    print::print_drones(drones);
+
+    // count number of depots
+    std::vector<int> number_of_depots_vec(drones.size(), 0);
+
+    for (size_t i = 0; i < drones.size(); i++)
+        number_of_depots_vec[std::get<1>(drones[i])]++;
+
+    // print::print_vector(number_of_depots_vec);
+    int number_of_depots = 0;
+    for (size_t i = 0; i < number_of_depots_vec.size(); i++)
+        if (number_of_depots_vec[i] > 0)
+            number_of_depots++;
+
+    int count = 0;
+    for (size_t i = 0; i < 4; i++)
+    {
+        if ((G.get_coord_x(i) == 0 or G.get_coord_x(i) == 1) and (G.get_coord_y(i) == 0 or G.get_coord_y(i) == 1))
+        {
+            count++;
+        }
+    }
+    if (count != number_of_depots)
+    {
+        std::cerr << "[ERROR] number of depots in the graph different from the number of depots in the drones files\n";
+        assert(count == number_of_depots);
+    }
+
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+    //////////////////////////////////////////
+
+    simulator_md sim = simulator_md(G, drones, number_of_depots);
+
+    assert(sim.check_feasibility_multi_depot());
+
+    {
+        auto start_t = std::chrono::high_resolution_clock::now();
+        std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_greedy = sim.greedy_out_loop();
+        auto stop_t = std::chrono::high_resolution_clock::now();
+
+        assert(sol_greedy.size() == drones.size());
+
+        std::cout << std::endl
+                  << "GREEDY ALGORITHM" << std::endl;
+        print::print_e_solution(G, sol_greedy, drones);
+
+        std::cout << " ct: " << sim.evaluate_solution(2, sol_greedy) << " tft: " << sim.evaluate_solution(3, sol_greedy) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() << std::endl;
+        std::vector<double> test = utilities::stat_sol(G, sol_greedy, 999 /* hard-coded but it should be impossible to have a budget this big */);
+        std::cout << "number of cycles: " << test[0] << " avg time in cycles: " << test[1] << " min budget spent in cycles: " << test[2] << std::endl;
+        assert(sim.check_solution_feasible(sol_greedy) == 1);
+
+        std::ofstream outfile;
+        boost::algorithm::replace_all(nome_file_graph, "data/graph/generated/", "");
+        boost::algorithm::replace_all(nome_file_drones, "data/graph/generated/", "");
+        outfile.open("data/output/newtest_greedy.csv", std::ios_base::app);
+        outfile << nome_file_graph
+                << "," << nome_file_drones
+                << "," << G.get_n_nodes()
+                << "," << number_of_depots /* number of depots */
+                << "," << drones.size()    /* number of drones */
+                // << "," << n_input.seed     /* seed */
+                // << "," << sim.evaluate_solution(0, sol_greedy)                                            /* wL^I */
+                // << "," << sim.evaluate_solution(1, sol_greedy)                                            /* wL^II */
+                << "," << sim.evaluate_solution(2, sol_greedy)                                            /* completion time */
+                << "," << sim.evaluate_solution(3, sol_greedy)                                            /* total flying time time */
+                << "," << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() /* microsends computation algorithm */
+                << "," << test[0]                                                                         /* number of cycles in solution */
+                << "," << test[1]                                                                         /* average time cycles (except last cycle) */
+                << "," << test[2]                                                                         /* min time cycles (except last cycle) */
+                << "\n";
+        outfile.close();
+    }
+    {
+        auto start_t = std::chrono::high_resolution_clock::now();
+        std::vector<std::vector<std::vector<std::pair<int, double>>>> sol_kim = sim.kim_alternativo();
+        auto stop_t = std::chrono::high_resolution_clock::now();
+
+        assert(sol_kim.size() == drones.size());
+
+        std::cout << std::endl
+                  << "KIM ALGORITHM" << std::endl;
+        print::print_e_solution(G, sol_kim, drones);
+
+        std::cout << " ct: " << sim.evaluate_solution(2, sol_kim) << " tft: " << sim.evaluate_solution(3, sol_kim) << " | time(mus): " << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() << std::endl;
+        std::vector<double> test = utilities::stat_sol(G, sol_kim, 999 /* hard-coded but it should be impossible to have a budget this big */);
+        std::cout << "number of cycles: " << test[0] << " avg time in cycles: " << test[1] << " min budget spent in cycles: " << test[2] << std::endl;
+        assert(sim.check_solution_feasible(sol_kim) == 1);
+
+        std::ofstream outfile;
+        outfile.open("data/output/newtest_kim.csv", std::ios_base::app);
+        outfile << nome_file_graph
+                << "," << nome_file_drones
+                << "," << G.get_n_nodes()
+                << "," << number_of_depots /* number of depots */
+                << "," << drones.size()    /* number of drones */
+                // << "," << n_input.seed     /* seed */
+                // << "," << sim.evaluate_solution(0, sol_greedy)                                            /* wL^I */
+                // << "," << sim.evaluate_solution(1, sol_greedy)                                            /* wL^II */
+                << "," << sim.evaluate_solution(2, sol_kim)                                               /* completion time */
+                << "," << sim.evaluate_solution(3, sol_kim)                                               /* total flying time time */
+                << "," << std::chrono::duration_cast<std::chrono::microseconds>(stop_t - start_t).count() /* microsends computation algorithm */
+                << "," << test[0]                                                                         /* number of cycles in solution */
+                << "," << test[1]                                                                         /* average time cycles (except last cycle) */
+                << "," << test[2]                                                                         /* min time cycles (except last cycle) */
+                << "\n";
+        outfile.close();
+    }
+}
+
 /*
     batteries_greedy:
     simulate the problem using algorithm Greedy round with a number of batteries equal to q+b, with 0<= b <= 2q
@@ -501,82 +658,77 @@ void print_cycles(input n_input)
 void divide_graph_four_quadrants(input n_input)
 {
     int n_nodes = 20;
-    
+
     for (int seed = 100000; seed < 100020; seed++)
     {
         std::string file_input = "data/graph/generated/graph_n" + std::to_string(n_nodes) + "_d4_s" + std::to_string(seed) + "_wadd5.csv";
-    
+
         std::cout << file_input << std::endl;
-    
 
-    // read graph from file
-    graph G = graph(1, 1);
-    G.erase_graph();
-    int check_existing_file = G.read_graph_from_file_multi_depot(file_input);
-    std::cout << check_existing_file;
-    assert(check_existing_file != -1);
+        // read graph from file
+        graph G = graph(1, 1);
+        G.erase_graph();
+        int check_existing_file = G.read_graph_from_file_multi_depot(file_input);
+        std::cout << check_existing_file;
+        assert(check_existing_file != -1);
 
+        print::print_graph(G);
 
-    print::print_graph(G);
+        graph G_NW = graph(1, 1);
+        G_NW.erase_graph();
+        graph G_NE = graph(1, 1);
+        G_NE.erase_graph();
+        graph G_SW = graph(1, 1);
+        G_SW.erase_graph();
+        graph G_SE = graph(1, 1);
+        G_SE.erase_graph();
 
-    graph G_NW = graph(1, 1);
-    G_NW.erase_graph();
-    graph G_NE = graph(1, 1);
-    G_NE.erase_graph();
-    graph G_SW = graph(1, 1);
-    G_SW.erase_graph();
-    graph G_SE = graph(1, 1);
-    G_SE.erase_graph();
-
-
-    // std::vector<int> vertices = G.get_vertices();
-    for (int i = 0; i < G.get_n_nodes(); i++)
-    {
-         int _p = 1;
+        // std::vector<int> vertices = G.get_vertices();
+        for (int i = 0; i < G.get_n_nodes(); i++)
+        {
+            int _p = 1;
             double _wp = 0;
-            //std::cout << G.get_coord_x(i) << " " << G.get_coord_y(i) << std::endl;
-        if (G.get_coord_x(i) < G.get_area_x()/2.0 and G.get_coord_y(i) > G.get_area_y()/2.0)
-        {
-            G_NW.add_node(G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), _p, _wp);
+            // std::cout << G.get_coord_x(i) << " " << G.get_coord_y(i) << std::endl;
+            if (G.get_coord_x(i) < G.get_area_x() / 2.0 and G.get_coord_y(i) > G.get_area_y() / 2.0)
+            {
+                G_NW.add_node(G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), _p, _wp);
+            }
+            if (G.get_coord_x(i) > G.get_area_x() / 2.0 and G.get_coord_y(i) >= G.get_area_y() / 2.0)
+            {
+                G_NE.add_node(G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), _p, _wp);
+            }
+            if (G.get_coord_x(i) < G.get_area_x() / 2.0 and G.get_coord_y(i) < G.get_area_y() / 2.0)
+            {
+                G_SW.add_node(G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), _p, _wp);
+            }
+            if (G.get_coord_x(i) > G.get_area_x() / 2.0 and G.get_coord_y(i) < G.get_area_y() / 2.0)
+            {
+                G_SE.add_node(G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), _p, _wp);
+            }
         }
-        if (G.get_coord_x(i) > G.get_area_x()/2.0 and G.get_coord_y(i) >= G.get_area_y()/2.0)
-        {
-            G_NE.add_node(G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), _p, _wp);
-        }
-        if (G.get_coord_x(i) < G.get_area_x()/2.0 and G.get_coord_y(i) < G.get_area_y()/2.0)
-        {
-            G_SW.add_node(G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), _p, _wp);
-        }
-        if (G.get_coord_x(i) > G.get_area_x()/2.0 and G.get_coord_y(i) < G.get_area_y()/2.0)
-        {
-            G_SE.add_node(G.get_coord_x(i), G.get_coord_y(i), G.get_weight_node(i), _p, _wp);
-        }
-    }
-    
-    std::cout << "G_NW:\n";
-    print::print_graph(G_NW);
-    std::cout << "G_NE:\n";
-    print::print_graph(G_NE);
-    std::cout << "G_SW:\n";
-    print::print_graph(G_SW);
-    std::cout << "G_SE:\n";
-    print::print_graph(G_SE);
 
-    assert(G.get_n_nodes() == (G_NW.get_n_nodes() + G_NE.get_n_nodes() + G_SW.get_n_nodes() + G_SE.get_n_nodes()));
+        std::cout << "G_NW:\n";
+        print::print_graph(G_NW);
+        std::cout << "G_NE:\n";
+        print::print_graph(G_NE);
+        std::cout << "G_SW:\n";
+        print::print_graph(G_SW);
+        std::cout << "G_SE:\n";
+        print::print_graph(G_SE);
 
-    std::string nome_file_graph = "data/graph/generated/quadrants/graph_n" + std::to_string(n_nodes) + "_d1_s" + std::to_string(seed) + "_wadd5_NW.csv";
-    print::print_graph_to_file_multi_depots(G_NW, 1, nome_file_graph);
+        assert(G.get_n_nodes() == (G_NW.get_n_nodes() + G_NE.get_n_nodes() + G_SW.get_n_nodes() + G_SE.get_n_nodes()));
 
-    nome_file_graph = "data/graph/generated/quadrants/graph_n" + std::to_string(n_nodes) + "_d1_s" + std::to_string(seed) + "_wadd5_NE.csv";
-    print::print_graph_to_file_multi_depots(G_NE, 1, nome_file_graph);
+        std::string nome_file_graph = "data/graph/generated/quadrants/graph_n" + std::to_string(n_nodes) + "_d1_s" + std::to_string(seed) + "_wadd5_NW.csv";
+        print::print_graph_to_file_multi_depots(G_NW, 1, nome_file_graph);
 
-    nome_file_graph = "data/graph/generated/quadrants/graph_n" + std::to_string(n_nodes) + "_d1_s" + std::to_string(seed) + "_wadd5_SW.csv";
-    print::print_graph_to_file_multi_depots(G_SW, 1, nome_file_graph);
+        nome_file_graph = "data/graph/generated/quadrants/graph_n" + std::to_string(n_nodes) + "_d1_s" + std::to_string(seed) + "_wadd5_NE.csv";
+        print::print_graph_to_file_multi_depots(G_NE, 1, nome_file_graph);
 
-    nome_file_graph = "data/graph/generated/quadrants/graph_n" + std::to_string(n_nodes) + "_d1_s" + std::to_string(seed) + "_wadd5_SE.csv";
-    print::print_graph_to_file_multi_depots(G_SE, 1, nome_file_graph);
+        nome_file_graph = "data/graph/generated/quadrants/graph_n" + std::to_string(n_nodes) + "_d1_s" + std::to_string(seed) + "_wadd5_SW.csv";
+        print::print_graph_to_file_multi_depots(G_SW, 1, nome_file_graph);
 
-    
+        nome_file_graph = "data/graph/generated/quadrants/graph_n" + std::to_string(n_nodes) + "_d1_s" + std::to_string(seed) + "_wadd5_SE.csv";
+        print::print_graph_to_file_multi_depots(G_SE, 1, nome_file_graph);
     }
     std::cout << "DONE!\n";
     return;
@@ -749,6 +901,11 @@ int main(int argc, char **argv)
     case 8: // --simulation divide-graphs-four-quadrants
 
         divide_graph_four_quadrants(n_input);
+        break;
+
+    case 9: // --simulation divide-graphs-four-quadrants
+
+        testing_one_depot();
         break;
 
     default:

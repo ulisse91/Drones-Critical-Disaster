@@ -14,7 +14,8 @@ input userinput::read_user_input(int argc, char **argv)
          {"generate-graph-multi-depot", 5},
          {"multi-depot", 6},
          {"generate-drones-multi-depot", 7},
-         {"divide-graph-four-quadrants", 8}};
+         {"divide-graph-four-quadrants", 8},
+         {"testing_one_depot", 9}};
 
     time_t my_time = time(NULL);
     std::cout << std::endl

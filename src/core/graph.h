@@ -60,6 +60,8 @@ public:
     void create_random_graph(int number_of_nodes, double max_weight, int max_priority, long seed);
     void create_random_graph_multi_depot(int number_of_nodes, int number_of_depot, double max_weight, long seed);
     void create_random_graph_poisson(int number_of_nodes, double max_weight, int max_priority, long seed);
+    void create_random_graph_multi_depot_newtest(int number_of_nodes, int number_of_depot, double max_weight, long seed, double min_area_x, double max_area_x, double min_area_y, double max_area_y);
+
     int add_node(int id, double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime);
     int add_node(double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime);
     int add_node_no_checks(int id, double _x, double _y, double _node_weight, int _priority, double _node_sigma_prime);

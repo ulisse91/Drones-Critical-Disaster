@@ -73,6 +73,36 @@ void graph::create_random_graph_multi_depot(int number_of_nodes, int number_of_d
     assert((int)this->vertices.size() == this->n_nodes);
 }
 
+void graph::create_random_graph_multi_depot_newtest(int number_of_nodes, int number_of_depot, double max_weight, long seed, double min_area_x, double max_area_x, double min_area_y, double max_area_y)
+{
+
+    if (seed == -1)
+        seed = std::random_device{}();
+
+    std::uniform_real_distribution<double> unif_1(min_area_x, max_area_x);
+    std::uniform_real_distribution<double> unif_2(min_area_y, max_area_y);
+    // std::uniform_real_distribution<double> unif_3(1, max_weight + 1);
+    // std::uniform_real_distribution<double> unif_5(1, max_weight + 1);
+    std::uniform_real_distribution<double> unif_3(0, 3);
+    // std::uniform_real_distribution<double> unif_5(0, 3);
+    // std::uniform_real_distribution<double> unif_4(1, max_priority + 1);
+
+    // Mersenne Twister: Good quality random number generator
+    std::mt19937 re(seed);
+
+    for (size_t i = 0; i < (unsigned)number_of_nodes; i++)
+    {
+        double _x = unif_1(re);
+        double _y = unif_2(re);
+        double _w = round(unif_3(re) * 100.0) / 100.0;
+        int _p = 1;
+        double _wp = 0;
+
+        this->add_node(_x, _y, _w, _p, _wp);
+    }
+    assert((int)this->vertices.size() == this->n_nodes);
+}
+
 void graph::create_random_graph(int number_of_nodes, double max_weight, int max_priority, long seed)
 {
     erase_graph();
